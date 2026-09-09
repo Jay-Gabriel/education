@@ -595,9 +595,9 @@ export default function App() {
               <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/70 to-transparent pointer-events-none z-0" />
 
               {/* SLIDESHOW TOP TABS & NAVIGATION */}
-              <div className="relative z-10 flex items-center justify-between gap-1.5 sm:gap-2 mb-2 pb-1 border-b border-sky-100/70">
+              <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 mb-2 pb-1.5 border-b border-sky-100/70">
                 {/* 4 Theme Tabs with smooth horizontal scroll */}
-                <div className="flex-1 min-w-0 flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5">
+                <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full">
                   {heroSlides.map((slide, idx) => {
                     const isActive = currentSlideIndex === idx;
                     return (
@@ -606,13 +606,13 @@ export default function App() {
                         onClick={() => handleSelectSlide(idx)}
                         className={`relative px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
                           isActive
-                            ? 'bg-[#0050A0] text-white shadow-md shadow-blue-900/20 scale-102'
-                            : 'bg-white/85 hover:bg-white text-slate-700 hover:text-blue-700 border border-slate-200/80 shadow-2xs'
+                            ? 'bg-[#0050A0] text-white shadow-md shadow-blue-900/20'
+                            : 'bg-white/90 hover:bg-white text-slate-700 hover:text-blue-700 border border-slate-200/80 shadow-2xs'
                         }`}
                       >
                         <span>{slide.tabTitle}</span>
                         {isActive && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping hidden sm:inline-block" />
                         )}
                       </button>
                     );
@@ -620,35 +620,37 @@ export default function App() {
                 </div>
 
                 {/* Slideshow Controls (Prev / Next / Indicators) */}
-                <div className="flex items-center gap-1 shrink-0 bg-white/90 backdrop-blur-xs px-2 py-1 rounded-full border border-sky-200/80 shadow-2xs">
-                  <button
-                    onClick={handlePrevSlide}
-                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-sky-50 transition-colors cursor-pointer"
-                    aria-label="Previous slide"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </button>
-                  <div className="flex items-center gap-1 px-1">
-                    {heroSlides.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleSelectSlide(idx)}
-                        className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                          currentSlideIndex === idx
-                            ? 'w-4 bg-[#0050A0]'
-                            : 'w-1.5 bg-slate-300 hover:bg-slate-400'
-                        }`}
-                        aria-label={`Go to slide ${idx + 1}`}
-                      />
-                    ))}
+                <div className="flex items-center justify-between sm:justify-end gap-1 shrink-0 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-full border border-sky-200/80 shadow-2xs self-end sm:self-auto">
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={handlePrevSlide}
+                      className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-sky-50 transition-colors cursor-pointer"
+                      aria-label="Previous slide"
+                    >
+                      <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    </button>
+                    <div className="flex items-center gap-1 px-1">
+                      {heroSlides.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => handleSelectSlide(idx)}
+                          className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                            currentSlideIndex === idx
+                              ? 'w-3.5 sm:w-4 bg-[#0050A0]'
+                              : 'w-1.5 bg-slate-300 hover:bg-slate-400'
+                          }`}
+                          aria-label={`Go to slide ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                    <button
+                      onClick={handleNextSlide}
+                      className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-sky-50 transition-colors cursor-pointer"
+                      aria-label="Next slide"
+                    >
+                      <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                    </button>
                   </div>
-                  <button
-                    onClick={handleNextSlide}
-                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-sky-50 transition-colors cursor-pointer"
-                    aria-label="Next slide"
-                  >
-                    <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </button>
                 </div>
               </div>
 
@@ -771,22 +773,24 @@ export default function App() {
                 </button>
               </div>
 
-              {/* 5 Quick Pill Buttons with Smooth Horizontal Scroll on Mobile */}
-              <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto sm:flex-wrap no-scrollbar pt-1.5 border-t border-slate-100">
-                <span className="text-[11px] font-bold text-slate-400 shrink-0 mr-1 hidden sm:inline">Gợi ý nhanh:</span>
-                {quickLinks.map((link) => (
-                  <button
-                    key={link}
-                    onClick={() => setSelectedGoal(link)}
-                    className={`border rounded-full px-3 py-1 text-xs font-medium cursor-pointer transition-all shadow-2xs whitespace-nowrap shrink-0 ${
-                      selectedGoal === link
-                        ? 'bg-blue-600 text-white font-bold border-blue-600 shadow-xs'
-                        : 'bg-slate-50 hover:bg-sky-50 text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600'
-                    }`}
-                  >
-                    {link}
-                  </button>
-                ))}
+              {/* 5 Quick Pill Buttons Responsive Layout */}
+              <div className="pt-2 border-t border-slate-100 flex flex-col gap-1.5">
+                <span className="text-[11px] font-bold text-slate-400">Gợi ý mục tiêu phổ biến:</span>
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                  {quickLinks.map((link) => (
+                    <button
+                      key={link}
+                      onClick={() => setSelectedGoal(link)}
+                      className={`border rounded-full px-3 py-1 text-xs font-medium cursor-pointer transition-all shadow-2xs leading-tight ${
+                        selectedGoal === link
+                          ? 'bg-blue-600 text-white font-bold border-blue-600 shadow-xs'
+                          : 'bg-slate-50 hover:bg-sky-50 text-slate-700 border-slate-200 hover:border-blue-300 hover:text-blue-600'
+                      }`}
+                    >
+                      {link}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
