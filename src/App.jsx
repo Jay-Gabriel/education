@@ -1363,44 +1363,47 @@ export default function App() {
           </section>
 
           {/* Col 2: Cần hỗ trợ? */}
-          <section className="h-full relative overflow-hidden rounded-3xl p-6 sm:p-7 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between">
+          <section className="h-full relative overflow-hidden rounded-3xl p-5 sm:p-7 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between min-h-[340px] sm:min-h-[360px]">
             {/* Full HD Background Artwork */}
             <img
               src="/assets/support-banner-bg.jpg"
               alt="Cần hỗ trợ?"
-              className="absolute inset-0 w-full h-full object-cover object-right pointer-events-none select-none z-0"
+              className="absolute inset-0 w-full h-full object-cover object-[80%_center] sm:object-right pointer-events-none select-none z-0"
             />
+
+            {/* Mobile-Friendly Soft White Gradient Overlay for 100% Readable Text */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/40 sm:from-white/80 sm:via-white/50 sm:to-transparent z-0 pointer-events-none" />
 
             {/* Speech bubble */}
             <div className="absolute top-5 right-5 sm:right-7 bg-white/95 backdrop-blur-xs px-3.5 py-2 rounded-2xl border border-sky-200 shadow-xs text-xs font-semibold text-sky-800 leading-tight text-center pointer-events-none z-10 hidden sm:block">
               Chúng tôi<br />luôn ở đây<br />cùng bạn!
             </div>
 
-            <div className="relative z-10 max-w-[54%] flex flex-col justify-between h-full">
+            <div className="relative z-10 w-full sm:max-w-[58%] flex flex-col justify-between h-full">
               <div>
                 <div className="flex items-center gap-3 mb-2.5">
                   <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs shrink-0">
                     <Headphones className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg font-bold text-[#0B3C78] leading-tight">Cần hỗ trợ?</h3>
-                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5 leading-snug">
+                    <h3 className="text-base sm:text-lg font-extrabold text-[#0B3C78] leading-tight">Cần hỗ trợ?</h3>
+                    <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5 leading-snug">
                       Đội ngũ tư vấn luôn sẵn sàng đồng hành cùng bạn trên hành trình chinh phục tri thức.
                     </p>
                   </div>
                 </div>
 
                 {/* Checklist */}
-                <div className="flex flex-col gap-2.5 my-3.5 text-xs sm:text-sm font-medium text-slate-700">
-                  <div className="flex items-center gap-2.5">
+                <div className="flex flex-col gap-2 my-3 text-xs sm:text-sm font-semibold text-slate-800">
+                  <div className="flex items-center gap-2.5 bg-white/50 sm:bg-transparent px-2 sm:px-0 py-1 sm:py-0 rounded-xl">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-100 shrink-0" />
                     <span>Tư vấn lộ trình học phù hợp</span>
                   </div>
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2.5 bg-white/50 sm:bg-transparent px-2 sm:px-0 py-1 sm:py-0 rounded-xl">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-100 shrink-0" />
                     <span>Hỗ trợ kỹ thuật, giải đáp thắc mắc</span>
                   </div>
-                  <div className="flex items-center gap-2.5">
+                  <div className="flex items-center gap-2.5 bg-white/50 sm:bg-transparent px-2 sm:px-0 py-1 sm:py-0 rounded-xl">
                     <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-100 shrink-0" />
                     <span>Đồng hành cùng học sinh và phụ huynh</span>
                   </div>
