@@ -35,6 +35,9 @@ export default function App() {
   const [selectedGrade, setSelectedGrade] = useState('Lớp 10');
   const [selectedGoal, setSelectedGoal] = useState('Luyện thi HSG Tin học lớp 9');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mainSectionTab, setMainSectionTab] = useState('courses');
+  const [isMainTabPaused, setIsMainTabPaused] = useState(false);
+  const [sidebarTab, setSidebarTab] = useState('leaderboard');
 
   // Slideshow State
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
@@ -115,6 +118,15 @@ export default function App() {
     }, 4500);
     return () => clearInterval(timer);
   }, [isSlidePaused, heroSlides.length]);
+
+  // Auto-switch Main Section Tab ('courses' <-> 'path') every 6s unless hovered
+  useEffect(() => {
+    if (isMainTabPaused) return;
+    const mainTabTimer = setInterval(() => {
+      setMainSectionTab((prev) => (prev === 'courses' ? 'path' : 'courses'));
+    }, 6000);
+    return () => clearInterval(mainTabTimer);
+  }, [isMainTabPaused]);
 
   const handleSelectSlide = (index) => {
     setCurrentSlideIndex(index);
@@ -549,24 +561,29 @@ export default function App() {
               />
             </div>
 
-            {/* Teacher Card: Thầy Nguyễn Tiến Thành */}
-            <div className="bg-white rounded-3xl p-3.5 xl:p-4 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)] text-center">
-              <div className="flex items-center gap-2.5 xl:gap-3 text-left mb-2.5 xl:mb-3">
+            {/* Teacher Profile Mini Card (Thiết kế chuẩn theo mẫu reference) */}
+            <div className="bg-white rounded-3xl p-3 sm:p-3.5 border border-sky-100/90 shadow-[0_2px_10px_rgba(0,100,220,0.04)] hover:shadow-md transition-all cursor-pointer group">
+              <div className="flex items-center gap-2.5 text-left mb-2">
                 <img
                   src="/assets/teacher-thanh.png"
                   alt="Thầy Nguyễn Tiến Thành"
-                  className="w-9 h-9 xl:w-11 xl:h-11 rounded-full border-2 border-sky-300 object-cover shrink-0 shadow-2xs"
+                  className="w-10 h-10 rounded-full border border-sky-200 object-cover shrink-0 shadow-2xs group-hover:scale-105 transition-transform"
                 />
                 <div className="overflow-hidden">
-                  <h4 className="text-xs xl:text-sm font-bold text-[#0B3C78] leading-tight truncate">Thầy Nguyễn Tiến Thành</h4>
-                  <p className="text-[10px] xl:text-xs text-slate-500 leading-tight mt-0.5 truncate">
-                    GV THPT Chuyên Thái Bình
+                  <h5 className="text-xs font-extrabold text-[#0B3C78] group-hover:text-blue-600 transition-colors leading-tight truncate">
+                    Thầy Nguyễn Tiến Thành
+                  </h5>
+                  <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">
+                    Giáo viên trường THPT<br />Chuyên Thái Bình
                   </p>
                 </div>
               </div>
-              <p className="text-[11px] xl:text-xs 2xl:text-sm font-bold text-blue-700 pt-2.5 xl:pt-3 border-t border-sky-100 leading-snug">
-                Kiến thức là chìa khóa mở ra tương lai
-              </p>
+
+              <div className="pt-2 border-t border-sky-100 text-center">
+                <p className="text-[11px] font-bold text-[#0050A0] leading-snug">
+                  Kiến thức là chìa khóa mở ra tương lai
+                </p>
+              </div>
             </div>
           </aside>
 
@@ -772,202 +789,179 @@ export default function App() {
                   <span className="text-sm font-bold">→</span>
                 </button>
               </div>
-
-              {/* 5 Quick Pill Buttons Responsive Layout */}
-              <div className="pt-2 border-t border-slate-100 flex flex-col gap-1.5">
-                <span className="text-[11px] font-bold text-slate-400">Gợi ý mục tiêu phổ biến:</span>
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                  {quickLinks.map((link) => (
-                    <button
-                      key={link}
-                      onClick={() => setSelectedGoal(link)}
-                      className={`border rounded-full px-3 py-1 text-xs font-medium cursor-pointer transition-all shadow-2xs leading-tight ${
-                        selectedGoal === link
-                          ? 'bg-blue-600 text-white font-bold border-blue-600 shadow-xs'
-                          : 'bg-slate-50 hover:bg-sky-50 text-slate-700 border-slate-200 hover:border-blue-300 hover:text-blue-600'
-                      }`}
-                    >
-                      {link}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
 
-            {/* FEATURED COURSES (Chương trình học nổi bật) */}
-            <section
-              id="courses"
-              className="relative rounded-3xl p-4 sm:p-6 border border-sky-200/80 shadow-[0_4px_20px_rgba(0,100,220,0.06)] overflow-hidden bg-center bg-no-repeat"
-              style={{ backgroundImage: `url('/assets/courses-bg-cloud.png?v=1')`, backgroundSize: '100% 100%' }}
+            {/* COMBINED MAIN TABBED SECTION (Chương trình học & Lộ trình học - Auto-Switch & Compact) */}
+            <div
+              className="mt-3.5"
+              onMouseEnter={() => setIsMainTabPaused(true)}
+              onMouseLeave={() => setIsMainTabPaused(false)}
             >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2.5 sm:gap-3">
-                  <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl overflow-hidden shadow-2xs shrink-0 flex items-center justify-center bg-white">
-                    <img
-                      src="/assets/badge-courses.png?v=3"
-                      alt="Chương trình học nổi bật"
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-sm sm:text-lg font-bold text-[#0B3C78] leading-tight">
-                      Chương trình học nổi bật
-                    </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5 hidden sm:block">
-                      Kết hợp giữa luyện tập, giáo trình, lớp học phù hợp, giáo viên và chuyên gia cao cấp
-                    </p>
-                  </div>
+              {/* Ultra-Sleek Single Header Row with Tab Switcher + 'Xem tất cả' Link */}
+              <div className="flex items-center justify-between gap-2 mb-2.5">
+                <div className="flex items-center gap-1.5 bg-white p-1 rounded-2xl border border-sky-200 shadow-[0_4px_16px_rgba(0,102,204,0.1)] w-full sm:w-fit overflow-x-auto no-scrollbar">
+                  <button
+                    onClick={() => setMainSectionTab('courses')}
+                    className={`px-3.5 sm:px-4.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+                      mainSectionTab === 'courses'
+                        ? 'bg-gradient-to-r from-[#0066CC] to-[#0048A0] text-white shadow-sm scale-102'
+                        : 'bg-slate-50 hover:bg-sky-50 text-[#0B3C78] border border-slate-200/70'
+                    }`}
+                  >
+                    <img src="/assets/badge-courses.png?v=3" alt="" className="w-4 h-4 object-contain" />
+                    <span>Chương trình học nổi bật</span>
+                  </button>
+
+                  <button
+                    onClick={() => setMainSectionTab('path')}
+                    className={`px-3.5 sm:px-4.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+                      mainSectionTab === 'path'
+                        ? 'bg-gradient-to-r from-[#0066CC] to-[#0048A0] text-white shadow-sm scale-102'
+                        : 'bg-slate-50 hover:bg-sky-50 text-[#0B3C78] border border-slate-200/70'
+                    }`}
+                  >
+                    <img src="/assets/badge-path.png?v=3" alt="" className="w-4 h-4 object-contain" />
+                    <span>Lộ trình học chuyên nghiệp</span>
+                  </button>
                 </div>
-                <a href="#courses" className="text-xs sm:text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center gap-1 shrink-0">
+
+                <a href={mainSectionTab === 'courses' ? '#courses' : '#path'} className="text-xs font-bold text-blue-600 hover:text-blue-700 hidden sm:flex items-center gap-1 shrink-0">
                   Xem tất cả <span>→</span>
                 </a>
               </div>
 
-              {/* 5 Distinct Pastel Cards with Carousel Arrows */}
-              <div className="relative">
-                {/* Left Arrow */}
-                <button className="hidden sm:flex absolute -left-3.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white border border-sky-200 shadow-md items-center justify-center text-slate-600 hover:text-blue-600 z-10 cursor-pointer text-base font-bold">
-                  ‹
-                </button>
+              {/* Tab 1: FEATURED COURSES */}
+              {mainSectionTab === 'courses' && (
+                <section
+                  id="courses"
+                  className="relative rounded-3xl p-3 sm:p-4 border border-sky-200/80 shadow-[0_4px_20px_rgba(0,100,220,0.06)] overflow-hidden bg-center bg-no-repeat"
+                  style={{ backgroundImage: `url('/assets/courses-bg-cloud.png?v=1')`, backgroundSize: '100% 100%' }}
+                >
+                  <div className="relative">
+                    <button className="hidden sm:flex absolute -left-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white border border-sky-200 shadow-md items-center justify-center text-slate-600 hover:text-blue-600 z-10 cursor-pointer text-sm font-bold">
+                      ‹
+                    </button>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2.5 xl:gap-3 text-center">
-                  {featuredCourses.map((course) => (
-                    <div
-                      key={course.title}
-                      className={`bg-gradient-to-b ${course.bgClass} rounded-2xl border overflow-hidden flex flex-col items-center justify-between hover:shadow-md transition-all duration-200 group`}
-                    >
-                      <div className="w-full h-28 sm:h-32 xl:h-36 overflow-hidden relative">
-                        <img
-                          src={course.image}
-                          alt={course.title}
-                          className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-300"
-                        />
-                      </div>
-                      <div className="p-2.5 sm:p-3 flex-1 flex flex-col justify-between w-full">
-                        <div>
-                          <h4 className="text-xs sm:text-[13px] font-bold text-[#0B3C78] leading-snug mb-1 min-h-[32px] flex items-center justify-center">
-                            {course.title}
-                          </h4>
-                          <p className="text-[10.5px] sm:text-[11px] text-slate-600 leading-snug mb-2 line-clamp-2">
-                            {course.desc}
+                    <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2 xl:gap-2.5 text-center">
+                      {featuredCourses.map((course) => (
+                        <div
+                          key={course.title}
+                          className={`bg-gradient-to-b ${course.bgClass} rounded-2xl border overflow-hidden flex flex-col items-center justify-between hover:shadow-md transition-all duration-200 group`}
+                        >
+                          <div className="w-full h-22 sm:h-24 xl:h-26 overflow-hidden relative">
+                            <img
+                              src={course.image}
+                              alt={course.title}
+                              className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-300"
+                            />
+                          </div>
+                          <div className="p-2 flex-1 flex flex-col justify-between w-full">
+                            <div>
+                              <h4 className="text-[11px] sm:text-xs font-bold text-[#0B3C78] leading-snug mb-1 min-h-[26px] flex items-center justify-center">
+                                {course.title}
+                              </h4>
+                              <p className="text-[9.5px] sm:text-[10px] text-slate-600 leading-snug mb-2 line-clamp-2">
+                                {course.desc}
+                              </p>
+                            </div>
+                            <button
+                              className={`w-full py-1 px-2 rounded-full text-[10px] sm:text-[11px] font-bold ${course.btnClass} shadow-2xs transition-opacity flex items-center justify-center gap-1 cursor-pointer`}
+                            >
+                              <span>{course.btnText}</span>
+                              <span className="font-bold">→</span>
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button className="hidden sm:flex absolute -right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white border border-sky-200 shadow-md items-center justify-center text-slate-600 hover:text-blue-600 z-10 cursor-pointer text-sm font-bold">
+                      ›
+                    </button>
+                  </div>
+                </section>
+              )}
+
+              {/* Tab 2: LEARNING PATH SECTION */}
+              {mainSectionTab === 'path' && (
+                <section
+                  id="path"
+                  className="relative rounded-3xl p-3 sm:p-4 border border-sky-200/80 shadow-[0_4px_20px_rgba(0,100,220,0.06)] overflow-hidden bg-center bg-no-repeat"
+                  style={{ backgroundImage: `url('/assets/courses-bg-cloud.png?v=1')`, backgroundSize: '100% 100%' }}
+                >
+                  <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2 xl:gap-2.5 items-stretch py-0.5">
+                    {learningSteps.map((step, idx) => (
+                      <div
+                        key={step.step}
+                        className="flex flex-col items-center text-center relative rounded-2xl bg-[#F8FBFE] border border-sky-100/80 overflow-hidden hover:border-sky-200 hover:shadow-md transition-all group cursor-pointer"
+                      >
+                        <div className="w-full h-18 sm:h-20 xl:h-22 overflow-hidden relative">
+                          <img
+                            src={step.img}
+                            alt={step.step}
+                            className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-300"
+                          />
+                        </div>
+                        <div className="p-2 flex-1 flex flex-col justify-center w-full">
+                          <h5 className="text-[11px] xl:text-[11.5px] font-bold text-[#0B3C78] leading-tight mb-0.5">
+                            {step.step}
+                          </h5>
+                          <p className="text-[9.5px] xl:text-[10px] text-slate-500 leading-snug">
+                            {step.desc}
                           </p>
                         </div>
-                        <button
-                          className={`w-full py-1.5 px-2 rounded-full text-[11px] sm:text-xs font-bold ${course.btnClass} shadow-2xs transition-opacity flex items-center justify-center gap-1 cursor-pointer`}
-                        >
-                          <span>{course.btnText}</span>
-                          <span className="font-bold">→</span>
-                        </button>
+
+                        {idx < learningSteps.length - 1 && (
+                          <span className="hidden xl:block absolute -right-2 top-1/2 -translate-y-1/2 text-sky-400 font-black text-sm z-10 drop-shadow-xs">
+                            ›
+                          </span>
+                        )}
                       </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Right Arrow */}
-                <button className="hidden sm:flex absolute -right-3.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white border border-sky-200 shadow-md items-center justify-center text-slate-600 hover:text-blue-600 z-10 cursor-pointer text-base font-bold">
-                  ›
-                </button>
-              </div>
-            </section>
-
-            {/* LEARNING PATH SECTION (Lộ trình học chuyên nghiệp - Gọn gàng & Hiện đại) */}
-            <section
-              id="path"
-              className="relative rounded-3xl p-3.5 sm:p-4 border border-sky-200/80 shadow-[0_4px_20px_rgba(0,100,220,0.06)] overflow-hidden bg-center bg-no-repeat"
-              style={{ backgroundImage: `url('/assets/courses-bg-cloud.png?v=1')`, backgroundSize: '100% 100%' }}
-            >
-              <div className="flex items-center gap-2.5 sm:gap-3 mb-2.5">
-                <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl overflow-hidden shadow-2xs shrink-0 flex items-center justify-center bg-white">
-                  <img
-                    src="/assets/badge-path.png?v=3"
-                    alt="Lộ trình học chuyên nghiệp"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <div>
-                  <h3 className="text-xs sm:text-sm font-bold text-[#0B3C78] leading-tight">
-                    Lộ trình học chuyên nghiệp
-                  </h3>
-                  <p className="text-[11px] text-slate-500 mt-0.5 hidden sm:block">
-                    Định hướng rõ ràng • Tiết kiệm thời gian • Chinh phục mục tiêu
-                  </p>
-                </div>
-              </div>
-
-              {/* 5 Steps horizontal flow */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2 xl:gap-2.5 items-stretch py-0.5">
-                {learningSteps.map((step, idx) => (
-                  <div
-                    key={step.step}
-                    className="flex flex-col items-center text-center relative rounded-2xl bg-[#F8FBFE] border border-sky-100/80 overflow-hidden hover:border-sky-200 hover:shadow-md transition-all group cursor-pointer"
-                  >
-                    <div className="w-full h-20 sm:h-24 xl:h-26 overflow-hidden relative">
-                      <img
-                        src={step.img}
-                        alt={step.step}
-                        className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-300"
-                      />
-                    </div>
-                    <div className="p-2 sm:p-2.5 flex-1 flex flex-col justify-center w-full">
-                      <h5 className="text-[11.5px] xl:text-xs font-bold text-[#0B3C78] leading-tight mb-0.5">
-                        {step.step}
-                      </h5>
-                      <p className="text-[10px] xl:text-[10.5px] text-slate-500 leading-snug">
-                        {step.desc}
-                      </p>
-                    </div>
-
-                    {/* Arrow between steps */}
-                    {idx < learningSteps.length - 1 && (
-                      <span className="hidden xl:block absolute -right-2 top-1/2 -translate-y-1/2 text-sky-400 font-black text-sm z-10 drop-shadow-xs">
-                        ›
-                      </span>
-                    )}
+                    ))}
                   </div>
-                ))}
-              </div>
 
-              {/* Audience Cards (4 cards below path) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2.5 mt-3 pt-3 border-t border-sky-200/50">
-                {audiencePills.slice(0, 4).map((aud) => (
-                  <div
-                    key={aud.title}
-                    className="flex items-center gap-2.5 p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-[#EAF4FE]/95 hover:bg-[#E0F0FE] border border-[#C6E2FA] hover:border-blue-400 hover:shadow-2xs transition-all group cursor-pointer"
-                  >
-                    <img
-                      src={aud.img}
-                      alt={aud.title}
-                      className="w-9 h-9 sm:w-9.5 sm:h-9.5 rounded-full object-cover border border-sky-300 shadow-2xs shrink-0 group-hover:scale-105 transition-transform"
-                    />
-                    <div className="overflow-hidden text-left">
-                      <h6 className="text-[11.5px] sm:text-xs font-extrabold text-[#0C3E8A] truncate leading-tight group-hover:text-blue-600 transition-colors">
-                        {aud.title}
-                      </h6>
-                      <p className="text-[10px] sm:text-[10.5px] text-[#4B6B94] truncate leading-tight mt-0.5 font-medium">
-                        {aud.desc}
-                      </p>
-                    </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 mt-2 pt-2 border-t border-sky-200/50">
+                    {audiencePills.slice(0, 4).map((aud) => (
+                      <div
+                        key={aud.title}
+                        className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-[#EAF4FE]/95 hover:bg-[#E0F0FE] border border-[#C6E2FA] hover:border-blue-400 hover:shadow-2xs transition-all group cursor-pointer"
+                      >
+                        <img
+                          src={aud.img}
+                          alt={aud.title}
+                          className="w-8 h-8 rounded-full object-cover border border-sky-300 shadow-2xs shrink-0 group-hover:scale-105 transition-transform"
+                        />
+                        <div className="overflow-hidden text-left">
+                          <h6 className="text-[11px] sm:text-[11.5px] font-extrabold text-[#0C3E8A] truncate leading-tight group-hover:text-blue-600 transition-colors">
+                            {aud.title}
+                          </h6>
+                          <p className="text-[9.5px] sm:text-[10px] text-[#4B6B94] truncate leading-tight mt-0.5 font-medium">
+                            {aud.desc}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </section>
+                </section>
+              )}
+            </div>
           </main>
 
           {/* RIGHT SIDEBAR */}
           <aside
             id="leaderboard"
-            className="flex flex-col gap-4"
+            className="flex flex-col gap-3.5 xl:gap-4"
           >
             {/* Card 1: Hành trình học của bạn */}
-            <div className="bg-white rounded-3xl p-3.5 xl:p-5 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)]">
-              <div className="flex items-center justify-between mb-3">
+            <div className="bg-white rounded-3xl p-3.5 xl:p-4 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)]">
+              <div className="flex items-center justify-between mb-2.5">
                 <div className="flex items-center gap-1.5 xl:gap-2">
-                  <span className="w-5 h-5 rounded-md bg-blue-600 text-white flex items-center justify-center text-[10px] shadow-2xs font-bold">★</span>
-                  <h4 className="text-xs xl:text-sm 2xl:text-base font-bold text-slate-800 leading-tight">Hành trình học của bạn</h4>
+                  <span className="w-4.5 h-4.5 rounded-md bg-blue-600 text-white flex items-center justify-center text-[10px] shadow-2xs font-bold">★</span>
+                  <h4 className="text-xs xl:text-sm font-bold text-slate-800 leading-tight">Hành trình học của bạn</h4>
                 </div>
                 <div
                   onClick={() => setSelectedGrade(selectedGrade === 'Lớp 10' ? 'Lớp 9' : 'Lớp 10')}
-                  className="bg-[#F0F6FC] hover:bg-sky-100/70 border border-sky-200/90 rounded-xl px-2 xl:px-2.5 py-1 flex items-center gap-1 cursor-pointer transition-colors text-[11px] font-semibold text-slate-700"
+                  className="bg-[#F0F6FC] hover:bg-sky-100/70 border border-sky-200/90 rounded-xl px-2 py-0.5 flex items-center gap-1 cursor-pointer transition-colors text-[10.5px] font-semibold text-slate-700"
                 >
                   <span>{selectedGrade}</span>
                   <ChevronDown className="w-3 h-3 text-slate-400" />
@@ -975,116 +969,129 @@ export default function App() {
               </div>
 
               {/* Progress Bar */}
-              <div className="mb-3.5">
-                <div className="flex justify-between text-xs font-bold mb-1.5">
+              <div className="mb-2.5">
+                <div className="flex justify-between text-xs font-bold mb-1">
                   <span className="text-blue-600">Tiến độ tổng thể</span>
                   <span className="text-blue-600">65%</span>
                 </div>
-                <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                  <div className="bg-gradient-to-r from-sky-400 to-blue-600 h-2 rounded-full w-[65%] shadow-xs"></div>
+                <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                  <div className="bg-gradient-to-r from-sky-400 to-blue-600 h-1.5 rounded-full w-[65%] shadow-xs"></div>
                 </div>
               </div>
 
               {/* Tiếp tục học */}
-              <div className="bg-gradient-to-r from-blue-50/70 to-sky-50/70 border border-blue-100 rounded-2xl p-2.5 xl:p-3 mb-3 flex items-center justify-between cursor-pointer hover:border-blue-200 transition-colors">
+              <div className="bg-gradient-to-r from-blue-50/70 to-sky-50/70 border border-blue-100 rounded-2xl p-2 xl:p-2.5 mb-2.5 flex items-center justify-between cursor-pointer hover:border-blue-200 transition-colors">
                 <div className="overflow-hidden">
-                  <p className="text-[10px] xl:text-[11px] font-bold text-blue-600 uppercase tracking-wide">Tiếp tục học</p>
-                  <p className="text-xs xl:text-sm font-bold text-[#0B3C78] truncate mt-0.5">Bài 12: Cấu trúc dữ liệu và giải thuật</p>
+                  <p className="text-[9.5px] xl:text-[10px] font-bold text-blue-600 uppercase tracking-wide">Tiếp tục học</p>
+                  <p className="text-xs font-bold text-[#0B3C78] truncate mt-0.5">Bài 12: Cấu trúc dữ liệu và giải thuật</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-blue-500 shrink-0 ml-1.5" />
               </div>
 
               {/* 3 Stats counters */}
-              <div className="grid grid-cols-3 gap-1.5 xl:gap-2.5 text-center">
-                <div className="bg-slate-50 rounded-2xl p-2 xl:p-2.5 border border-slate-100">
-                  <p className="text-base xl:text-lg 2xl:text-xl font-black text-blue-600 leading-tight">12</p>
-                  <p className="text-[10px] xl:text-[11px] text-slate-500 font-medium leading-tight mt-0.5">Bài đã xong</p>
+              <div className="grid grid-cols-3 gap-1.5 text-center">
+                <div className="bg-slate-50 rounded-xl p-1.5 xl:p-2 border border-slate-100">
+                  <p className="text-base xl:text-lg font-black text-blue-600 leading-tight">12</p>
+                  <p className="text-[9.5px] xl:text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Bài đã xong</p>
                 </div>
-                <div className="bg-slate-50 rounded-2xl p-2 xl:p-2.5 border border-slate-100">
-                  <p className="text-base xl:text-lg 2xl:text-xl font-black text-emerald-600 leading-tight">8</p>
-                  <p className="text-[10px] xl:text-[11px] text-slate-500 font-medium leading-tight mt-0.5">Đang học</p>
+                <div className="bg-slate-50 rounded-xl p-1.5 xl:p-2 border border-slate-100">
+                  <p className="text-base xl:text-lg font-black text-emerald-600 leading-tight">8</p>
+                  <p className="text-[9.5px] xl:text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Đang học</p>
                 </div>
-                <div className="bg-slate-50 rounded-2xl p-2 xl:p-2.5 border border-slate-100">
-                  <p className="text-base xl:text-lg 2xl:text-xl font-black text-amber-500 leading-tight">3</p>
-                  <p className="text-[10px] xl:text-[11px] text-slate-500 font-medium leading-tight mt-0.5">Chưa học</p>
+                <div className="bg-slate-50 rounded-xl p-1.5 xl:p-2 border border-slate-100">
+                  <p className="text-base xl:text-lg font-black text-amber-500 leading-tight">3</p>
+                  <p className="text-[9.5px] xl:text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Chưa học</p>
                 </div>
               </div>
             </div>
 
-            {/* Card 2: Thông báo quan trọng */}
-            <div className="bg-white rounded-3xl p-3.5 xl:p-5 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)]">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-xs xl:text-sm 2xl:text-base font-bold text-slate-800">Thông báo quan trọng</h4>
-                <a href="#hero" className="text-[11px] xl:text-xs font-semibold text-blue-600 hover:text-blue-700">
-                  Xem tất cả →
-                </a>
-              </div>
-
-              <div className="flex flex-col gap-2">
-                {[
-                  { title: 'Kỳ thi HSG Tin học cấp tỉnh sắp diễn ra', time: '3 ngày trước', icon: '⭐' },
-                  { title: 'Lịch học lớp Toán Tin 10A1 tuần này', time: '5 giờ trước', icon: '📅' },
-                  { title: 'Bài tập mới: Cấu trúc dữ liệu cơ bản', time: '1 ngày trước', icon: '💡' },
-                  { title: 'Bạn đã nộp được một bài tập hôm nay!', time: '2 ngày trước', icon: '⭐' }
-                ].map((item, idx) => (
-                  <div key={idx} className="flex items-start gap-2 text-xs xl:text-sm group cursor-pointer hover:bg-sky-50/70 p-1.5 xl:p-2 rounded-xl transition-colors">
-                    <span className="text-sm xl:text-base mt-0.5">{item.icon}</span>
-                    <div className="flex-1 overflow-hidden">
-                      <p className="text-xs xl:text-sm font-semibold text-slate-800 group-hover:text-blue-600 transition-colors leading-snug truncate">
-                        {item.title}
-                      </p>
-                      <p className="text-[10px] xl:text-[11px] text-slate-400 mt-0.5">{item.time}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Card 3: Top học sinh xuất sắc */}
-            <div className="bg-white rounded-3xl p-3.5 xl:p-5 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)]">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-1.5 xl:gap-2">
-                  <span className="text-amber-400 text-base xl:text-lg">⭐</span>
-                  <h4 className="text-xs xl:text-sm 2xl:text-base font-bold text-slate-800 leading-tight">Top học sinh xuất sắc</h4>
-                </div>
-                <a href="#leaderboard" className="text-[11px] xl:text-xs font-semibold text-blue-600 hover:text-blue-700">
-                  Xem bảng xếp hạng →
-                </a>
-              </div>
-
-              <div className="flex flex-col gap-2 mb-3.5">
-                {topStudents.map((st) => (
-                  <div
-                    key={st.rank}
-                    className="flex items-center justify-between py-1.5 px-2 rounded-xl hover:bg-sky-50 transition-colors text-xs sm:text-sm"
+            {/* Card 2: Combined Tabbed Card (Top xuất sắc | Thông báo) */}
+            <div className="bg-white rounded-3xl p-3.5 xl:p-4 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)]">
+              {/* Tab Switcher Header */}
+              <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl w-full">
+                  <button
+                    onClick={() => setSidebarTab('leaderboard')}
+                    className={`flex-1 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                      sidebarTab === 'leaderboard'
+                        ? 'bg-blue-600 text-white shadow-2xs'
+                        : 'text-slate-600 hover:text-blue-600'
+                    }`}
                   >
-                    <div className="flex items-center gap-2.5">
-                      <span className="w-5 text-center font-bold text-slate-500 text-xs sm:text-sm">
-                        {st.rank}
-                      </span>
-                      <img
-                        src={st.avatar}
-                        alt={st.name}
-                        className="w-7 h-7 sm:w-8 sm:h-8 rounded-full border border-sky-200 object-cover shadow-2xs"
-                      />
-                      <span className="font-semibold text-slate-800">{st.name}</span>
-                    </div>
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-xs text-slate-400">{st.class}</span>
-                      <span className="text-xs sm:text-sm font-bold text-blue-600">{st.score}</span>
-                    </div>
-                  </div>
-                ))}
+                    <span>⭐ Top xuất sắc</span>
+                  </button>
+                  <button
+                    onClick={() => setSidebarTab('notifications')}
+                    className={`flex-1 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
+                      sidebarTab === 'notifications'
+                        ? 'bg-blue-600 text-white shadow-2xs'
+                        : 'text-slate-600 hover:text-blue-600'
+                    }`}
+                  >
+                    <span>🔔 Thông báo</span>
+                  </button>
+                </div>
               </div>
 
-              {/* Motivational Banner Graphic */}
-              <div className="overflow-hidden rounded-2xl border border-sky-100 cursor-pointer hover:shadow-md transition-shadow">
-                <img
-                  src="/assets/achieve-banner.png?v=3"
-                  alt="Cùng chinh phục thành tích cao hơn!"
-                  className="w-full h-auto object-cover"
-                />
-              </div>
+              {/* Tab 1: Top xuất sắc */}
+              {sidebarTab === 'leaderboard' && (
+                <div>
+                  <div className="flex flex-col gap-1.5 mb-2.5">
+                    {topStudents.map((st) => (
+                      <div
+                        key={st.rank}
+                        className="flex items-center justify-between py-1 px-1.5 rounded-xl hover:bg-sky-50 transition-colors text-xs"
+                      >
+                        <div className="flex items-center gap-2">
+                          <span className="w-4 text-center font-bold text-slate-500 text-xs">
+                            {st.rank}
+                          </span>
+                          <img
+                            src={st.avatar}
+                            alt={st.name}
+                            className="w-7 h-7 rounded-full border border-sky-200 object-cover shadow-2xs"
+                          />
+                          <span className="font-semibold text-slate-800 truncate max-w-[100px]">{st.name}</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] text-slate-400">{st.class}</span>
+                          <span className="text-xs font-bold text-blue-600">{st.score}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="overflow-hidden rounded-2xl border border-sky-100 cursor-pointer hover:shadow-md transition-shadow">
+                    <img
+                      src="/assets/achieve-banner.png?v=3"
+                      alt="Cùng chinh phục thành tích cao hơn!"
+                      className="w-full h-auto object-cover"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 2: Thông báo quan trọng */}
+              {sidebarTab === 'notifications' && (
+                <div className="flex flex-col gap-1.5 py-1">
+                  {[
+                    { title: 'Kỳ thi HSG Tin học cấp tỉnh sắp diễn ra', time: '3 ngày trước', icon: '⭐' },
+                    { title: 'Lịch học lớp Toán Tin 10A1 tuần này', time: '5 giờ trước', icon: '📅' },
+                    { title: 'Bài tập mới: Cấu trúc dữ liệu cơ bản', time: '1 ngày trước', icon: '💡' },
+                    { title: 'Bạn đã nộp được một bài tập hôm nay!', time: '2 ngày trước', icon: '⭐' }
+                  ].map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-2 text-xs group cursor-pointer hover:bg-sky-50/70 p-2 rounded-xl transition-colors">
+                      <span className="text-xs sm:text-sm mt-0.5">{item.icon}</span>
+                      <div className="flex-1 overflow-hidden">
+                        <p className="text-xs font-semibold text-slate-800 group-hover:text-blue-600 transition-colors leading-snug">
+                          {item.title}
+                        </p>
+                        <p className="text-[9.5px] text-slate-400 mt-0.5">{item.time}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </aside>
         </div>
@@ -1092,29 +1099,29 @@ export default function App() {
         {/* 4. FULL-WIDTH MIDDLE SECTION: TÀI LIỆU NỔI BẬT */}
         <section
           id="materials"
-          className="mt-6 bg-white rounded-3xl p-5 sm:p-6 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)]"
+          className="mt-4 sm:mt-5 bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)]"
         >
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs">
-                <FileText className="w-5 h-5 text-white" />
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3.5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs shrink-0">
+                <FileText className="w-4.5 h-4.5 text-white" />
               </div>
               <div>
-                <h3 className="text-base sm:text-lg font-bold text-[#0B3C78] leading-tight">Tài liệu nổi bật</h3>
-                <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                  Sách, chuyên đề, đề thi chất lượng, được biên soạn bởi đội ngũ giáo viên và chuyên gia uy tín
+                <h3 className="text-sm sm:text-base font-bold text-[#0B3C78] leading-tight">Tài liệu nổi bật</h3>
+                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                  Sách, chuyên đề, đề thi chất lượng, biên soạn bởi giáo viên và chuyên gia uy tín
                 </p>
               </div>
             </div>
 
             {/* Filter Tabs */}
-            <div className="flex items-center gap-2.5">
-              <div className="inline-flex bg-slate-100 p-1 rounded-xl text-xs sm:text-sm font-medium">
+            <div className="flex items-center gap-2">
+              <div className="inline-flex bg-slate-100 p-0.5 rounded-xl text-xs font-medium">
                 {['Sách', 'Chuyên đề', 'Đề thi'].map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveDocTab(tab)}
-                    className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all cursor-pointer ${
+                    className={`px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
                       activeDocTab === tab
                         ? 'bg-blue-600 text-white shadow-2xs font-bold'
                         : 'text-slate-600 hover:text-blue-600'
@@ -1124,21 +1131,21 @@ export default function App() {
                   </button>
                 ))}
               </div>
-              <a href="#materials" className="text-xs sm:text-sm font-bold text-blue-600 hover:text-blue-700 ml-1">
+              <a href="#materials" className="text-xs font-bold text-blue-600 hover:text-blue-700 ml-1">
                 Xem tất cả →
               </a>
             </div>
           </div>
 
           {/* 4 Books in Single Horizontal Row of 4 Columns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
             {books.map((b) => (
               <div
                 key={b.title}
-                className="bg-white rounded-2xl border border-sky-100 overflow-hidden flex flex-row items-stretch gap-3 hover:shadow-md hover:border-sky-200 transition-all duration-200 group min-h-[175px]"
+                className="bg-white rounded-2xl border border-sky-100 overflow-hidden flex flex-row items-stretch gap-2.5 hover:shadow-md hover:border-sky-200 transition-all duration-200 group min-h-[155px]"
               >
                 {/* Book Cover on the Left - Full Vertical Height */}
-                <div className="w-[40%] shrink-0 relative overflow-hidden bg-slate-50">
+                <div className="w-[36%] shrink-0 relative overflow-hidden bg-slate-50">
                   <img
                     src={b.image}
                     alt={b.title}
@@ -1147,30 +1154,30 @@ export default function App() {
                 </div>
 
                 {/* Details on the Right */}
-                <div className="w-[60%] p-3 py-3.5 pr-3.5 flex flex-col justify-between text-left">
+                <div className="w-[64%] p-2.5 py-3 pr-3 flex flex-col justify-between text-left">
                   <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-[#0B3C78] leading-snug line-clamp-2 mb-2">
+                    <h4 className="text-xs sm:text-[13px] font-bold text-[#0B3C78] leading-snug line-clamp-2 mb-1.5">
                       {b.title}
                     </h4>
 
-                    <div className="flex flex-col gap-1 text-xs text-slate-500 mb-3">
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-blue-500 text-xs">👤</span>
+                    <div className="flex flex-col gap-0.5 text-[11px] text-slate-500 mb-2">
+                      <div className="flex items-center gap-1">
+                        <span className="text-blue-500 text-[11px]">👤</span>
                         <span className="truncate">{b.tag}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-blue-500 text-xs">📄</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-blue-500 text-[11px]">📄</span>
                         <span>{b.pages}</span>
                       </div>
-                      <div className="flex items-center gap-1.5">
-                        <span className="text-amber-500 text-xs">💡</span>
+                      <div className="flex items-center gap-1">
+                        <span className="text-amber-500 text-[11px]">💡</span>
                         <span className="truncate">{b.highlight}</span>
                       </div>
                     </div>
                   </div>
 
                   <button
-                    className={`w-full py-2 px-3 rounded-full text-xs sm:text-sm font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs ${b.btnStyle}`}
+                    className={`w-full py-1.5 px-2.5 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer shadow-2xs ${b.btnStyle}`}
                   >
                     <span>{b.btnText}</span>
                     <span className="font-bold">→</span>
@@ -1182,40 +1189,40 @@ export default function App() {
         </section>
 
         {/* 5. 2-COLUMN SECTION: CUỘC THI & KHẢO SÁT | CÂU CHUYỆN ĐỒNG HÀNH */}
-        <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-5">
+        <div className="mt-4 sm:mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Col 1: Cuộc thi & khảo sát */}
           <section
             id="contests"
-            className="bg-white rounded-3xl p-5 sm:p-6 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between"
+            className="bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between"
           >
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs">
-                    <Trophy className="w-5 h-5 text-white" />
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs">
+                    <Trophy className="w-4.5 h-4.5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg font-bold text-[#0B3C78] leading-tight">
+                    <h3 className="text-sm sm:text-base font-bold text-[#0B3C78] leading-tight">
                       Cuộc thi & khảo sát
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                    <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
                       Được tổ chức thường xuyên, công bằng và uy tín
                     </p>
                   </div>
                 </div>
-                <a href="#contests" className="text-xs sm:text-sm font-bold text-blue-600 hover:text-blue-700">
+                <a href="#contests" className="text-xs font-bold text-blue-600 hover:text-blue-700">
                   Xem tất cả →
                 </a>
               </div>
 
               {/* 3 Contests in row */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 {competitions.map((c) => (
                   <div
                     key={c.title}
                     className="bg-[#F8FBFE] rounded-2xl border border-sky-100/80 overflow-hidden flex flex-col justify-between hover:shadow-md transition-all group"
                   >
-                    <div className="w-full h-28 sm:h-32 xl:h-36 overflow-hidden relative">
+                    <div className="w-full h-24 sm:h-26 xl:h-28 overflow-hidden relative">
                       <img
                         src={c.image}
                         alt={c.title}
@@ -1223,22 +1230,22 @@ export default function App() {
                       />
                     </div>
 
-                    <div className="p-3 flex-1 flex flex-col justify-between">
+                    <div className="p-2.5 flex-1 flex flex-col justify-between">
                       <div>
-                        <h4 className="text-xs sm:text-sm font-bold text-[#0B3C78] leading-snug line-clamp-2 mb-2">
+                        <h4 className="text-xs font-bold text-[#0B3C78] leading-snug line-clamp-2 mb-1.5">
                           {c.title}
                         </h4>
-                        <div className="flex items-center gap-1.5 text-xs text-slate-500 mb-1.5">
-                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                        <div className="flex items-center gap-1 text-[11px] text-slate-500 mb-1">
+                          <Calendar className="w-3 h-3 text-slate-400" />
                           <span className="truncate">{c.time}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs font-semibold mb-3">
+                        <div className="flex items-center gap-1 text-[11px] font-semibold mb-2.5">
                           <span className={`w-2 h-2 rounded-full ${c.statusDot}`}></span>
                           <span className={c.statusColor}>{c.status}</span>
                         </div>
                       </div>
 
-                      <button className="w-full py-2 px-3 rounded-full text-xs sm:text-sm font-bold text-white bg-[#38BDF8] hover:bg-sky-500 shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer">
+                      <button className="w-full py-1.5 px-2.5 rounded-full text-xs font-bold text-white bg-[#38BDF8] hover:bg-sky-500 shadow-2xs transition-all flex items-center justify-center gap-1 cursor-pointer">
                         <span>Xem cuộc thi</span>
                         <span className="font-bold">→</span>
                       </button>
@@ -1252,37 +1259,37 @@ export default function App() {
           {/* Col 2: Câu chuyện đồng hành */}
           <section
             id="testimonials"
-            className="bg-white rounded-3xl p-5 sm:p-6 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between"
+            className="bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between"
           >
             <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs">
-                    <Heart className="w-5 h-5 text-white fill-white" />
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs">
+                    <Heart className="w-4.5 h-4.5 text-white fill-white" />
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg font-bold text-[#0B3C78] leading-tight">
+                    <h3 className="text-sm sm:text-base font-bold text-[#0B3C78] leading-tight">
                       Câu chuyện đồng hành
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                    <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
                       Những câu chuyện thật, truyền cảm hứng thật
                     </p>
                   </div>
                 </div>
-                <a href="#testimonials" className="text-xs sm:text-sm font-bold text-blue-600 hover:text-blue-700">
+                <a href="#testimonials" className="text-xs font-bold text-blue-600 hover:text-blue-700">
                   Xem thêm câu chuyện →
                 </a>
               </div>
 
               {/* 3 Testimonials */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                 {testimonials.map((t) => (
                   <div
                     key={t.author}
                     className="bg-[#F8FBFE] rounded-2xl border border-sky-100/80 overflow-hidden flex flex-col justify-between hover:shadow-md transition-all"
                   >
                     {/* Top scenic portrait banner */}
-                    <div className="w-full h-28 overflow-hidden">
+                    <div className="w-full h-22 sm:h-24 overflow-hidden">
                       <img
                         src={t.banner}
                         alt={t.author}
@@ -1291,21 +1298,21 @@ export default function App() {
                     </div>
 
                     {/* Bottom quote card */}
-                    <div className="p-3 flex-1 flex flex-col justify-between bg-white m-2 rounded-xl border border-sky-50 shadow-2xs">
-                      <p className="text-xs text-slate-600 italic leading-relaxed line-clamp-3 mb-2.5">
+                    <div className="p-2.5 flex-1 flex flex-col justify-between bg-white m-1.5 rounded-xl border border-sky-50 shadow-2xs">
+                      <p className="text-[11px] text-slate-600 italic leading-relaxed line-clamp-3 mb-2">
                         {t.quote}
                       </p>
-                      <div className="flex items-center gap-2.5 pt-2.5 border-t border-slate-100">
+                      <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
                         <img
                           src={t.avatar}
                           alt={t.author}
-                          className="w-7 h-7 rounded-full object-cover border border-sky-200 shadow-2xs"
+                          className="w-6.5 h-6.5 rounded-full object-cover border border-sky-200 shadow-2xs"
                         />
                         <div className="overflow-hidden text-left">
-                          <p className="text-xs sm:text-sm font-bold text-[#0B3C78] truncate leading-none">
+                          <p className="text-xs font-bold text-[#0B3C78] truncate leading-none">
                             {t.author}
                           </p>
-                          <p className="text-[11px] text-slate-400 truncate leading-none mt-1">
+                          <p className="text-[10px] text-slate-400 truncate leading-none mt-0.5">
                             {t.role}
                           </p>
                         </div>
@@ -1319,19 +1326,19 @@ export default function App() {
         </div>
 
         {/* 6. 2-COLUMN SECTION: CÂU HỎI THƯỜNG GẶP | CẦN HỖ TRỢ? */}
-        <div id="support" className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-5 items-stretch">
+        <div id="support" className="mt-4 sm:mt-5 grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
           {/* Col 1: Câu hỏi thường gặp */}
-          <section className="h-full bg-white rounded-3xl p-5 sm:p-6 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between">
+          <section className="h-full bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs">
-                  <HelpCircle className="w-5 h-5 text-white" />
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs">
+                  <HelpCircle className="w-4.5 h-4.5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold text-[#0B3C78] leading-tight">
+                  <h3 className="text-sm sm:text-base font-bold text-[#0B3C78] leading-tight">
                     Câu hỏi thường gặp
                   </h3>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
                     Giải đáp nhanh những thắc mắc phổ biến
                   </p>
                 </div>
@@ -1345,17 +1352,17 @@ export default function App() {
                     <div key={idx} className="transition-colors">
                       <button
                         onClick={() => setOpenFaq(isOpen ? null : idx)}
-                        className="w-full text-left px-5 py-3.5 flex items-center justify-between text-xs sm:text-sm font-bold text-slate-800 hover:text-blue-600 transition-colors cursor-pointer"
+                        className="w-full text-left px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm font-bold text-slate-800 hover:text-blue-600 transition-colors cursor-pointer"
                       >
                         <span className="pr-2">{faq.q}</span>
                         <ChevronDown
-                          className={`w-4 h-4 text-slate-400 shrink-0 transition-transform duration-200 ${
+                          className={`w-3.5 h-3.5 text-slate-400 shrink-0 transition-transform duration-200 ${
                             isOpen ? 'rotate-180 text-blue-600' : ''
                           }`}
                         />
                       </button>
                       {isOpen && (
-                        <div className="px-5 pb-4 text-xs sm:text-sm text-slate-600 bg-sky-50/40 leading-relaxed border-t border-sky-50">
+                        <div className="px-4 pb-3 text-xs text-slate-600 bg-sky-50/40 leading-relaxed border-t border-sky-50">
                           {faq.a}
                         </div>
                       )}
@@ -1367,7 +1374,7 @@ export default function App() {
           </section>
 
           {/* Col 2: Cần hỗ trợ? */}
-          <section className="h-full relative overflow-hidden rounded-3xl p-5 sm:p-7 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between min-h-[340px] sm:min-h-[360px]">
+          <section className="h-full relative overflow-hidden rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between min-h-[300px] sm:min-h-[320px]">
             {/* Full HD Background Artwork */}
             <img
               src="/assets/support-banner-bg.jpg"
@@ -1379,45 +1386,45 @@ export default function App() {
             <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/85 to-white/40 sm:from-white/80 sm:via-white/50 sm:to-transparent z-0 pointer-events-none" />
 
             {/* Speech bubble */}
-            <div className="absolute top-5 right-5 sm:right-7 bg-white/95 backdrop-blur-xs px-3.5 py-2 rounded-2xl border border-sky-200 shadow-xs text-xs font-semibold text-sky-800 leading-tight text-center pointer-events-none z-10 hidden sm:block">
+            <div className="absolute top-4 right-4 sm:right-6 bg-white/95 backdrop-blur-xs px-3 py-1.5 rounded-2xl border border-sky-200 shadow-xs text-[11px] font-semibold text-sky-800 leading-tight text-center pointer-events-none z-10 hidden sm:block">
               Chúng tôi<br />luôn ở đây<br />cùng bạn!
             </div>
 
             <div className="relative z-10 w-full sm:max-w-[58%] flex flex-col justify-between h-full">
               <div>
-                <div className="flex items-center gap-3 mb-2.5">
-                  <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs shrink-0">
-                    <Headphones className="w-5 h-5 text-white" />
+                <div className="flex items-center gap-2.5 mb-2">
+                  <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs shrink-0">
+                    <Headphones className="w-4.5 h-4.5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-base sm:text-lg font-extrabold text-[#0B3C78] leading-tight">Cần hỗ trợ?</h3>
-                    <p className="text-xs sm:text-sm text-slate-600 font-medium mt-0.5 leading-snug">
+                    <h3 className="text-sm sm:text-base font-extrabold text-[#0B3C78] leading-tight">Cần hỗ trợ?</h3>
+                    <p className="text-[11px] sm:text-xs text-slate-600 font-medium mt-0.5 leading-snug">
                       Đội ngũ tư vấn luôn sẵn sàng đồng hành cùng bạn trên hành trình chinh phục tri thức.
                     </p>
                   </div>
                 </div>
 
                 {/* Checklist */}
-                <div className="flex flex-col gap-2 my-3 text-xs sm:text-sm font-semibold text-slate-800">
-                  <div className="flex items-center gap-2.5 bg-white/50 sm:bg-transparent px-2 sm:px-0 py-1 sm:py-0 rounded-xl">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-100 shrink-0" />
+                <div className="flex flex-col gap-1.5 my-2.5 text-xs font-semibold text-slate-800">
+                  <div className="flex items-center gap-2 bg-white/50 sm:bg-transparent px-2 sm:px-0 py-0.5 sm:py-0 rounded-xl">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 fill-emerald-100 shrink-0" />
                     <span>Tư vấn lộ trình học phù hợp</span>
                   </div>
-                  <div className="flex items-center gap-2.5 bg-white/50 sm:bg-transparent px-2 sm:px-0 py-1 sm:py-0 rounded-xl">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-100 shrink-0" />
+                  <div className="flex items-center gap-2 bg-white/50 sm:bg-transparent px-2 sm:px-0 py-0.5 sm:py-0 rounded-xl">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 fill-emerald-100 shrink-0" />
                     <span>Hỗ trợ kỹ thuật, giải đáp thắc mắc</span>
                   </div>
-                  <div className="flex items-center gap-2.5 bg-white/50 sm:bg-transparent px-2 sm:px-0 py-1 sm:py-0 rounded-xl">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-100 shrink-0" />
+                  <div className="flex items-center gap-2 bg-white/50 sm:bg-transparent px-2 sm:px-0 py-0.5 sm:py-0 rounded-xl">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500 fill-emerald-100 shrink-0" />
                     <span>Đồng hành cùng học sinh và phụ huynh</span>
                   </div>
                 </div>
               </div>
 
-              <div className="pt-2">
-                <button className="bg-[#0091FF] hover:bg-blue-600 text-white font-bold text-xs sm:text-sm py-2.5 px-6 rounded-full shadow-md inline-flex items-center gap-2 transition-all cursor-pointer">
+              <div className="pt-1.5">
+                <button className="bg-[#0091FF] hover:bg-blue-600 text-white font-bold text-xs py-2 px-5 rounded-full shadow-md inline-flex items-center gap-1.5 transition-all cursor-pointer">
                   <span>Liên hệ tư vấn</span>
-                  <span className="text-sm font-bold">→</span>
+                  <span className="text-xs font-bold">→</span>
                 </button>
               </div>
             </div>
@@ -1426,7 +1433,7 @@ export default function App() {
       </div>
 
       {/* 7. FULL-WIDTH PANORAMIC FOOTER */}
-      <footer className="w-full relative overflow-hidden border-t border-sky-200/80 bg-white mt-10">
+      <footer className="w-full relative overflow-hidden border-t border-sky-200/80 bg-white mt-7 sm:mt-9">
         {/* Panoramic HD Background Artwork */}
         <img
           src="/assets/footer-bg.jpg"
@@ -1434,27 +1441,27 @@ export default function App() {
           className="absolute inset-0 w-full h-full object-cover object-bottom pointer-events-none select-none z-0"
         />
 
-        <div className="relative z-10 max-w-[1780px] mx-auto px-4 sm:px-8 lg:px-10 py-9 sm:py-11">
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-7 sm:gap-8 mb-8">
+        <div className="relative z-10 max-w-[1780px] mx-auto px-4 sm:px-8 lg:px-10 py-7 sm:py-9">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-5 sm:gap-6 mb-6">
             {/* Logo & Intro */}
             <div className="md:col-span-2">
               <img
                 src="/assets/header-logo.png?v=3"
                 alt="Ôn Thi 360"
-                className="h-10 sm:h-11 object-contain mb-3"
+                className="h-9 sm:h-10 object-contain mb-2.5"
               />
-              <p className="text-sm sm:text-base font-semibold text-blue-700 mb-1.5">
+              <p className="text-xs sm:text-sm font-semibold text-blue-700 mb-1">
                 Học cùng mục tiêu – Vươn xa ước mơ
               </p>
-              <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-sm">
+              <p className="text-[11px] sm:text-xs text-slate-500 leading-relaxed max-w-sm">
                 Nền tảng học tập Tin học uy tín, đồng hành cùng học sinh trên hành trình chinh phục tri thức và ước mơ.
               </p>
             </div>
 
             {/* Col 1: Học tập */}
             <div>
-              <h5 className="text-sm sm:text-base font-bold text-slate-900 mb-3">Học tập</h5>
-              <ul className="flex flex-col gap-2 text-xs sm:text-sm text-slate-600">
+              <h5 className="text-xs sm:text-sm font-bold text-slate-900 mb-2">Học tập</h5>
+              <ul className="flex flex-col gap-1.5 text-xs text-slate-600">
                 {['Lớp học', 'Luyện tập', 'Tài liệu', 'Cuộc thi'].map((it) => (
                   <li key={it}>
                     <a href="#courses" className="hover:text-blue-600 transition-colors">{it}</a>
@@ -1465,8 +1472,8 @@ export default function App() {
 
             {/* Col 2: Đồng hành */}
             <div>
-              <h5 className="text-sm sm:text-base font-bold text-slate-900 mb-3">Đồng hành</h5>
-              <ul className="flex flex-col gap-2 text-xs sm:text-sm text-slate-600">
+              <h5 className="text-xs sm:text-sm font-bold text-slate-900 mb-2">Đồng hành</h5>
+              <ul className="flex flex-col gap-1.5 text-xs text-slate-600">
                 {['Dành cho học sinh', 'Dành cho phụ huynh', 'Giáo viên & chuyên gia', 'Bảng xếp hạng'].map((it) => (
                   <li key={it}>
                     <a href="#testimonials" className="hover:text-blue-600 transition-colors">{it}</a>
@@ -1477,8 +1484,8 @@ export default function App() {
 
             {/* Col 3: Thông tin & Kết nối */}
             <div>
-              <h5 className="text-sm sm:text-base font-bold text-slate-900 mb-3">Thông tin</h5>
-              <ul className="flex flex-col gap-2 text-xs sm:text-sm text-slate-600 mb-3.5">
+              <h5 className="text-xs sm:text-sm font-bold text-slate-900 mb-2">Thông tin</h5>
+              <ul className="flex flex-col gap-1.5 text-xs text-slate-600 mb-2.5">
                 {['Giới thiệu', 'Tin tức', 'Hướng dẫn sử dụng', 'Liên hệ'].map((it) => (
                   <li key={it}>
                     <a href="#support" className="hover:text-blue-600 transition-colors">{it}</a>
@@ -1486,20 +1493,20 @@ export default function App() {
                 ))}
               </ul>
 
-              <h5 className="text-xs sm:text-sm font-bold text-slate-900 mb-2">Kết nối với chúng tôi</h5>
-              <div className="flex items-center gap-2.5 mb-3.5">
-                <a href="#" className="w-8 h-8 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-sm font-bold hover:opacity-90 shadow-2xs">
+              <h5 className="text-xs font-bold text-slate-900 mb-1.5">Kết nối với chúng tôi</h5>
+              <div className="flex items-center gap-2 mb-2.5">
+                <a href="#" className="w-7 h-7 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-xs font-bold hover:opacity-90 shadow-2xs">
                   f
                 </a>
-                <a href="#" className="w-8 h-8 rounded-full bg-[#FF0000] text-white flex items-center justify-center text-sm font-bold hover:opacity-90 shadow-2xs">
+                <a href="#" className="w-7 h-7 rounded-full bg-[#FF0000] text-white flex items-center justify-center text-xs font-bold hover:opacity-90 shadow-2xs">
                   ▶
                 </a>
-                <a href="#" className="w-8 h-8 rounded-full bg-[#0068FF] text-white flex items-center justify-center text-xs font-bold hover:opacity-90 shadow-2xs">
+                <a href="#" className="w-7 h-7 rounded-full bg-[#0068FF] text-white flex items-center justify-center text-[10px] font-bold hover:opacity-90 shadow-2xs">
                   Zalo
                 </a>
               </div>
 
-              <div className="text-xs text-slate-500 leading-normal">
+              <div className="text-[11px] text-slate-500 leading-normal">
                 <p>Điều khoản sử dụng | Chính sách bảo mật</p>
                 <p className="mt-0.5">© 2025 Ôn Thi 360. Tất cả quyền được bảo lưu.</p>
               </div>
@@ -1507,12 +1514,12 @@ export default function App() {
           </div>
 
           {/* Bottom Slogan */}
-          <div className="pt-6 border-t border-sky-100/70 text-center flex items-center justify-center gap-3">
-            <div className="h-px bg-gradient-to-r from-transparent via-sky-300 to-transparent w-24 hidden sm:block"></div>
-            <p className="text-sm sm:text-base font-bold text-blue-900 italic tracking-wide">
+          <div className="pt-4 border-t border-sky-100/70 text-center flex items-center justify-center gap-3">
+            <div className="h-px bg-gradient-to-r from-transparent via-sky-300 to-transparent w-20 hidden sm:block"></div>
+            <p className="text-xs sm:text-sm font-bold text-blue-900 italic tracking-wide">
               — Học tốt Tin học – Vững vàng hành trang 6–12 —
             </p>
-            <div className="h-px bg-gradient-to-r from-transparent via-sky-300 to-transparent w-24 hidden sm:block"></div>
+            <div className="h-px bg-gradient-to-r from-transparent via-sky-300 to-transparent w-20 hidden sm:block"></div>
           </div>
         </div>
       </footer>
