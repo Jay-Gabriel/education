@@ -64,7 +64,7 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-fadeIn">
-      <div className="bg-white rounded-3xl max-w-4xl w-full max-h-[92vh] flex flex-col shadow-2xl border border-sky-100 overflow-hidden relative">
+      <div className="relative flex h-[calc(100dvh-24px)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-sky-100 bg-white shadow-2xl sm:h-auto sm:max-h-[92vh] sm:rounded-3xl">
         {/* Header with Background Accent */}
         <div className="bg-gradient-to-r from-[#0050A0] via-[#0066CC] to-[#0284C7] p-4 sm:p-6 text-white relative shrink-0">
           <button
@@ -104,7 +104,7 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
           </div>
 
           {/* Navigation Tabs Bar */}
-          <div className="flex items-center gap-1 overflow-x-auto no-scrollbar mt-4 pt-3 border-t border-white/20">
+          <div className="flex items-center gap-1 overflow-x-auto mt-4 pt-3 border-t border-white/20">
             {tabs.map((t) => {
               const Icon = t.icon;
               const isActive = activeTab === t.id;
@@ -124,6 +124,7 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
               );
             })}
           </div>
+          <p className="mt-1 text-[9px] font-medium text-sky-100 sm:hidden">Vuốt ngang để xem thêm mục</p>
         </div>
 
         {/* Modal Body Content */}

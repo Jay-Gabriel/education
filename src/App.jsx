@@ -162,7 +162,7 @@ export default function App() {
       {/* 3. SHARED FOOTER */}
       <Footer onNavigate={handlePublicNavigate} />
 
-      {!workspaceMode && (
+      {!workspaceMode && !activationModalOpen && !classDetailModalOpen && !codeWorkspaceModalOpen && !reviewModalOpen && !assessmentModalOpen && !accessModal && (
         <>
           <nav className="md:hidden fixed bottom-3 left-3 right-3 z-[55] flex items-center justify-around rounded-2xl border border-sky-100 bg-white/95 p-2 shadow-xl backdrop-blur-md">
             {[["Trang chủ", Home], ["Khóa học", BookOpen], ["Luyện tập", Code2]].map(([label, Icon]) => <button key={label} onClick={() => handlePublicNavigate(label)} className={`min-w-16 py-1.5 flex flex-col items-center gap-0.5 text-[10px] font-bold ${activeNav === label ? "text-blue-600" : "text-slate-500"}`}><Icon className="w-4 h-4"/>{label}</button>)}
