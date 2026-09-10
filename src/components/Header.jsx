@@ -92,6 +92,15 @@ export default function Header({
 
         {/* Search & Actions & Profile */}
         <div className="ml-auto flex items-center gap-1.5 sm:gap-2 shrink-0">
+          {userRole === "guest" && (
+            <button
+              onClick={() => onOpenAccess?.("auth")}
+              className="flex items-center gap-1.5 rounded-full border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-xs font-bold text-blue-700 transition hover:bg-blue-100 sm:px-3"
+            >
+              <UserCheck className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Đăng nhập</span>
+            </button>
+          )}
           {/* Quick Activation Code Button */}
           <button
             onClick={onOpenActivation}

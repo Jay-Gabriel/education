@@ -20,7 +20,7 @@ import AccessCenterModal from "./components/AccessCenterModal";
 
 export default function App() {
   const [activeNav, setActiveNav] = useState("Trang chủ");
-  const [userRole, setUserRole] = useState("student"); // student, teacher, parent, guest
+  const [userRole, setUserRole] = useState("guest"); // student, teacher, parent, guest
   const [workspaceMode, setWorkspaceMode] = useState(false);
 
   // Modals state
