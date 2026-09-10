@@ -846,7 +846,7 @@ export default function App() {
                       </svg>
                     </div>
                     <div className="text-left">
-                      <h5 className="text-xs sm:text-sm font-black text-[#0B3C78] leading-tight tracking-tight">Hệ thống & cuộc thi</h5>
+                      <h5 className="text-xs sm:text-sm font-black text-[#0B3C78] leading-tight tracking-tight">Cuộc thi</h5>
                       <p className="text-[10.5px] sm:text-xs font-semibold text-[#475569] leading-tight mt-0.5">Học tiêu chuẩn, đấu trường uy tín</p>
                     </div>
                   </div>
