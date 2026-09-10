@@ -47,7 +47,7 @@ const roleConfig = {
 };
 
 const IconButton = ({ icon: Icon, label, active, onClick, badge }) => (
-  <button onClick={onClick} className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left text-xs font-semibold transition-all cursor-pointer ${active ? "bg-blue-600 text-white shadow-md shadow-blue-200" : "text-slate-600 hover:bg-sky-50 hover:text-blue-700"}`}>
+  <button onClick={onClick} className={`w-auto shrink-0 flex items-center gap-2 px-3 py-2.5 rounded-xl text-left text-xs font-semibold transition-all cursor-pointer lg:w-full lg:gap-3 ${active ? "bg-blue-600 text-white shadow-md shadow-blue-200" : "text-slate-600 hover:bg-sky-50 hover:text-blue-700"}`}>
     <Icon className="w-4 h-4 shrink-0" />
     <span className="min-w-0 truncate">{label}</span>
     {badge && <span className={`ml-auto text-[9px] px-1.5 py-0.5 rounded-md ${active ? "bg-white/20 text-white" : "bg-amber-100 text-amber-700"}`}>{badge}</span>}
@@ -68,11 +68,11 @@ const Stat = ({ icon: Icon, label, value, note, tone = "blue" }) => {
 };
 
 function Hero({ config, children }) {
-  return <section className="relative overflow-hidden rounded-3xl min-h-[188px] border border-sky-100 shadow-[0_7px_20px_rgba(0,95,180,.09)] bg-[#0d5faf]">
+  return <section className="relative min-w-0 overflow-hidden rounded-3xl min-h-[188px] border border-sky-100 shadow-[0_7px_20px_rgba(0,95,180,.09)] bg-[#0d5faf]">
     <img src={config.image} alt="" className="absolute inset-0 w-full h-full object-cover" />
     <div className="absolute inset-0 bg-gradient-to-r from-[#0759a8]/95 via-[#0976c9]/72 to-[#0976c9]/10" />
     <div className="relative px-5 sm:px-7 py-5 sm:py-6 text-white flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-      <div><p className="text-[10px] font-bold uppercase tracking-[.14em] text-sky-100">{config.eyebrow}</p><h1 className="mt-1 text-xl sm:text-2xl font-black tracking-tight text-white">{config.title}</h1><p className="mt-1 max-w-xl text-xs text-sky-50">Từng bước rõ ràng, mọi kết quả đều được lưu lại để bạn tiếp tục đúng lúc.</p></div>
+      <div className="min-w-0"><p className="text-[10px] font-bold uppercase tracking-[.14em] text-sky-100">{config.eyebrow}</p><h1 className="mt-1 break-words text-xl sm:text-2xl font-black tracking-tight text-white">{config.title}</h1><p className="mt-1 max-w-xl text-xs text-sky-50">Từng bước rõ ràng, mọi kết quả đều được lưu lại để bạn tiếp tục đúng lúc.</p></div>
       {children}
     </div>
   </section>;
@@ -155,11 +155,11 @@ export default function RoleWorkspace({ role, activeNav, onNavigate, onOpenCodeW
   const normalizedRole = role === "teacher" || role === "parent" || role === "admin" ? role : "student";
   const config = roleConfig[normalizedRole];
   const content = normalizedRole === "student" ? <StudentContent active={activeNav} onOpenCodeWorkspace={onOpenCodeWorkspace} onOpenActivation={onOpenActivation} onOpenAssessment={onOpenAssessment} /> : normalizedRole === "teacher" ? <TeacherContent active={activeNav} /> : normalizedRole === "parent" ? <ParentContent active={activeNav} /> : <AdminContent active={activeNav} />;
-  return <div className="max-w-[1780px] mx-auto grid lg:grid-cols-[230px_minmax(0,1fr)] gap-4 lg:gap-5">
-    <aside className="bg-white rounded-3xl border border-sky-100 p-3 h-fit shadow-[0_2px_8px_rgba(0,90,180,.04)] lg:sticky lg:top-24">
-      <div className="px-2 pt-1 pb-3 border-b border-slate-100"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{normalizedRole === "student" ? "Không gian học tập" : normalizedRole === "teacher" ? "Không gian giảng dạy" : normalizedRole === "parent" ? "Không gian phụ huynh" : "Quản trị hệ thống"}</p></div>
-      <nav className="mt-2 flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible">{config.nav.map(([label, icon]) => <IconButton key={label} label={label} icon={icon} active={activeNav === label} onClick={() => onNavigate(label)} badge={label === "Thông báo" ? "3" : undefined} />)}</nav>
-      <div className="mt-3 p-3 rounded-2xl bg-gradient-to-br from-sky-50 to-blue-50 border border-blue-100"><p className="text-[10px] font-bold text-blue-700">Cần hỗ trợ?</p><p className="mt-1 text-[10px] leading-relaxed text-slate-500">Đội ngũ Ôn Thi 360 luôn sẵn sàng đồng hành.</p><button className="mt-2 text-[10px] font-bold text-blue-600">Liên hệ hỗ trợ →</button></div>
+  return <div className="max-w-[1780px] min-w-0 mx-auto grid lg:grid-cols-[230px_minmax(0,1fr)] gap-4 lg:gap-5">
+    <aside className="min-w-0 bg-white rounded-2xl lg:rounded-3xl border border-sky-100 p-2 lg:p-3 h-fit shadow-[0_2px_8px_rgba(0,90,180,.04)] lg:sticky lg:top-24">
+      <div className="hidden lg:block px-2 pt-1 pb-3 border-b border-slate-100"><p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{normalizedRole === "student" ? "Không gian học tập" : normalizedRole === "teacher" ? "Không gian giảng dạy" : normalizedRole === "parent" ? "Không gian phụ huynh" : "Quản trị hệ thống"}</p></div>
+      <nav className="flex min-w-0 gap-1 overflow-x-auto lg:mt-2 lg:flex-col lg:overflow-visible">{config.nav.map(([label, icon]) => <IconButton key={label} label={label} icon={icon} active={activeNav === label} onClick={() => onNavigate(label)} badge={label === "Thông báo" ? "3" : undefined} />)}</nav>
+      <div className="hidden lg:block mt-3 p-3 rounded-2xl bg-gradient-to-br from-sky-50 to-blue-50 border border-blue-100"><p className="text-[10px] font-bold text-blue-700">Cần hỗ trợ?</p><p className="mt-1 text-[10px] leading-relaxed text-slate-500">Đội ngũ Ôn Thi 360 luôn sẵn sàng đồng hành.</p><button className="mt-2 text-[10px] font-bold text-blue-600">Liên hệ hỗ trợ →</button></div>
     </aside>
     <main className="min-w-0 space-y-4"><Hero config={config}><div className="flex gap-2"><button onClick={() => onNavigate(normalizedRole === "teacher" ? "Lớp học" : normalizedRole === "student" ? "Luyện tập" : normalizedRole === "parent" ? "Kết quả & Tiến độ" : "Báo cáo")} className="px-3 py-2 rounded-xl bg-white text-blue-700 text-[11px] font-black shadow-sm cursor-pointer">{normalizedRole === "teacher" ? "Mở lớp học" : normalizedRole === "student" ? "Vào luyện tập" : normalizedRole === "parent" ? "Xem tiến độ" : "Mở báo cáo"}</button></div></Hero>{content}</main>
   </div>;
