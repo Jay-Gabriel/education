@@ -825,9 +825,36 @@ export default function App() {
                   </button>
                 </div>
 
-                <a href={mainSectionTab === 'courses' ? '#courses' : '#path'} className="text-xs font-bold text-blue-600 hover:text-blue-700 hidden sm:flex items-center gap-1 shrink-0">
-                  Xem tất cả <span>→</span>
-                </a>
+                <div className="flex items-center gap-2.5 shrink-0">
+                  {/* Banner Card: Hệ thống & cuộc thi (Reference Match) */}
+                  <div className="hidden md:flex items-center gap-3 px-3.5 py-1.5 rounded-2xl sm:rounded-3xl bg-[#FFFDF0] border border-[#FDE68A] shadow-2xs cursor-pointer hover:shadow-md transition-all">
+                    {/* Golden Trophy Icon */}
+                    <div className="relative w-9 h-9 shrink-0 flex items-center justify-center">
+                      <svg className="w-8.5 h-8.5" viewBox="0 0 64 64" fill="none">
+                        <path d="M12 40C10 32 14 24 18 20" stroke="#22C55E" strokeWidth="4" strokeLinecap="round" />
+                        <path d="M52 40C54 32 50 24 46 20" stroke="#22C55E" strokeWidth="4" strokeLinecap="round" />
+                        <circle cx="14" cy="24" r="3" fill="#16A34A" />
+                        <circle cx="10" cy="32" r="3" fill="#16A34A" />
+                        <circle cx="50" cy="24" r="3" fill="#16A34A" />
+                        <circle cx="54" cy="32" r="3" fill="#16A34A" />
+                        <path d="M20 16H44V28C44 34.6274 38.6274 40 32 40C25.3726 40 20 34.6274 20 28V16Z" fill="#F59E0B" stroke="#D97706" strokeWidth="2.5" />
+                        <path d="M24 16V26C24 30.4183 27.5817 34 32 34C36.4183 34 40 30.4183 40 26V16H24Z" fill="#FBBF24" />
+                        <path d="M20 20H14C12.8954 20 12 20.8954 12 22V24C12 27.3137 14.6863 30 18 30H20" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" />
+                        <path d="M44 20H50C51.1046 20 52 20.8954 52 22V24C52 27.3137 49.3137 30 46 30H44" stroke="#F59E0B" strokeWidth="2.5" strokeLinecap="round" />
+                        <rect x="29" y="40" width="6" height="8" fill="#D97706" />
+                        <rect x="22" y="48" width="20" height="5" rx="2.5" fill="#F59E0B" stroke="#D97706" strokeWidth="1.5" />
+                      </svg>
+                    </div>
+                    <div className="text-left">
+                      <h5 className="text-xs sm:text-sm font-black text-[#0B3C78] leading-tight tracking-tight">Hệ thống & cuộc thi</h5>
+                      <p className="text-[10.5px] sm:text-xs font-semibold text-[#475569] leading-tight mt-0.5">Học tiêu chuẩn, đấu trường uy tín</p>
+                    </div>
+                  </div>
+
+                  <a href={mainSectionTab === 'courses' ? '#courses' : '#path'} className="text-xs font-bold text-blue-600 hover:text-blue-700 hidden sm:flex items-center gap-1 shrink-0">
+                    Xem tất cả <span>→</span>
+                  </a>
+                </div>
               </div>
 
               {/* Tab 1: FEATURED COURSES */}
