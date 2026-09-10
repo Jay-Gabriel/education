@@ -66,6 +66,38 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
       prize: "Chứng nhận đánh giá năng lực Ôn Thi 360",
       image: "/assets/contest-img-3.png",
       tag: "📊 Khảo sát phi thi đua"
+    },
+    {
+      id: "CONTEST_WAITING_2",
+      title: "Kỳ thi thử Chuyên đề Đồ thị tháng 9",
+      type: "contest",
+      status: "waiting",
+      statusLabel: "Chờ công bố kết quả",
+      statusStyle: "bg-violet-100 text-violet-800 border-violet-300",
+      startTime: "08/09/2026 14:00",
+      endTime: "08/09/2026 17:00",
+      duration: "180 phút",
+      problemsCount: 3,
+      registeredCount: "620 thí sinh",
+      prize: "Chứng nhận hoàn thành",
+      image: "/assets/generated-practice-hero-v1.png",
+      tag: "⏳ Đang đối soát điểm"
+    },
+    {
+      id: "CONTEST_PUBLISHED_1",
+      title: "Mini Contest Cấu trúc dữ liệu tháng 8",
+      type: "contest",
+      status: "published",
+      statusLabel: "Đã công bố",
+      statusStyle: "bg-blue-100 text-blue-800 border-blue-300",
+      startTime: "28/08/2026 19:30",
+      endTime: "28/08/2026 21:30",
+      duration: "120 phút",
+      problemsCount: 3,
+      registeredCount: "1,008 thí sinh",
+      prize: "Huy hiệu Top 100",
+      image: "/assets/generated-leaderboard-hero-v1.png",
+      tag: "✓ Kết quả chính thức"
     }
   ];
   const filteredContests = contests.filter((contest) => activeTab === "all" || (activeTab === "surveys" ? contest.type === "survey" : contest.status === activeTab));
@@ -200,7 +232,7 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
                   }`}
                 >
                   <Play className="w-3.5 h-3.5" />
-                  <span>{c.status === "ongoing" ? "Vào phòng thi ngay" : "Đăng ký dự thi"}</span>
+                  <span>{c.status === "ongoing" ? "Vào phòng thi ngay" : c.status === "waiting" ? "Xem trạng thái" : c.status === "published" ? "Xem kết quả" : "Đăng ký dự thi"}</span>
                 </button>
               </div>
             </div>

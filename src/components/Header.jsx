@@ -170,7 +170,7 @@ export default function Header({
 
             {/* Role Switcher Menu */}
             {roleDropdownOpen && (
-              <div className="absolute right-0 top-11 w-64 bg-white border border-sky-100 rounded-2xl shadow-xl p-2.5 z-50 animate-fadeIn">
+              <div className="fixed left-3 right-3 top-[68px] max-h-[calc(100dvh-156px)] overflow-y-auto rounded-3xl border border-sky-100 bg-white p-2.5 shadow-xl z-[70] animate-fadeIn sm:absolute sm:left-auto sm:right-0 sm:top-11 sm:max-h-[min(70vh,560px)] sm:w-64 sm:rounded-2xl">
                 <div className="px-2 py-1 mb-1.5 border-b border-slate-100">
                   <p className="text-[10px] uppercase tracking-wider font-extrabold text-slate-400">Chuyển vai trò xem giao diện</p>
                 </div>
