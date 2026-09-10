@@ -116,7 +116,7 @@ export default function LeaderboardPage() {
       </div>
 
       {/* 3. RANKING TABLE */}
-      {scope === "class" ? <div className="rounded-3xl border border-dashed border-sky-200 bg-white p-10 text-center"><School className="mx-auto h-9 w-9 text-sky-300"/><h2 className="mt-3 text-sm font-black text-slate-800">Chưa có bảng xếp hạng lớp</h2><p className="mt-1 text-xs text-slate-500">Giáo viên sẽ bật BXH khi lớp có đủ dữ liệu hoạt động.</p></div> : <div className="bg-white rounded-3xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,220,0.05)] overflow-hidden divide-y divide-slate-100">
+      {scope === "class" ? <div className="rounded-3xl border border-dashed border-sky-200 bg-white p-10 text-center"><School className="mx-auto h-9 w-9 text-sky-300"/><h2 className="mt-3 text-sm font-black text-slate-800">Chưa có bảng xếp hạng lớp</h2><p className="mt-1 text-xs text-slate-500">Giáo viên sẽ bật BXH khi lớp có đủ dữ liệu hoạt động.</p></div> : <div className="overflow-x-auto rounded-3xl border border-sky-100 bg-white shadow-[0_4px_16px_rgba(0,100,220,0.05)]"><div className="min-w-[680px] divide-y divide-slate-100">
         <div className="grid grid-cols-[60px_1fr_180px_120px_100px] px-5 py-3 bg-[#F8FBFE] text-[11px] font-bold text-slate-500 uppercase tracking-wider">
           <span>Hạng</span>
           <span>Học sinh</span>
@@ -137,7 +137,7 @@ export default function LeaderboardPage() {
             <span className="text-right font-black text-[#0B3C78]">{st.score}</span>
           </div>
         ))}
-      </div>}
+      </div></div>}
     </div>
   );
 }

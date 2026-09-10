@@ -94,7 +94,7 @@ int main() {
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-900/75 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-fadeIn">
-      <div className="bg-[#0F172A] rounded-3xl max-w-7xl w-full h-[94vh] flex flex-col shadow-2xl border border-slate-800 overflow-hidden text-slate-100">
+      <div className="bg-[#0F172A] rounded-2xl sm:rounded-3xl max-w-7xl w-full h-[96dvh] sm:h-[94vh] flex flex-col shadow-2xl border border-slate-800 overflow-hidden text-slate-100">
         {/* Workspace Top Bar */}
         <div className="bg-[#1E293B] px-4 py-2.5 border-b border-slate-800 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3 min-w-0">
@@ -175,9 +175,9 @@ int main() {
         </div>
 
         {/* Workspace Main Area: 2 Columns (Problem Spec on Left | Code & Runner on Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 flex-1 overflow-hidden">
+        <div className="grid grid-cols-1 grid-rows-2 lg:grid-cols-2 lg:grid-rows-1 flex-1 overflow-hidden">
           {/* Left Column: Problem Statement & Tests */}
-          <div className="border-r border-slate-800 flex flex-col bg-[#0F172A] overflow-hidden">
+          <div className="border-b lg:border-b-0 lg:border-r border-slate-800 flex flex-col bg-[#0F172A] overflow-hidden">
             {/* Left Tabs */}
             <div className="flex items-center gap-1 px-4 py-2 border-b border-slate-800 bg-slate-900/50">
               <button

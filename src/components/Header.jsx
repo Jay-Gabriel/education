@@ -91,7 +91,7 @@ export default function Header({
         </nav>
 
         {/* Search & Actions & Profile */}
-        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+        <div className="ml-auto flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Quick Activation Code Button */}
           <button
             onClick={onOpenActivation}
