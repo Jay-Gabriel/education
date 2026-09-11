@@ -706,51 +706,64 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
           {/* PHẦN 1: VÒNG THI ĐANG DIỄN RA (HIỆN TẠI & NỔI BẬT NHẤT)                  */}
           {/* ======================================================================= */}
           {selectedContest.activeRound ? (
-            <div className="rounded-3xl border border-emerald-300/80 bg-gradient-to-b from-[#F0FDF4] via-white to-white p-5 sm:p-6 shadow-[0_4px_20px_rgba(16,185,129,0.08)]">
-              <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-emerald-100">
+            <div className="rounded-3xl border border-emerald-300 bg-gradient-to-br from-emerald-50/90 via-white to-teal-50/50 p-5 sm:p-6 shadow-[0_8px_30px_rgba(16,185,129,0.12)] space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-3 pb-3.5 border-b border-emerald-100">
                 <div className="flex items-center gap-2.5">
-                  <span className="px-3 py-1 rounded-full text-xs font-black bg-emerald-600 text-white flex items-center gap-1.5 shadow-sm">
-                    <Flame className="w-3.5 h-3.5 fill-white" />
-                    VÒNG THI ĐANG MỞ
+                  <span className="relative flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                  </span>
+                  <span className="px-3 py-1 rounded-full text-[11px] font-black bg-emerald-600 text-white shadow-xs tracking-wide uppercase">
+                    Vòng thi đang mở
                   </span>
                   <h2 className="text-base sm:text-lg font-black text-slate-900">
                     {selectedContest.activeRound.title}
                   </h2>
                 </div>
 
-                <div className="flex items-center gap-2 bg-emerald-100/90 border border-emerald-300 px-3.5 py-1.5 rounded-xl text-xs font-bold text-emerald-900 shadow-2xs">
-                  <Timer className="w-4 h-4 text-emerald-700" />
-                  <span>Thời gian còn lại:</span>
-                  <strong className="font-mono text-emerald-900 text-sm font-black tracking-wide">
-                    {selectedContest.activeRound.timeRemaining}
-                  </strong>
+                <div className="text-[11px] text-emerald-800 font-bold bg-white px-3 py-1 rounded-full border border-emerald-200 shadow-2xs">
+                  SBD của bạn: <span className="font-mono font-black text-emerald-900">{selectedContest.activeRound.candidateId}</span>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 lg:grid-cols-[1.5fr_1fr] gap-5 mt-4 items-center">
-                <div className="space-y-2.5 text-xs text-slate-700">
-                  <div className="flex flex-wrap items-center gap-3">
-                    <span className="flex items-center gap-1.5 font-bold text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+                {/* Thông tin vòng thi */}
+                <div className="lg:col-span-8 space-y-3">
+                  <div className="flex flex-wrap items-center gap-2.5 text-xs">
+                    <span className="inline-flex items-center gap-1.5 font-bold text-slate-800 bg-white px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-2xs">
                       <Calendar className="w-3.5 h-3.5 text-blue-600" />
                       {selectedContest.activeRound.startDate} ({selectedContest.activeRound.scheduleTime})
                     </span>
-                    <span className="flex items-center gap-1.5 font-bold text-slate-800 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                    <span className="inline-flex items-center gap-1.5 font-bold text-slate-800 bg-white px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-2xs">
                       <Clock className="w-3.5 h-3.5 text-amber-500" />
-                      {selectedContest.activeRound.duration} ({selectedContest.activeRound.problemsCount} bài toán)
+                      {selectedContest.activeRound.duration} · {selectedContest.activeRound.problemsCount} bài toán
                     </span>
-                    <span className="flex items-center gap-1.5 font-semibold text-slate-600 bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                    <span className="inline-flex items-center gap-1.5 font-semibold text-slate-600 bg-white px-3 py-1.5 rounded-xl border border-slate-200/80 shadow-2xs">
                       <Users className="w-3.5 h-3.5 text-purple-600" />
-                      {selectedContest.activeRound.totalParticipants} thí sinh tham gia
+                      {selectedContest.activeRound.totalParticipants} thí sinh
                     </span>
                   </div>
 
-                  <p className="text-emerald-900 bg-emerald-50/90 p-3 rounded-2xl border border-emerald-200 text-xs leading-relaxed">
-                    ✨ <strong>Lưu ý thí sinh:</strong> {selectedContest.activeRound.note}
-                  </p>
+                  <div className="text-emerald-900 bg-emerald-100/60 p-3.5 rounded-2xl border border-emerald-200/80 text-xs leading-relaxed flex items-start gap-2.5">
+                    <span className="text-base leading-none">📢</span>
+                    <div>
+                      <strong className="font-bold">Hướng dẫn phòng thi:</strong> {selectedContest.activeRound.note}
+                    </div>
+                  </div>
                 </div>
 
-                {/* Nút Vào phòng thi */}
-                <div>
+                {/* Hộp Đếm ngược & Nút Vào thi */}
+                <div className="lg:col-span-4 bg-white p-4 rounded-2xl border border-emerald-200 shadow-md flex flex-col justify-between gap-3">
+                  <div className="flex items-center justify-between text-xs pb-2 border-b border-slate-100">
+                    <span className="text-slate-500 font-medium flex items-center gap-1">
+                      <Timer className="w-3.5 h-3.5 text-amber-500" />
+                      Thời gian còn lại:
+                    </span>
+                    <span className="font-mono text-base font-black text-rose-600 bg-rose-50 px-2.5 py-0.5 rounded-lg border border-rose-200 animate-pulse">
+                      {selectedContest.activeRound.timeRemaining}
+                    </span>
+                  </div>
+
                   <button
                     onClick={() => {
                       onOpenCodeWorkspace?.({
@@ -758,7 +771,7 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
                         id: selectedContest.activeRound.id
                       });
                     }}
-                    className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:brightness-105 text-white text-xs sm:text-sm font-black shadow-lg shadow-emerald-600/25 flex items-center justify-center gap-2.5 cursor-pointer transition-all active:scale-98"
+                    className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-700 hover:brightness-110 text-white text-xs sm:text-sm font-black shadow-lg shadow-emerald-600/30 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-98"
                   >
                     <Play className="w-4 h-4 fill-white" />
                     <span>VÀO PHÒNG THI TRỰC TUYẾN</span>
@@ -775,174 +788,191 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
           {/* ======================================================================= */}
           {/* PHẦN 2: BIỂU ĐỒ CỘT THỐNG KÊ CÁC VÒNG ĐÃ QUA & DANH SÁCH 5 THỦ KHOA     */}
           {/* ======================================================================= */}
-          <div className="rounded-3xl border border-sky-100 bg-white p-5 sm:p-6 shadow-[0_4px_20px_rgba(0,100,220,0.06)] space-y-5">
+          <div className="rounded-3xl border border-sky-100 bg-white p-5 sm:p-6 shadow-[0_4px_25px_rgba(0,100,220,0.06)] space-y-5">
             <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
-                <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-600 text-white shadow-sm">
+                <span className="px-3 py-1 rounded-full text-xs font-black bg-blue-600 text-white shadow-xs">
                   CÁC VÒNG ĐÃ QUA
                 </span>
-                <h3 className="text-sm sm:text-base font-black text-slate-900">
-                  Thống kê biểu đồ điểm số & Vinh danh 5 Thủ khoa
+                <h3 className="text-base font-black text-slate-900">
+                  Thống kê kết quả & Bảng vàng Thủ khoa
                 </h3>
               </div>
-              <span className="text-[11px] text-slate-500 font-medium">
+              <span className="text-xs text-slate-500 font-medium">
                 {selectedContest.pastRoundsStats?.summary}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-              {/* PHẦN A: BIỂU ĐỒ CỘT DỌC (VERTICAL COLUMN CHART) THỐNG KÊ ĐIỂM SỐ */}
-              <div className="lg:col-span-7 bg-[#F8FBFE] p-4 sm:p-5 rounded-2xl border border-sky-100 space-y-4">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <span className="text-xs font-bold text-slate-800 flex items-center gap-2">
-                    <BarChart3 className="w-4 h-4 text-blue-600" />
-                    Biểu đồ cột so sánh điểm số qua các vòng
-                  </span>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+              {/* PHẦN A: BIỂU ĐỒ CỘT DỌC THỐNG KÊ ĐIỂM SỐ */}
+              <div className="lg:col-span-7 bg-[#F8FBFE] p-5 rounded-2xl border border-sky-100/80 flex flex-col justify-between space-y-4">
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <span className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                      <BarChart3 className="w-4 h-4 text-blue-600" />
+                      Biểu đồ cột so sánh điểm số từng vòng
+                    </span>
 
-                  {/* Chú thích các cột */}
-                  <div className="flex flex-wrap items-center gap-2.5 text-[10px] font-bold">
-                    <span className="flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                      <span className="w-2.5 h-2.5 rounded-xs bg-emerald-500 inline-block" /> Thủ khoa
-                    </span>
-                    <span className="flex items-center gap-1 text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
-                      <span className="w-2.5 h-2.5 rounded-xs bg-blue-600 inline-block" /> Điểm của bạn
-                    </span>
-                    <span className="flex items-center gap-1 text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
-                      <span className="w-2.5 h-2.5 rounded-xs bg-slate-400 inline-block" /> Điểm TB
-                    </span>
+                    {/* Chú thích màu sắc */}
+                    <div className="flex items-center gap-2 text-[10px] font-bold">
+                      <span className="inline-flex items-center gap-1 text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                        <span className="w-2.5 h-2.5 rounded-xs bg-emerald-500 inline-block" /> Thủ khoa
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-blue-700 bg-blue-50 px-2 py-0.5 rounded-md border border-blue-200">
+                        <span className="w-2.5 h-2.5 rounded-xs bg-blue-600 inline-block" /> Điểm của bạn
+                      </span>
+                      <span className="inline-flex items-center gap-1 text-slate-600 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                        <span className="w-2.5 h-2.5 rounded-xs bg-slate-400 inline-block" /> Điểm TB
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                {selectedContest.pastRoundsStats?.roundsChart?.length > 0 ? (
-                  <div className="space-y-3 pt-2">
-                    {/* Vùng vẽ biểu đồ cột dọc */}
-                    <div className="relative bg-white rounded-xl border border-slate-200/80 p-4 sm:p-5 pt-8 shadow-2xs">
-                      {/* Đường gióng trục Y ngang */}
-                      <div className="absolute inset-x-4 top-8 border-b border-dashed border-slate-200 pointer-events-none flex justify-between">
-                        <span className="text-[9px] text-slate-300 -mt-3.5 bg-white px-1">Tối đa</span>
-                      </div>
-                      <div className="absolute inset-x-4 top-[38%] border-b border-dashed border-slate-100 pointer-events-none flex justify-between">
-                        <span className="text-[9px] text-slate-300 -mt-3.5 bg-white px-1">75%</span>
-                      </div>
-                      <div className="absolute inset-x-4 top-[60%] border-b border-dashed border-slate-100 pointer-events-none flex justify-between">
-                        <span className="text-[9px] text-slate-300 -mt-3.5 bg-white px-1">50%</span>
-                      </div>
-                      <div className="absolute inset-x-4 bottom-14 border-b-2 border-slate-300 pointer-events-none flex justify-between">
-                        <span className="text-[9px] text-slate-400 -mt-3 bg-white px-1">0đ</span>
-                      </div>
+                  {selectedContest.pastRoundsStats?.roundsChart?.length > 0 ? (
+                    <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
+                      {/* VÙNG BIỂU ĐỒ CỘT DỌC */}
+                      <div className="relative h-44 flex items-end justify-around gap-6 pt-6 pb-2 px-6">
+                        {/* Các đường gióng ngang mờ */}
+                        <div className="absolute inset-x-4 top-6 border-b border-dashed border-slate-200 pointer-events-none flex justify-between">
+                          <span className="text-[9px] font-bold text-slate-300 -mt-3 bg-white px-1">Tối đa (100%)</span>
+                        </div>
+                        <div className="absolute inset-x-4 top-[48%] border-b border-dashed border-slate-100 pointer-events-none flex justify-between">
+                          <span className="text-[9px] font-bold text-slate-300 -mt-3 bg-white px-1">50%</span>
+                        </div>
 
-                      {/* Các cụm cột dọc cho từng vòng */}
-                      <div className="h-52 flex items-end justify-around gap-4 pb-14 relative z-10">
+                        {/* Các cụm cột cho từng vòng */}
                         {selectedContest.pastRoundsStats.roundsChart.map((round, idx) => {
-                          const topPct = Math.min(100, Math.max(12, (round.topScore / round.maxScore) * 100));
-                          const myPct = round.myScore !== undefined ? Math.min(100, Math.max(12, (round.myScore / round.maxScore) * 100)) : null;
-                          const avgPct = Math.min(100, Math.max(12, (round.avgScore / round.maxScore) * 100));
+                          const topPct = Math.min(100, Math.max(14, (round.topScore / round.maxScore) * 100));
+                          const myPct = round.myScore !== undefined ? Math.min(100, Math.max(14, (round.myScore / round.maxScore) * 100)) : null;
+                          const avgPct = Math.min(100, Math.max(14, (round.avgScore / round.maxScore) * 100));
 
                           return (
-                            <div key={idx} className="flex flex-col items-center h-full justify-end flex-1 max-w-[170px] relative">
-                              {/* 3 Cột Dọc đứng cạnh nhau */}
-                              <div className="flex items-end justify-center gap-1.5 sm:gap-2.5 h-full w-full pb-0.5">
-                                {/* Cột 1: Thủ khoa */}
-                                <div className="flex flex-col items-center justify-end h-full group">
-                                  <span className="text-[10px] font-black text-emerald-700 mb-1 leading-none group-hover:scale-110 transition-transform">
-                                    {round.topScore}đ
-                                  </span>
-                                  <div
-                                    className="w-4 sm:w-6 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md shadow-xs transition-all duration-500 hover:brightness-110 cursor-pointer"
-                                    style={{ height: `${topPct}%` }}
-                                    title={`Thủ khoa: ${round.topScore}/${round.maxScore}đ`}
-                                  />
-                                </div>
-
-                                {/* Cột 2: Điểm của bạn */}
-                                {myPct !== null && (
-                                  <div className="flex flex-col items-center justify-end h-full group">
-                                    <span className="text-[10px] font-black text-blue-700 bg-blue-100 px-1 py-0.5 rounded-sm shadow-2xs mb-1 leading-none group-hover:scale-110 transition-transform">
-                                      {round.myScore}đ
-                                    </span>
-                                    <div
-                                      className="w-4 sm:w-6 bg-gradient-to-t from-blue-700 to-sky-500 rounded-t-md shadow-md ring-2 ring-blue-300 transition-all duration-500 hover:brightness-110 cursor-pointer"
-                                      style={{ height: `${myPct}%` }}
-                                      title={`Điểm của bạn: ${round.myScore}/${round.maxScore}đ (${round.myRank})`}
-                                    />
-                                  </div>
-                                )}
-
-                                {/* Cột 3: Điểm trung bình giải */}
-                                <div className="flex flex-col items-center justify-end h-full group">
-                                  <span className="text-[10px] text-slate-500 mb-1 leading-none group-hover:scale-110 transition-transform">
-                                    {round.avgScore}đ
-                                  </span>
-                                  <div
-                                    className="w-4 sm:w-6 bg-gradient-to-t from-slate-400 to-slate-200 rounded-t-md transition-all duration-500 hover:brightness-110 cursor-pointer"
-                                    style={{ height: `${avgPct}%` }}
-                                    title={`Điểm trung bình giải: ${round.avgScore}/${round.maxScore}đ`}
-                                  />
-                                </div>
+                            <div key={idx} className="flex-1 max-w-[150px] flex items-end justify-center gap-2 sm:gap-3 h-full z-10">
+                              {/* Cột 1: Thủ khoa */}
+                              <div className="flex flex-col items-center justify-end h-full group flex-1">
+                                <span className="text-[10px] font-black text-emerald-700 mb-1 leading-none">
+                                  {round.topScore}đ
+                                </span>
+                                <div
+                                  className="w-full max-w-[28px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-lg shadow-sm hover:brightness-110 transition-all cursor-pointer"
+                                  style={{ height: `${topPct}%` }}
+                                  title={`Thủ khoa: ${round.topScore}/${round.maxScore} điểm`}
+                                />
                               </div>
 
-                              {/* Nhãn Tên vòng thi bên dưới cột */}
-                              <div className="absolute top-[calc(100%-48px)] inset-x-0 text-center space-y-0.5">
-                                <p className="font-bold text-[11px] sm:text-xs text-slate-800 line-clamp-1">
-                                  {round.roundName}
-                                </p>
-                                <p className="text-[9px] sm:text-[10px] text-slate-400">
-                                  {round.date} · {round.participants?.toLocaleString()} thí sinh
-                                </p>
+                              {/* Cột 2: Điểm của bạn */}
+                              {myPct !== null && (
+                                <div className="flex flex-col items-center justify-end h-full group flex-1">
+                                  <span className="text-[10px] font-black text-blue-700 bg-blue-100 px-1 py-0.5 rounded shadow-2xs mb-1 leading-none">
+                                    {round.myScore}đ
+                                  </span>
+                                  <div
+                                    className="w-full max-w-[28px] bg-gradient-to-t from-blue-700 via-blue-600 to-sky-400 rounded-t-lg shadow-md ring-2 ring-blue-300/80 hover:brightness-110 transition-all cursor-pointer"
+                                    style={{ height: `${myPct}%` }}
+                                    title={`Điểm của bạn: ${round.myScore}/${round.maxScore} điểm (${round.myRank})`}
+                                  />
+                                </div>
+                              )}
+
+                              {/* Cột 3: Điểm trung bình */}
+                              <div className="flex flex-col items-center justify-end h-full group flex-1">
+                                <span className="text-[10px] font-semibold text-slate-500 mb-1 leading-none">
+                                  {round.avgScore}đ
+                                </span>
+                                <div
+                                  className="w-full max-w-[28px] bg-gradient-to-t from-slate-400 to-slate-200 rounded-t-lg hover:brightness-110 transition-all cursor-pointer"
+                                  style={{ height: `${avgPct}%` }}
+                                  title={`Điểm trung bình giải: ${round.avgScore}/${round.maxScore} điểm`}
+                                />
                               </div>
                             </div>
                           );
                         })}
                       </div>
-                    </div>
 
-                    {/* Tóm tắt nhanh thành tích */}
-                    <div className="flex flex-wrap items-center justify-between gap-2 text-xs p-3 rounded-xl bg-blue-50/70 border border-blue-100 text-blue-900">
-                      <span>💡 <strong>Đánh giá tiến độ:</strong> Điểm số của bạn luôn nằm trong nhóm <strong>Top dẫn đầu</strong> vượt trội so với điểm trung bình toàn giải.</span>
+                      {/* ĐƯỜNG ĐÁY TRỤC HOÀNH (BASELINE) */}
+                      <div className="h-0.5 bg-slate-300 w-full mb-3" />
+
+                      {/* NHÃN THÔNG TIN TỪNG VÒNG (NẰM HOÀN TOÀN DƯỚI ĐÁY CỘT) */}
+                      <div className="flex justify-around gap-6 px-6">
+                        {selectedContest.pastRoundsStats.roundsChart.map((round, idx) => (
+                          <div key={idx} className="flex-1 max-w-[150px] text-center space-y-1">
+                            <strong className="block text-xs font-bold text-slate-800 leading-tight">
+                              {round.roundName}
+                            </strong>
+                            <p className="text-[10px] text-slate-500">
+                              {round.date} · {round.participants?.toLocaleString()} thí sinh
+                            </p>
+                            {round.myRank && (
+                              <span className="inline-block px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-bold text-[10px]">
+                                Thứ hạng: {round.myRank}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ) : (
-                  <p className="text-xs text-slate-400 py-6 text-center italic">Chưa có dữ liệu vòng thi nào trước đây.</p>
-                )}
+                  ) : (
+                    <p className="text-xs text-slate-400 py-6 text-center italic">Chưa có dữ liệu vòng thi nào trước đây.</p>
+                  )}
+                </div>
+
+                {/* Nhận xét phân tích */}
+                <div className="text-xs p-3 rounded-xl bg-blue-50/80 border border-blue-100 text-blue-900 flex items-center gap-2">
+                  <span className="text-sm">💡</span>
+                  <span><strong>Đánh giá năng lực:</strong> Điểm số của bạn luôn nằm trong <strong>Top 1% thí sinh dẫn đầu</strong> qua cả hai vòng thi trước.</span>
+                </div>
               </div>
 
               {/* PHẦN B: DANH SÁCH 5 THỦ KHOA DẪN ĐẦU */}
-              <div className="lg:col-span-5 bg-slate-50/80 p-4 sm:p-5 rounded-2xl border border-slate-200/80 space-y-3">
+              <div className="lg:col-span-5 bg-gradient-to-b from-amber-50/40 via-slate-50/60 to-slate-50/80 p-5 rounded-2xl border border-slate-200/90 flex flex-col justify-between space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-amber-950 flex items-center gap-2">
+                  <span className="text-xs font-bold text-amber-950 flex items-center gap-1.5">
                     <Trophy className="w-4 h-4 text-amber-500" />
-                    Danh sách 5 Thủ khoa các vòng đã qua
+                    Bảng vàng 5 Thủ khoa xuất sắc
                   </span>
                   <span className="text-[10px] text-slate-400 font-medium">Xếp hạng ACM/ICPC</span>
                 </div>
 
                 {selectedContest.pastRoundsStats?.top5Valedictorians.length > 0 ? (
                   <div className="space-y-2">
-                    {selectedContest.pastRoundsStats.top5Valedictorians.map((val) => (
-                      <div
-                        key={val.rank}
-                        className="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-200/70 text-xs shadow-2xs hover:border-amber-300 transition-all"
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <span className="w-6 h-6 rounded-lg bg-amber-50 text-amber-900 border border-amber-200 font-black text-xs flex items-center justify-center shrink-0">
-                            {val.medal}
-                          </span>
-                          <div className="min-w-0">
-                            <p className="font-bold text-slate-900 truncate leading-tight">{val.name}</p>
-                            <p className="text-[11px] text-slate-400 truncate">{val.school}</p>
+                    {selectedContest.pastRoundsStats.top5Valedictorians.map((val) => {
+                      const isTop1 = val.rank === 1;
+                      return (
+                        <div
+                          key={val.rank}
+                          className={`flex items-center justify-between p-2.5 rounded-xl border text-xs transition-all ${
+                            isTop1
+                              ? "bg-gradient-to-r from-amber-100/90 to-amber-50/80 border-amber-300 shadow-xs"
+                              : "bg-white border-slate-200/80 hover:border-slate-300 shadow-2xs"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <span className={`w-6 h-6 rounded-lg font-black text-xs flex items-center justify-center shrink-0 ${
+                              isTop1 ? "bg-amber-400 text-amber-950 shadow-xs" : "bg-slate-100 text-slate-700"
+                            }`}>
+                              {val.medal}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="font-bold text-slate-900 truncate leading-tight">{val.name}</p>
+                              <p className="text-[10px] text-slate-400 truncate">{val.school}</p>
+                            </div>
+                          </div>
+
+                          <div className="text-right shrink-0 pl-3">
+                            <strong className="text-blue-700 font-black text-xs block">{val.score} điểm</strong>
+                            <span className="text-[10px] text-slate-400">({val.time} penalty)</span>
                           </div>
                         </div>
-
-                        <div className="text-right shrink-0 pl-3">
-                          <strong className="text-blue-700 font-black text-xs block">{val.score} điểm</strong>
-                          <span className="text-[10px] text-slate-400">({val.time} penalty)</span>
-                        </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <p className="text-xs text-slate-400 py-6 text-center italic">Chưa có dữ liệu thủ khoa vòng trước.</p>
                 )}
+
+                <div className="text-[11px] text-slate-400 text-center pt-1 border-t border-slate-100">
+                  Cập nhật theo kết quả chính thức từ Hội đồng Chấm thi Quốc gia
+                </div>
               </div>
             </div>
           </div>
@@ -980,7 +1010,7 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
                     </span>
                   </div>
                   <p className="text-[11px] text-slate-500 pt-0.5">
-                    📌 <strong>Điều kiện:</strong> {selectedContest.nextRound.advancementCondition}
+                    📌 <strong>Điều kiện tham gia:</strong> {selectedContest.nextRound.advancementCondition}
                   </p>
                 </div>
 
@@ -988,12 +1018,12 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
                   onClick={() => handleRegisterNextRound(selectedContest.id, selectedContest.nextRound.id)}
                   className={`px-5 py-3 rounded-xl text-xs font-bold transition-all shrink-0 cursor-pointer shadow-md ${
                     registeredRounds[`${selectedContest.id}_${selectedContest.nextRound.id}`]
-                      ? "bg-emerald-100 text-emerald-800 border border-emerald-300"
-                      : "bg-[#0066CC] hover:bg-blue-700 text-white active:scale-98"
+                      ? "bg-emerald-600 text-white"
+                      : "bg-[#0050A0] hover:bg-blue-700 text-white"
                   }`}
                 >
                   {registeredRounds[`${selectedContest.id}_${selectedContest.nextRound.id}`]
-                    ? "Đã đăng ký nhận lịch ✓"
+                    ? "✓ Đã nhận thông báo"
                     : "Đăng ký nhận thông báo mở đề"}
                 </button>
               </div>
