@@ -27,7 +27,7 @@ import {
   Zap
 } from "lucide-react";
 
-// Mock Data for Grand Contests
+// Mock Data for Grand Contests (8 comprehensive contests to ensure rich pagination)
 const CONTESTS_DATA = [
   {
     id: "OLYMPIC_2026",
@@ -257,6 +257,143 @@ const CONTESTS_DATA = [
       advancementCondition: "Mở tự do cho tất cả học sinh toàn hệ thống.",
       isRegistered: false
     }
+  },
+  {
+    id: "ALGO_CUP_SUMMER",
+    title: "Cúp Lập trình Mùa hè Ôn Thi 360 Algo-Cup 2026",
+    editionLabel: "Mùa giải 2026",
+    category: "mini",
+    categoryLabel: "Mini-Contest Định kỳ",
+    season: "2026",
+    type: "contest",
+    status: "completed",
+    statusLabel: "Đã kết thúc",
+    statusStyle: "bg-slate-100 text-slate-700 border-slate-300",
+    tag: "⚡ Mini-Contest",
+    organizer: "Ban Chuyên môn Ôn Thi 360",
+    bannerImage: "/assets/contest-img-1.png",
+    totalPrize: "10.000.000đ + Huy hiệu Vinh danh",
+    targetAudience: "Học sinh THCS & THPT",
+    description: "Giải đấu khởi động mùa hè với các bài toán thuật toán ứng dụng thực tế.",
+    myOverallStatus: {
+      registered: true,
+      candidateId: "SBD-ALGO-220",
+      overallRank: "#12 / 1,800",
+      totalScore: 270
+    },
+    activeRound: null,
+    pastStats: {
+      userRounds: [
+        { name: "Chung kết Algo-Cup", score: 270, maxScore: 300, percentage: 90, rank: "#12", ac: "3/3 AC", date: "15/07/2026" }
+      ],
+      top5Valedictorians: [
+        { rank: 1, name: "Phạm Quốc Bảo", school: "THPT Chuyên Nguyễn Trãi", score: 300, time: "75'", medal: "🥇" },
+        { rank: 2, name: "Đỗ Gia Hưng", school: "THPT Chuyên Hùng Vương", score: 300, time: "92'", medal: "🥈" },
+        { rank: 3, name: "Bùi Thảo My", school: "THPT Chuyên Lê Khiết", score: 290, time: "110'", medal: "🥉" }
+      ]
+    },
+    nextRound: null
+  },
+  {
+    id: "TRAINING_CAMP_AUTUMN",
+    title: "Kỳ thi Tuyển chọn Trại Huấn luyện Mùa Thu 2026",
+    editionLabel: "Mùa giải 2026",
+    category: "national",
+    categoryLabel: "Đấu trường Quốc gia",
+    season: "2026",
+    type: "contest",
+    status: "upcoming",
+    statusLabel: "Sắp mở đăng ký ⏳",
+    statusStyle: "bg-amber-100 text-amber-800 border-amber-300",
+    tag: "🏆 Trại Huấn luyện",
+    organizer: "Ban Huấn luyện Đội tuyển & Ôn Thi 360",
+    bannerImage: "/assets/generated-practice-hero-v1.png",
+    totalPrize: "25.000.000đ + Học bổng Huấn luyện",
+    targetAudience: "Học sinh chuyên Tin định hướng thi Quốc gia",
+    description: "Kỳ thi đánh giá sau đợt tập huấn chuyên sâu các chủ đề đồ thị nâng cao và quy hoạch động quy mô lớn.",
+    myOverallStatus: null,
+    activeRound: null,
+    pastStats: {
+      userRounds: [],
+      top5Valedictorians: []
+    },
+    nextRound: {
+      id: "CAMP_R1",
+      roundNumber: 1,
+      title: "Kỳ thi Tuyển chọn Trại Huấn luyện",
+      targetDate: "05/11/2026 (Chủ nhật)",
+      scheduleTime: "08:00 – 12:00",
+      duration: "240 phút (4 bài toán)",
+      advancementCondition: "Mở đăng ký cho toàn bộ học sinh đạt từ 250 điểm ở các kỳ thi trước.",
+      isRegistered: false
+    }
+  },
+  {
+    id: "PYTHON_CHALLENGE_2026",
+    title: "Thử thách Lập trình Python & Cấu trúc Dữ liệu Trẻ",
+    editionLabel: "Mùa giải 2026",
+    category: "mini",
+    categoryLabel: "Mini-Contest Định kỳ",
+    season: "2026",
+    type: "contest",
+    status: "upcoming",
+    statusLabel: "Mở đăng ký",
+    statusStyle: "bg-blue-100 text-blue-800 border-blue-300",
+    tag: "⚡ Mini-Contest",
+    organizer: "CLB Lập trình Trẻ & Ôn Thi 360",
+    bannerImage: "/assets/generated-leaderboard-hero-v1.png",
+    totalPrize: "8.000.000đ + Khóa học chuyên sâu",
+    targetAudience: "Học sinh lớp 6-9 làm quen với lập trình",
+    description: "Sân chơi lập trình cơ bản bằng Python giúp học sinh phát triển tư duy thuật toán và giải quyết bài toán thực tế.",
+    myOverallStatus: null,
+    activeRound: null,
+    pastStats: { userRounds: [], top5Valedictorians: [] },
+    nextRound: {
+      id: "PY_R1",
+      roundNumber: 1,
+      title: "Vòng Tuyển chọn Trực tuyến",
+      targetDate: "12/11/2026",
+      scheduleTime: "19:00 – 21:00",
+      duration: "120 phút",
+      advancementCondition: "Mở tự do.",
+      isRegistered: false
+    }
+  },
+  {
+    id: "ACM_ICPC_JUNIOR",
+    title: "Đấu trường Lập trình ICPC Khối THPT Mở rộng 2026",
+    editionLabel: "Mùa giải 2025–2026",
+    category: "national",
+    categoryLabel: "Đấu trường Quốc gia",
+    season: "2025-2026",
+    type: "contest",
+    status: "completed",
+    statusLabel: "Đã kết thúc",
+    statusStyle: "bg-slate-100 text-slate-700 border-slate-300",
+    tag: "🏆 Chuẩn ICPC",
+    organizer: "Ban Chuyên môn ICPC & Ôn Thi 360",
+    bannerImage: "/assets/page-contests-hero.jpg",
+    totalPrize: "40.000.000đ + Cúp Vô địch",
+    targetAudience: "Đội thi THPT 3 thành viên",
+    description: "Đấu trường lập trình đồng đội chuẩn format ICPC quốc tế với bảng điểm trực tiếp đóng băng 60 phút cuối.",
+    myOverallStatus: {
+      registered: true,
+      candidateId: "TEAM-360-01",
+      overallRank: "#4 Toàn quốc",
+      totalScore: 400
+    },
+    activeRound: null,
+    pastStats: {
+      userRounds: [
+        { name: "Vòng Chung kết Quốc gia ICPC Junior", score: 400, maxScore: 500, percentage: 80, rank: "#4", ac: "4/5 AC", date: "20/06/2026" }
+      ],
+      top5Valedictorians: [
+        { rank: 1, name: "Team Amsterdam Stars", school: "THPT Chuyên Hà Nội - Amsterdam", score: 500, time: "180'", medal: "🥇" },
+        { rank: 2, name: "Team LHP Dragons", school: "THPT Chuyên Lê Hồng Phong", score: 480, time: "210'", medal: "🥈" },
+        { rank: 3, name: "Team KHTN Innovators", school: "THPT Chuyên KHTN", score: 450, time: "230'", medal: "🥉" }
+      ]
+    },
+    nextRound: null
   }
 ];
 
@@ -270,7 +407,7 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [seasonFilter, setSeasonFilter] = useState("all");
 
-  // Pagination
+  // Pagination Settings: 4 items per page so 8 items will show 2 pages
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 4;
 
@@ -868,51 +1005,51 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
             </div>
           )}
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-sky-100 shadow-2xs mt-1">
-              <span className="text-xs text-slate-500">
-                Hiển thị <strong>{(currentPage - 1) * itemsPerPage + 1}</strong> -{" "}
-                <strong>{Math.min(currentPage * itemsPerPage, filteredContests.length)}</strong> trên tổng số{" "}
-                <strong>{filteredContests.length}</strong> cuộc thi
-              </span>
+          {/* PHÂN TRANG (LUÔN LUÔN HIỂN THỊ RÕ RÀNG) */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-sky-100 shadow-2xs mt-2">
+            <span className="text-xs text-slate-500 font-medium">
+              Hiển thị <strong>{filteredContests.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</strong> -{" "}
+              <strong>{Math.min(currentPage * itemsPerPage, filteredContests.length)}</strong> trên tổng số{" "}
+              <strong>{filteredContests.length}</strong> cuộc thi
+            </span>
 
-              <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-sky-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                title="Trang trước"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
                 <button
+                  key={pageNum}
                   type="button"
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-sky-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`min-w-[32px] h-8 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    currentPage === pageNum
+                      ? "bg-[#0066CC] text-white shadow-sm"
+                      : "text-slate-600 hover:bg-sky-50"
+                  }`}
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  {pageNum}
                 </button>
+              ))}
 
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                  <button
-                    key={pageNum}
-                    type="button"
-                    onClick={() => setCurrentPage(pageNum)}
-                    className={`w-8 h-8 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                      currentPage === pageNum
-                        ? "bg-[#0066CC] text-white shadow-sm"
-                        : "text-slate-600 hover:bg-sky-50"
-                    }`}
-                  >
-                    {pageNum}
-                  </button>
-                ))}
-
-                <button
-                  type="button"
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                  className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-sky-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
+              <button
+                type="button"
+                disabled={currentPage === totalPages || filteredContests.length === 0}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-sky-50 disabled:opacity-40 disabled:cursor-not-allowed transition-all cursor-pointer"
+                title="Trang sau"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
-          )}
+          </div>
         </>
       )}
     </div>
