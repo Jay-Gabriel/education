@@ -1,5 +1,21 @@
 @import "tailwindcss";
 
+/*
+ * TYPOGRAPHY FOUNDATION
+ * Font sans của Tailwind phải trỏ đúng Be Vietnam Pro; nếu không lớp `font-sans`
+ * ở App sẽ ghi đè font thương hiệu bằng font hệ thống của trình duyệt.
+ */
+@theme {
+  --font-sans: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+:root {
+  --type-ink-heading: #123b68;
+  --type-ink-body: #536d86;
+  --type-ink-meta: #71869a;
+  --type-ink-action: #126f91;
+}
+
 @layer base {
   html, body, #root {
     overflow-x: hidden;
@@ -14,10 +30,710 @@
     font-family: 'Be Vietnam Pro', 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     color: #1a3865;
     background-color: #f4f8fc;
-    letter-spacing: -0.01em;
+    letter-spacing: 0;
   }
   h1, h2, h3, h4, h5, h6 {
-    letter-spacing: -0.012em;
-    color: #0b3c78;
+    letter-spacing: -0.018em;
+    color: var(--type-ink-heading);
+  }
+}
+
+/*
+ * THEME TOKENS
+ * Dark mode đổi theo toàn bộ surface chung, không tạo một panel tối riêng lẻ.
+ * Các nút hành động có màu thương hiệu đậm vẫn giữ nguyên để không mất affordance.
+ */
+html.theme-dark {
+  color-scheme: dark;
+  --type-ink-heading: #e6f1f7;
+  --type-ink-body: #b8cbd6;
+  --type-ink-meta: #8ea8b7;
+  --type-ink-action: #79d2df;
+}
+
+html.theme-dark body {
+  color: #dceaf0;
+  background-color: #12212b;
+}
+
+html.theme-dark .bg-white,
+html.theme-dark [class~="bg-white/95"],
+html.theme-dark [class~="bg-white/90"],
+html.theme-dark [class~="bg-white/80"],
+html.theme-dark [class~="bg-white/70"] {
+  background-color: #1b2d38;
+}
+
+html.theme-dark [class~="bg-[#EEF5FC]"],
+html.theme-dark [class~="bg-[#F8FAFB]"],
+html.theme-dark [class~="bg-[#F8FBFE]"],
+html.theme-dark [class~="bg-[#F0F6FC]"] {
+  background-color: #12212b;
+}
+
+/* Các surface pastel khai báo bằng màu tùy chỉnh cũng được gom về cùng thang tối. */
+html.theme-dark [class*="bg-[#F"],
+html.theme-dark [class*="bg-[#E"] {
+  background-color: #203b48;
+}
+
+html.theme-dark [class~="text-[#123B68]"],
+html.theme-dark [class~="text-[#0B3C78]"],
+html.theme-dark [class~="text-[#0050A0]"],
+html.theme-dark [class~="text-[#0066CC]"],
+html.theme-dark [class~="text-[#536D86]"],
+html.theme-dark [class~="text-[#71869A]"] {
+  color: #dceaf0;
+}
+
+html.theme-dark [class~="text-[#126F91]"],
+html.theme-dark [class~="text-[#2D7FA3]"] {
+  color: #84d4e2;
+}
+
+html.theme-dark .bg-slate-50,
+html.theme-dark .bg-slate-100,
+html.theme-dark [class~="bg-slate-50/80"],
+html.theme-dark [class~="bg-slate-50/60"],
+html.theme-dark [class~="bg-sky-50/50"],
+html.theme-dark [class~="bg-sky-50/40"],
+html.theme-dark [class~="bg-sky-50/60"],
+html.theme-dark .bg-sky-50,
+html.theme-dark .bg-blue-50,
+html.theme-dark .bg-emerald-50,
+html.theme-dark .bg-amber-50 {
+  background-color: #203b48;
+}
+
+html.theme-dark .text-slate-800,
+html.theme-dark .text-slate-700,
+html.theme-dark .text-slate-600 {
+  color: #dceaf0;
+}
+
+html.theme-dark .text-slate-500,
+html.theme-dark .text-slate-400 {
+  color: #9eb4c0;
+}
+
+html.theme-dark .text-slate-300 {
+  color: #c3d4dc;
+}
+
+html.theme-dark .text-blue-700,
+html.theme-dark .text-blue-600,
+html.theme-dark .text-sky-700,
+html.theme-dark .text-sky-600 {
+  color: #84d4e2;
+}
+
+html.theme-dark .text-emerald-700,
+html.theme-dark .text-green-700 {
+  color: #86dfb0;
+}
+
+html.theme-dark .text-amber-700,
+html.theme-dark .text-amber-600 {
+  color: #f2c778;
+}
+
+html.theme-dark .border-slate-100,
+html.theme-dark .border-slate-200,
+html.theme-dark .border-sky-100,
+html.theme-dark .border-sky-200,
+html.theme-dark .border-blue-100,
+html.theme-dark .border-blue-200 {
+  border-color: #34505e;
+}
+
+html.theme-dark input,
+html.theme-dark textarea,
+html.theme-dark select {
+  color: #e6f1f7;
+  background-color: #172a35;
+  border-color: #3b5b69;
+}
+
+html.theme-dark input::placeholder,
+html.theme-dark textarea::placeholder {
+  color: #88a1af;
+}
+
+html.theme-dark .shadow-xl,
+html.theme-dark .shadow-2xl {
+  --tw-shadow-color: rgb(0 0 0 / 0.28);
+}
+
+/* Không gian học tập: summary là một surface định hướng, không cạnh tranh với KPI. */
+.student-dashboard-summary,
+.teacher-dashboard-summary,
+.parent-dashboard-summary {
+  background-color: #f7fbfd;
+}
+
+.student-dashboard-next {
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.student-dashboard-next:hover {
+  border-color: #b9dbe3;
+  background-color: #f2f9fb;
+}
+
+html.theme-dark .student-dashboard-summary,
+html.theme-dark .teacher-dashboard-summary,
+html.theme-dark .parent-dashboard-summary {
+  background-color: #1b2d38;
+}
+
+html.theme-dark .student-dashboard-next:hover {
+  border-color: #4b7480;
+  background-color: #254550;
+}
+
+/* Phòng làm bài: đề và khu vực nộp bài có hai surface riêng nhưng cùng nhịp theme. */
+.workspace-statement-panel {
+  background-color: #f5f9fc;
+}
+
+.workspace-answer-panel {
+  background-color: #eaf4f5;
+}
+
+/* Thang chữ chung của phòng làm bài: micro-copy không bị quá nhỏ, nhưng code
+ * và các tiêu đề chính vẫn giữ kích thước riêng để không làm layout phình ra. */
+.workspace-shell [class~="text-[9px]"] {
+  font-size: 0.625rem;
+}
+
+.workspace-shell [class~="text-[10px]"] {
+  font-size: 0.6875rem;
+}
+
+.workspace-shell [class~="text-[10.5px]"] {
+  font-size: 0.71875rem;
+}
+
+.workspace-shell [class~="text-[11px]"] {
+  font-size: 0.75rem;
+}
+
+.workspace-shell [class~="text-[11.5px]"] {
+  font-size: 0.78125rem;
+}
+
+.workspace-split-grid {
+  --workspace-split: 50%;
+}
+
+.workspace-split-divider {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--workspace-split) - 0.375rem);
+  width: 0.75rem;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+}
+
+.workspace-split-divider::before {
+  position: absolute;
+  inset: 0.75rem 0.3rem;
+  border-left: 1px solid #c7dce2;
+  border-right: 1px solid #c7dce2;
+  border-radius: 0.5rem;
+  content: "";
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.workspace-split-divider span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  width: 1.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border: 1px solid #c7dce2;
+  border-radius: 0.65rem;
+  background: #f8fbfc;
+  color: #6d8a97;
+  box-shadow: 0 2px 8px rgb(18 59 104 / 0.08);
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+
+.workspace-split-divider:hover span,
+.workspace-split-divider:focus-visible span {
+  border-color: #55a8bc;
+  background: #eaf6f8;
+  color: #126f91;
+}
+
+.workspace-split-divider:focus-visible {
+  outline: none;
+}
+
+.workspace-is-resizing,
+.workspace-is-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+@media (min-width: 1024px) {
+  .workspace-split-grid {
+    grid-template-columns: minmax(0, var(--workspace-split)) minmax(0, calc(100% - var(--workspace-split)));
+  }
+}
+
+.workspace-activity-item {
+  background-color: #ffffff;
+  transition: background-color 160ms ease, border-color 160ms ease;
+}
+
+.workspace-activity-item:hover {
+  border-color: #b9d9e0;
+  background-color: #fbfdfe;
+}
+
+.workspace-runner-modal {
+  background-color: #ffffff;
+  color: #536d86;
+  box-shadow: 0 24px 70px rgb(18 59 104 / 0.22);
+}
+
+.workspace-runner-result {
+  background-color: #f7fafb;
+}
+
+.workspace-runner-modal :is(input, textarea, select) {
+  min-width: 0;
+  transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+}
+
+.workspace-runner-modal :is(input, textarea, select):focus {
+  outline: none;
+  border-color: #55a8bc;
+  box-shadow: 0 0 0 3px rgb(85 168 188 / 0.16);
+}
+
+.workspace-runner-modal textarea {
+  min-height: 2.75rem;
+  tab-size: 4;
+}
+
+.workspace-runner-mode {
+  background-color: #f1f5f7;
+}
+
+.workspace-runner-output {
+  max-height: 22rem;
+}
+
+.workspace-runner-empty {
+  min-height: 12rem;
+}
+
+.workspace-result-modal {
+  color: #536d86;
+  box-shadow: 0 18px 48px rgb(18 59 104 / 0.18);
+}
+
+.workspace-result-hero {
+  background-color: #fbfdfe;
+}
+
+.workspace-result-hero-success {
+  border-color: #d4eadc;
+}
+
+.workspace-result-hero-failure {
+  border-color: #efd9dc;
+  background-color: #fffdfd;
+}
+
+.workspace-result-score-block {
+  border-color: #dce9ed;
+}
+
+.workspace-result-stat-strip {
+  border-color: #e1ecef;
+}
+
+.workspace-result-test {
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.workspace-result-test:hover {
+  border-color: #9bcbd4;
+}
+
+.workspace-result-test-pass {
+  border-left-width: 3px;
+  border-left-color: #8bc5a5 !important;
+  background-color: #fcfefd !important;
+}
+
+.workspace-result-test-fail {
+  border-left-width: 3px;
+  border-left-color: #d7a0a0 !important;
+  background-color: #fffdfd !important;
+}
+
+.workspace-code-surface {
+  background-color: #f1f5f7;
+  border-color: #d4e1e6;
+}
+
+.workspace-code-preview {
+  color: #243b4a;
+  font-variant-ligatures: none;
+}
+
+.code-token-plain {
+  color: #243b4a;
+}
+
+.code-token-keyword {
+  color: #0f607e;
+  font-weight: 700;
+}
+
+.code-token-string {
+  color: #9a5f4a;
+}
+
+.code-token-number {
+  color: #956f2d;
+  font-weight: 600;
+}
+
+.code-token-function {
+  color: #32745f;
+  font-weight: 600;
+}
+
+.code-token-comment {
+  color: #748792;
+  font-style: italic;
+}
+
+.code-token-preprocessor {
+  color: #6d638e;
+  font-weight: 600;
+}
+
+.code-highlight-input {
+  color: transparent;
+}
+
+html.theme-dark .workspace-statement-panel {
+  background-color: #162832;
+}
+
+html.theme-dark .workspace-answer-panel {
+  background-color: #203a44;
+}
+
+html.theme-dark .workspace-split-divider::before {
+  border-color: #456471;
+}
+
+html.theme-dark .workspace-split-divider span {
+  border-color: #456471;
+  background: #1b3039;
+  color: #9eb4c0;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.22);
+}
+
+html.theme-dark .workspace-split-divider:hover span,
+html.theme-dark .workspace-split-divider:focus-visible span {
+  border-color: #79d2df;
+  background: #203b48;
+  color: #84d4e2;
+}
+
+html.theme-dark .workspace-activity-item {
+  background-color: #1b3039;
+  border-color: #34505e;
+}
+
+html.theme-dark .workspace-activity-item:hover {
+  border-color: #4a707d;
+  background-color: #203b48;
+}
+
+html.theme-dark .workspace-activity-log [class~="bg-rose-50"] {
+  background-color: #3a2830;
+}
+
+html.theme-dark .workspace-activity-log [class~="text-rose-700"] {
+  color: #ffb7be;
+}
+
+html.theme-dark .workspace-runner-modal {
+  background-color: #1b3039;
+  color: #b8cbd6;
+  box-shadow: 0 24px 70px rgb(0 0 0 / 0.42);
+}
+
+html.theme-dark .workspace-runner-result {
+  background-color: #162832;
+}
+
+html.theme-dark .workspace-runner-mode {
+  background-color: #172a35;
+}
+
+html.theme-dark .workspace-runner-error {
+  border-color: #71434d;
+  background-color: #3a2830;
+  color: #ffb7be;
+}
+
+html.theme-dark .workspace-runner-output {
+  border-color: #3b6b5d;
+  background-color: #1f3a35;
+  color: #a9e4bd;
+}
+
+html.theme-dark .workspace-result-modal {
+  background-color: #1b3039;
+  color: #b8cbd6;
+  box-shadow: 0 18px 48px rgb(0 0 0 / 0.36);
+}
+
+html.theme-dark .workspace-result-hero {
+  background-color: #1e343d;
+}
+
+html.theme-dark .workspace-result-hero-success {
+  border-color: #3b6b5d;
+}
+
+html.theme-dark .workspace-result-hero-failure {
+  border-color: #71434d;
+  background-color: #382a30;
+}
+
+html.theme-dark .workspace-result-score-block,
+html.theme-dark .workspace-result-stat-strip {
+  border-color: #34505e;
+}
+
+html.theme-dark .workspace-result-test:hover {
+  border-color: #4a707d;
+}
+
+html.theme-dark .workspace-result-modal [class~="bg-sky-50/70"] {
+  border-color: #3b6673;
+  background-color: #203b48;
+}
+
+html.theme-dark .workspace-result-modal [class~="bg-emerald-50/70"],
+html.theme-dark .workspace-result-modal [class~="bg-emerald-50/50"] {
+  border-color: #3b6b5d;
+  background-color: #1d3731;
+}
+
+html.theme-dark .workspace-result-modal [class~="bg-rose-50/70"],
+html.theme-dark .workspace-result-modal [class~="bg-rose-50/50"] {
+  border-color: #71434d;
+  background-color: #382a30;
+}
+
+html.theme-dark .workspace-result-modal [class~="bg-emerald-100"] {
+  background-color: #2a594a;
+}
+
+html.theme-dark .workspace-result-modal [class~="bg-rose-100"] {
+  background-color: #663b45;
+}
+
+html.theme-dark .workspace-result-modal [class~="text-rose-700"] {
+  color: #ffb7be;
+}
+
+html.theme-dark .workspace-result-modal [class~="bg-rose-50"] {
+  background-color: #382a30;
+}
+
+html.theme-dark .workspace-result-test-pass {
+  border-left-color: #70b693 !important;
+  background-color: #1d3731 !important;
+}
+
+html.theme-dark .workspace-result-test-fail {
+  border-left-color: #c9848d !important;
+  background-color: #382a30 !important;
+}
+
+html.theme-dark .workspace-code-surface {
+  background-color: #16232b;
+  border-color: #3b515d;
+}
+
+html.theme-dark .workspace-code-preview,
+html.theme-dark .workspace-code-preview code,
+html.theme-dark .code-token-plain {
+  color: #e8f0f1;
+}
+
+html.theme-dark .code-token-keyword {
+  color: #8fd3e0;
+  font-weight: 800;
+}
+
+html.theme-dark .code-token-string {
+  color: #e6b58e;
+}
+
+html.theme-dark .code-token-number {
+  color: #d8c47b;
+}
+
+html.theme-dark .code-token-function {
+  color: #a9d39c;
+}
+
+html.theme-dark .code-token-comment {
+  color: #8aa1a6;
+}
+
+html.theme-dark .code-token-preprocessor {
+  color: #c1b2e7;
+}
+
+html.theme-dark .code-highlight-input {
+  color: transparent;
+  background-color: transparent;
+  caret-color: #8fd3e0;
+}
+
+/*
+ * TYPE SCALE TRANG CHỦ
+ * display 42 → hero 18 → section 15/16 → card 12 → body 12 → meta 10.
+ * Chỉ nội dung phụ mới dùng 10px; không dùng chữ nhỏ hơn 10px.
+ */
+.type-hero-brand {
+  font-size: clamp(2rem, 3vw, 2.625rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.035em;
+}
+
+.type-hero-title {
+  font-size: clamp(0.9375rem, 1.25vw, 1.125rem);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.018em;
+}
+
+.type-section-title {
+  font-size: clamp(0.875rem, 1.05vw, 1rem);
+  font-weight: 800;
+  line-height: 1.35;
+  letter-spacing: -0.016em;
+  color: var(--type-ink-heading);
+}
+
+.type-card-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.008em;
+  color: var(--type-ink-heading);
+}
+
+.type-card-title-compact {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.006em;
+  color: var(--type-ink-heading);
+}
+
+.type-body {
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0;
+  color: var(--type-ink-body);
+}
+
+.type-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0;
+}
+
+.type-meta {
+  font-size: 0.625rem;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0;
+  color: var(--type-ink-meta);
+}
+
+.type-action {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.004em;
+}
+
+/* Form đăng nhập/đăng ký dùng cỡ chữ thao tác 12px để label và liên kết
+ * không bị chìm trên nền sáng, đồng thời vẫn nhỏ hơn tiêu đề form. */
+.auth-eyebrow {
+  font-size: 0.6875rem;
+  line-height: 1.35;
+}
+
+.auth-form-label {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.auth-form-helper,
+.auth-form-action {
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+/* Footer cần cỡ chữ nhỉnh hơn card vì nằm ở cuối trang và có nhiều liên kết. */
+.type-footer-heading {
+  font-size: 0.875rem;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--type-ink-heading);
+}
+
+.type-footer-link {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+
+.type-footer-meta {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: 0;
+}
+
+/* Người dùng giảm chuyển động vẫn giữ được trạng thái và nội dung, chỉ bỏ hiệu ứng dư thừa. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
   }
 }

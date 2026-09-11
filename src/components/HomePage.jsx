@@ -12,136 +12,378 @@ import {
   ChevronRight,
   ChevronLeft,
   Calendar,
+  Bell,
   CheckCircle2,
   HelpCircle,
   Headphones,
   Heart,
   Target,
   GraduationCap,
+  LockKeyhole,
   Sparkles,
   Award
 } from "lucide-react";
 
+const SYSTEM_NOTICES = [
+  {
+    category: "Kỳ thi",
+    message: "Kỳ thi HSG Tin học cấp tỉnh năm học 2025–2026 sắp diễn ra. Hãy chuẩn bị thật tốt!",
+    surfaceClass: "from-[#FFF9E6] via-[#FCFBF5] to-[#F1F7FC]",
+    borderClass: "border-amber-200/80",
+    accentClass: "bg-amber-300",
+    categoryClass: "border-amber-200 bg-amber-50 text-amber-800",
+    iconClass: "text-amber-500"
+  },
+  {
+    category: "Lịch học",
+    message: "Lịch học lớp Toán Tin 10A1 tuần này đã được cập nhật. Xem lịch để không bỏ lỡ buổi học.",
+    surfaceClass: "from-[#EFF8FF] via-[#F7FBFE] to-[#F2F8F6]",
+    borderClass: "border-sky-200/80",
+    accentClass: "bg-sky-400",
+    categoryClass: "border-sky-200 bg-sky-50 text-sky-800",
+    iconClass: "text-sky-500"
+  },
+  {
+    category: "Bài tập mới",
+    message: "Bài tập mới: Cấu trúc dữ liệu cơ bản đã sẵn sàng trong mục Luyện tập.",
+    surfaceClass: "from-[#EEF9F5] via-[#F8FCFB] to-[#F2F7FD]",
+    borderClass: "border-emerald-200/80",
+    accentClass: "bg-emerald-400",
+    categoryClass: "border-emerald-200 bg-emerald-50 text-emerald-800",
+    iconClass: "text-emerald-500"
+  }
+];
+
+const JOURNEY_ROLE_VIEWS = {
+  student: {
+    label: "Học sinh",
+    icon: GraduationCap,
+    iconClass: "text-[#2D7FA3]",
+    progress: 65,
+    progressLabel: "Tiến độ tổng thể",
+    nextLabel: "Tiếp tục học",
+    nextTitle: "Bài 12: Cấu trúc dữ liệu và giải thuật",
+    nextMeta: "Còn khoảng 18 phút",
+    stats: [
+      { value: "12", label: "Bài đã xong", valueClass: "text-[#3E79A4]" },
+      { value: "8", label: "Đang học", valueClass: "text-[#3B9374]" },
+      { value: "3", label: "Chưa học", valueClass: "text-[#AF7C32]" }
+    ]
+  },
+  parent: {
+    label: "Phụ huynh",
+    icon: Heart,
+    iconClass: "text-[#4C88A1]",
+    contextLabel: "Con đang theo dõi",
+    contexts: [
+      {
+        label: "Tất cả 2 con",
+        progress: 78,
+        progressLabel: "Tiến độ trung bình của các con",
+        nextLabel: "Cần đồng hành",
+        nextTitle: "Minh Anh đã hoàn thành 4 bài trong tuần",
+        nextMeta: "Minh Anh · Lớp 10A1 · Cập nhật hôm nay",
+        stats: [
+          { value: "7", label: "Bài tuần này", valueClass: "text-[#3E79A4]" },
+          { value: "89%", label: "Đúng trung bình", valueClass: "text-[#3B9374]" },
+          { value: "2", label: "Cần hỗ trợ", valueClass: "text-[#AF7C32]" }
+        ]
+      },
+      {
+        label: "Minh Anh · 10A1",
+        progress: 82,
+        progressLabel: "Tiến độ của Minh Anh",
+        nextLabel: "Cần đồng hành",
+        nextTitle: "Đã hoàn thành 4 bài trong tuần",
+        nextMeta: "Lớp 10A1 · Cập nhật hôm nay",
+        stats: [
+          { value: "4", label: "Bài tuần này", valueClass: "text-[#3E79A4]" },
+          { value: "92%", label: "Đúng trung bình", valueClass: "text-[#3B9374]" },
+          { value: "5h20", label: "Thời gian học", valueClass: "text-[#AF7C32]" }
+        ]
+      },
+      {
+        label: "Gia Hân · 7A2",
+        progress: 74,
+        progressLabel: "Tiến độ của Gia Hân",
+        nextLabel: "Gợi ý đồng hành",
+        nextTitle: "Ôn lại 2 bài trước khi sang chuyên đề mới",
+        nextMeta: "Lớp 7A2 · Cập nhật hôm qua",
+        stats: [
+          { value: "3", label: "Bài tuần này", valueClass: "text-[#3E79A4]" },
+          { value: "86%", label: "Đúng trung bình", valueClass: "text-[#3B9374]" },
+          { value: "1", label: "Cần hỗ trợ", valueClass: "text-[#AF7C32]" }
+        ]
+      }
+    ]
+  },
+  teacher: {
+    label: "Giáo viên",
+    icon: Users,
+    iconClass: "text-[#5B77A8]",
+    contextLabel: "Lớp đang quản lý",
+    contexts: [
+      {
+        label: "Tất cả 4 lớp",
+        progress: 84,
+        progressLabel: "Tiến độ trung bình các lớp",
+        nextLabel: "Cần theo dõi",
+        nextTitle: "9 học sinh cần hỗ trợ ở chuyên đề hiện tại",
+        nextMeta: "4 lớp · Báo cáo cập nhật hôm nay",
+        stats: [
+          { value: "126", label: "Học sinh", valueClass: "text-[#3E79A4]" },
+          { value: "84%", label: "Hoàn thành", valueClass: "text-[#3B9374]" },
+          { value: "18", label: "Bài chờ chấm", valueClass: "text-[#AF7C32]" }
+        ]
+      },
+      {
+        label: "10A1 · Toán Tin",
+        progress: 84,
+        progressLabel: "Tiến độ lớp 10A1",
+        nextLabel: "Cần theo dõi",
+        nextTitle: "3 học sinh cần hỗ trợ ở chuyên đề hiện tại",
+        nextMeta: "32 học sinh · Xem báo cáo lớp",
+        stats: [
+          { value: "32", label: "Học sinh", valueClass: "text-[#3E79A4]" },
+          { value: "84%", label: "Hoàn thành", valueClass: "text-[#3B9374]" },
+          { value: "6", label: "Bài chờ chấm", valueClass: "text-[#AF7C32]" }
+        ]
+      },
+      {
+        label: "10A2 · Cơ bản",
+        progress: 76,
+        progressLabel: "Tiến độ lớp 10A2",
+        nextLabel: "Cần theo dõi",
+        nextTitle: "4 học sinh chưa hoàn thành bài tuần này",
+        nextMeta: "30 học sinh · Xem báo cáo lớp",
+        stats: [
+          { value: "30", label: "Học sinh", valueClass: "text-[#3E79A4]" },
+          { value: "76%", label: "Hoàn thành", valueClass: "text-[#3B9374]" },
+          { value: "5", label: "Bài chờ chấm", valueClass: "text-[#AF7C32]" }
+        ]
+      },
+      {
+        label: "11A1 · Chuyên đề",
+        progress: 88,
+        progressLabel: "Tiến độ lớp 11A1",
+        nextLabel: "Cần theo dõi",
+        nextTitle: "2 học sinh cần bổ sung phần bài tập nâng cao",
+        nextMeta: "36 học sinh · Xem báo cáo lớp",
+        stats: [
+          { value: "36", label: "Học sinh", valueClass: "text-[#3E79A4]" },
+          { value: "88%", label: "Hoàn thành", valueClass: "text-[#3B9374]" },
+          { value: "4", label: "Bài chờ chấm", valueClass: "text-[#AF7C32]" }
+        ]
+      },
+      {
+        label: "12A1 · Ôn HSG",
+        progress: 91,
+        progressLabel: "Tiến độ lớp 12A1",
+        nextLabel: "Cần theo dõi",
+        nextTitle: "2 học sinh sắp chạm mốc đội tuyển",
+        nextMeta: "28 học sinh · Xem báo cáo lớp",
+        stats: [
+          { value: "28", label: "Học sinh", valueClass: "text-[#3E79A4]" },
+          { value: "91%", label: "Hoàn thành", valueClass: "text-[#3B9374]" },
+          { value: "3", label: "Bài chờ chấm", valueClass: "text-[#AF7C32]" }
+        ]
+      }
+    ]
+  }
+};
+
+/**
+ * SƠ ĐỒ KHỐI TRANG CHỦ — dùng các mã dưới đây khi yêu cầu AI chỉnh giao diện:
+ * HOME-01: Thanh thông báo hệ thống.
+ * HOME-02: Menu trái (điều hướng, banner, thẻ giáo viên).
+ * HOME-03: Hero/banner trình chiếu chính.
+ * HOME-04: Bộ chọn lớp, mục tiêu và nút tìm kiếm.
+ * HOME-05: Chương trình nổi bật / lộ trình học.
+ * HOME-06: Không gian học tập — tiến độ theo vai trò, yêu cầu đăng nhập.
+ * HOME-07: Bảng xếp hạng / thông báo.
+ * HOME-08: Tài liệu nổi bật ở sidebar phải.
+ * HOME-09: Cuộc thi & khảo sát ở sidebar phải.
+ * HOME-10: Câu chuyện đồng hành.
+ * HOME-11: Câu hỏi thường gặp và hỗ trợ toàn chiều ngang.
+ */
 export default function HomePage({
   onNavigate,
   onOpenClassDetail,
   onOpenActivation,
+  onOpenAccess,
   onOpenCodeWorkspace,
   selectedGrade,
   setSelectedGrade,
   selectedGoal,
-  setSelectedGoal
+  setSelectedGoal,
+  userRole = "guest"
 }) {
-  const [activeDocTab, setActiveDocTab] = useState("Sách");
   const [openFaq, setOpenFaq] = useState(null);
   const [mainSectionTab, setMainSectionTab] = useState("courses");
   const [isMainTabPaused, setIsMainTabPaused] = useState(false);
+  const [courseCarouselIndex, setCourseCarouselIndex] = useState(0);
+  const [pathCarouselIndex, setPathCarouselIndex] = useState(0);
   const [sidebarTab, setSidebarTab] = useState("leaderboard");
+  const [systemNoticeIndex, setSystemNoticeIndex] = useState(0);
+  const [isSystemNoticePaused, setIsSystemNoticePaused] = useState(false);
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+  const activeSystemNotice = SYSTEM_NOTICES[systemNoticeIndex];
+  const initialJourneyRole = userRole === "parent" || userRole === "teacher" ? userRole : "student";
+  const [journeyRole, setJourneyRole] = useState(initialJourneyRole);
+  const [journeyContextIndex, setJourneyContextIndex] = useState(0);
+  const activeJourney = JOURNEY_ROLE_VIEWS[journeyRole];
+  const activeJourneyData = activeJourney.contexts?.[journeyContextIndex] || activeJourney;
+  const isGuest = userRole === "guest";
 
   // Slideshow State
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [isSlidePaused, setIsSlidePaused] = useState(false);
 
+  // Tôn trọng tùy chọn giảm chuyển động của hệ điều hành cho mọi nội dung tự chạy.
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const syncMotionPreference = () => setPrefersReducedMotion(mediaQuery.matches);
+    syncMotionPreference();
+    mediaQuery.addEventListener?.("change", syncMotionPreference);
+    return () => mediaQuery.removeEventListener?.("change", syncMotionPreference);
+  }, []);
+
   const heroSlides = [
     {
       id: "hsg",
-      tabTitle: "Giải cao HSG",
+      tabTitle: "Giải HSG",
       tag: "🏆 Đấu trường đỉnh cao",
       tagStyle: "bg-amber-100/90 text-amber-800 border-amber-300",
-      subtitle: "Luyện thi Tin học – Đồng hành cùng bạn chinh phục giải HSG & Olympic Tin học",
-      badges: ["HSG Tin học lớp 9", "HSG Quốc gia lớp 12", "Olympic Tin học", "Bồi dưỡng đội tuyển"],
+      subtitle: "Chinh phục HSG & Olympic Tin học",
+      description: "Học theo chuyên đề trọng tâm, luyện đề phân cấp và từng bước tiến tới đội tuyển.",
+      panelStyle: "border-[#EBCF73] bg-gradient-to-br from-[#FFF2BA]/94 via-[#FFF9E2]/92 to-white/86",
+      panelIconStyle: "border-[#E8C75D] bg-[#FFE89A] text-[#9A6508]",
+      itemIconStyle: "bg-[#FFF0B8] text-[#A86D08]",
+      panelIcon: Trophy,
+      highlights: [
+        { label: "HSG Tin học lớp 9", icon: BookOpen },
+        { label: "HSG Quốc gia lớp 12", icon: Trophy },
+        { label: "Olympic Tin học", icon: Code },
+        { label: "Bồi dưỡng đội tuyển", icon: Award }
+      ],
       defaultGoal: "Luyện thi HSG Tin học lớp 9",
-      bgImage: "/assets/hero-banner-hsg.jpg",
-      floatingCard: {
-        icon: "🥇",
-        title: "Giải Nhất HSG Quốc gia 2025",
-        desc: "Điểm tuyệt đối phần Quy hoạch động & Đồ thị",
-        badge: "Top 1 Toàn quốc"
-      }
+      bgImage: "/assets/hero-banner-hsg.jpg"
     },
     {
       id: "chuyen-tin",
-      tabTitle: "Đỗ Chuyên Tin",
+      tabTitle: "Chuyên Tin",
       tag: "🎯 Mục tiêu trường Chuyên",
       tagStyle: "bg-blue-100/90 text-blue-800 border-blue-300",
-      subtitle: "Luyện thi vào lớp 10 Chuyên Tin – Tự tin đỗ trường Chuyên top đầu cả nước",
-      badges: ["Chuyên Khoa Học Tự Nhiên", "Chuyên Sư Phạm", "Chuyên Amsterdam", "Chuyên Tin các tỉnh"],
+      subtitle: "Tự tin đỗ lớp 10 Chuyên Tin",
+      description: "Củng cố thuật toán, rèn kỹ năng làm bài và luyện đề theo từng trường mục tiêu.",
+      panelStyle: "border-[#AFCFED] bg-gradient-to-br from-[#DDEEFF]/94 via-[#EEF7FF]/92 to-white/86",
+      panelIconStyle: "border-[#A5C9EA] bg-[#CFE8FF] text-[#17669E]",
+      itemIconStyle: "bg-[#DBEEFF] text-[#176AAB]",
+      panelIcon: Target,
+      highlights: [
+        { label: "Chuyên KHTN", icon: Code },
+        { label: "Chuyên Sư phạm", icon: BookOpen },
+        { label: "Chuyên Amsterdam", icon: Target },
+        { label: "Chuyên tỉnh/TP", icon: GraduationCap }
+      ],
       defaultGoal: "Luyện thi vào lớp 10 chuyên Tin",
-      bgImage: "/assets/hero-banner-chuyen.jpg",
-      floatingCard: {
-        icon: "🎓",
-        title: "Thủ khoa Chuyên KHTN & CSP",
-        desc: "Tự tin đỗ lớp 10 chuyên thuật toán & C++",
-        badge: "Đỗ Chuyên 100%"
-      }
+      bgImage: "/assets/hero-banner-chuyen.jpg"
     },
     {
       id: "tot-nghiep",
-      tabTitle: "Điểm cao Tốt nghiệp",
+      tabTitle: "Tốt nghiệp 9+",
       tag: "⚡ Bứt phá điểm 9+",
       tagStyle: "bg-emerald-100/90 text-emerald-800 border-emerald-300",
-      subtitle: "Tổng ôn cấp tốc THPT – Chinh phục điểm 9+ môn Tin học kỳ thi Tốt nghiệp 2025–2026",
-      badges: ["Điểm 9+ THPT môn Tin", "100+ Đề thi thử trắc nghiệm", "Lý thuyết trọng tâm", "Chấm điểm tự động"],
+      subtitle: "Bứt phá điểm 9+ môn Tin học",
+      description: "Hệ thống hóa lý thuyết, luyện đề bám cấu trúc kỳ thi 2025–2026 và theo dõi tiến bộ.",
+      panelStyle: "border-[#A9DDC9] bg-gradient-to-br from-[#D9F6EA]/94 via-[#ECFBF5]/92 to-white/86",
+      panelIconStyle: "border-[#98D7BE] bg-[#C9EFDF] text-[#14785A]",
+      itemIconStyle: "bg-[#D8F4E8] text-[#168062]",
+      panelIcon: BarChart2,
+      highlights: [
+        { label: "Mục tiêu 9+", icon: Target },
+        { label: "100+ đề bám cấu trúc", icon: FileText },
+        { label: "Lý thuyết trọng tâm", icon: BookOpen },
+        { label: "Chấm điểm tự động", icon: BarChart2 }
+      ],
       defaultGoal: "Ôn thi tốt nghiệp môn Tin học",
-      bgImage: "/assets/hero-banner-totnghiep.jpg",
-      floatingCard: {
-        icon: "💯",
-        title: "10/10 Điểm Tin Tốt Nghiệp THPT",
-        desc: "Nắm chắc 100% ma trận & định dạng đề thi mới",
-        badge: "Thủ khoa A00 / B00"
-      }
+      bgImage: "/assets/hero-banner-totnghiep.jpg"
     },
     {
       id: "du-hoc",
-      tabTitle: "Phỏng vấn du học",
+      tabTitle: "Du học & AP CS",
       tag: "✈️ Vươn ra thế giới",
       tagStyle: "bg-purple-100/90 text-purple-800 border-purple-300",
-      subtitle: "Luyện thuật toán quốc tế AP CS & USACO – Tự tin phỏng vấn học bổng Du học ngành Tech",
-      badges: ["USACO Bronze / Silver / Gold", "AP Computer Science A", "Portfolio Tech quốc tế", "Học bổng Du học $50k+"],
+      subtitle: "Sẵn sàng cho AP CS, USACO & học bổng",
+      description: "Xây nền thuật toán, luyện chuẩn quốc tế và hoàn thiện hồ sơ công nghệ có định hướng.",
+      panelStyle: "border-[#CDBDEB] bg-gradient-to-br from-[#E9E0FA]/94 via-[#F5F0FF]/92 to-white/86",
+      panelIconStyle: "border-[#C7B4E8] bg-[#DFD1F6] text-[#7050A5]",
+      itemIconStyle: "bg-[#EBE2FA] text-[#7653AD]",
+      panelIcon: GraduationCap,
+      highlights: [
+        { label: "USACO Bronze–Gold", icon: Code },
+        { label: "AP Computer Science A", icon: BookOpen },
+        { label: "Portfolio công nghệ", icon: FileText },
+        { label: "Định hướng học bổng", icon: GraduationCap }
+      ],
       defaultGoal: "Học trước chương trình Tin học để du học",
-      bgImage: "/assets/hero-banner-duhoc.jpg",
-      floatingCard: {
-        icon: "🌐",
-        title: "Học bổng $50,000 Đại học Mỹ",
-        desc: "USACO Gold Division & AP CS điểm 5/5",
-        badge: "Tech Scholarship"
-      }
+      bgImage: "/assets/hero-banner-duhoc.jpg"
     }
   ];
 
   // Auto-play slideshow timer
   useEffect(() => {
-    if (isSlidePaused) return;
+    if (isSlidePaused || prefersReducedMotion) return;
     const timer = setInterval(() => {
       setCurrentSlideIndex((prev) => (prev + 1) % heroSlides.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, [isSlidePaused, heroSlides.length]);
+  }, [isSlidePaused, prefersReducedMotion, heroSlides.length]);
+
+  // Đồng bộ mục tiêu bên dưới với nội dung hero, kể cả khi slideshow tự chuyển.
+  useEffect(() => {
+    setSelectedGoal(heroSlides[currentSlideIndex].defaultGoal);
+  }, [currentSlideIndex, setSelectedGoal]);
 
   // Auto-switch Main Section Tab
   useEffect(() => {
-    if (isMainTabPaused) return;
+    if (isMainTabPaused || prefersReducedMotion) return;
     const mainTabTimer = setInterval(() => {
       setMainSectionTab((prev) => (prev === "courses" ? "path" : "courses"));
     }, 6000);
     return () => clearInterval(mainTabTimer);
-  }, [isMainTabPaused]);
+  }, [isMainTabPaused, prefersReducedMotion]);
+
+  // HOME-01 tự chuyển thông báo định kỳ; tạm dừng khi rê chuột để người dùng đọc dễ hơn.
+  useEffect(() => {
+    if (isSystemNoticePaused || prefersReducedMotion) return;
+    const noticeTimer = setInterval(() => {
+      setSystemNoticeIndex((prev) => (prev + 1) % SYSTEM_NOTICES.length);
+    }, 5200);
+    return () => clearInterval(noticeTimer);
+  }, [isSystemNoticePaused, prefersReducedMotion]);
+
+  // Đồng bộ tab hành trình với vai trò đang chọn ở menu người dùng; vẫn cho phép xem thử từng vai trò.
+  useEffect(() => {
+    setJourneyRole(userRole === "parent" || userRole === "teacher" ? userRole : "student");
+  }, [userRole]);
+
+  useEffect(() => {
+    setJourneyContextIndex(0);
+  }, [journeyRole]);
 
   const handleSelectSlide = (index) => {
     setCurrentSlideIndex(index);
-    setSelectedGoal(heroSlides[index].defaultGoal);
   };
 
   const handlePrevSlide = () => {
     const nextIdx = (currentSlideIndex - 1 + heroSlides.length) % heroSlides.length;
     setCurrentSlideIndex(nextIdx);
-    setSelectedGoal(heroSlides[nextIdx].defaultGoal);
   };
 
   const handleNextSlide = () => {
     const nextIdx = (currentSlideIndex + 1) % heroSlides.length;
     setCurrentSlideIndex(nextIdx);
-    setSelectedGoal(heroSlides[nextIdx].defaultGoal);
   };
 
   const featuredCourses = [
@@ -179,7 +421,7 @@ export default function HomePage({
       bgClass: "from-[#FFF7E6] to-[#FEEAD0] border-[#FED7AA]",
       btnClass: "bg-[#FB923C] hover:bg-[#EA580C] text-white",
       image: "/assets/course-img-4.png?v=3",
-      target: "Giáo viên tiêu biểu"
+      target: "Giáo viên & chuyên gia"
     },
     {
       title: "Cuộc thi",
@@ -200,12 +442,25 @@ export default function HomePage({
     { step: "5. Thi & Đánh giá", desc: "Cuộc thi, đánh giá phát năng lực", img: "/assets/step-5.png?v=3" }
   ];
 
-  const audiencePills = [
-    { title: "Học sinh tự luyện", desc: "Luyện tập theo chuyên đề", img: "/assets/aud-1.png?v=4" },
-    { title: "Phụ huynh đồng hành", desc: "Theo dõi tiến độ và kết quả", img: "/assets/aud-2.png?v=4" },
-    { title: "Lớp học chuyên nghiệp", desc: "Quản lý lớp, nhận xét học sinh", img: "/assets/aud-3.png?v=4" },
-    { title: "Giáo viên & Chuyên gia", desc: "Đồng hành, hỗ trợ cao cấp", img: "/assets/aud-4.png?v=4" }
-  ];
+  // HOME-05 carousel: luôn lấy tối đa 4 mục liên tiếp và quay vòng ở cuối danh sách.
+  const getCircularItems = (items, startIndex) =>
+    Array.from({ length: Math.min(4, items.length) }, (_, offset) => {
+      const originalIndex = (startIndex + offset) % items.length;
+      return { item: items[originalIndex], originalIndex, offset };
+    });
+
+  const visibleCourses = getCircularItems(featuredCourses, courseCarouselIndex);
+  const visibleLearningSteps = getCircularItems(learningSteps, pathCarouselIndex);
+  const activeCarouselIndex = mainSectionTab === "courses" ? courseCarouselIndex : pathCarouselIndex;
+  const activeCarouselLength = mainSectionTab === "courses" ? featuredCourses.length : learningSteps.length;
+
+  const moveLearningCarousel = (direction) => {
+    if (mainSectionTab === "courses") {
+      setCourseCarouselIndex((current) => (current + direction + featuredCourses.length) % featuredCourses.length);
+      return;
+    }
+    setPathCarouselIndex((current) => (current + direction + learningSteps.length) % learningSteps.length);
+  };
 
   const books = [
     {
@@ -317,52 +572,80 @@ export default function HomePage({
   ];
 
   const topStudents = [
-    { rank: 1, name: "Nguyễn Minh Anh", class: "10A1", score: "9.8", avatar: "/assets/rank-1.png" },
-    { rank: 2, name: "Trần Đức Duy", class: "10A2", score: "9.6", avatar: "/assets/rank-2.png" },
-    { rank: 3, name: "Lê Phương Thảo", class: "10A3", score: "9.5", avatar: "/assets/rank-3.png" },
-    { rank: 4, name: "Phạm Hoàng Nam", class: "10A2", score: "9.3", avatar: "/assets/rank-4.png" },
-    { rank: 5, name: "Vũ Thị Mai", class: "10A2", score: "9.2", avatar: "/assets/rank-5.png" }
+    // Ảnh chân dung riêng cho bảng xếp hạng; badge số bên trái vẫn giữ thứ hạng rõ ràng.
+    { rank: 1, name: "Nguyễn Minh Anh", class: "10A1", score: "9.8", avatar: "/assets/testimonial-1.png" },
+    { rank: 2, name: "Trần Đức Duy", class: "10A2", score: "9.6", avatar: "/assets/testimonial-3.png" },
+    { rank: 3, name: "Lê Phương Thảo", class: "10A3", score: "9.5", avatar: "/assets/testimonial-2.png" },
+    { rank: 4, name: "Phạm Hoàng Nam", class: "10A2", score: "9.3", avatar: "/assets/testi-av-3.png" },
+    { rank: 5, name: "Vũ Thị Mai", class: "10A2", score: "9.2", avatar: "/assets/testi-av-1.png" }
   ];
 
   const sidebarNavItems = [
     { name: "Trang chủ", icon: Home, target: "Trang chủ" },
-    { name: "Khóa học", icon: BookOpen, target: "Khóa học" },
+    { name: "Lớp học", icon: BookOpen, target: "Khóa học" },
     { name: "Luyện tập", icon: Code, target: "Luyện tập" },
     { name: "Tài liệu", icon: FileText, target: "Tài liệu" },
     { name: "Cuộc thi", icon: Trophy, target: "Cuộc thi" },
     { name: "Bảng xếp hạng", icon: BarChart2, target: "Bảng xếp hạng" },
-    { name: "Giáo viên tiêu biểu", icon: Users, target: "Giáo viên tiêu biểu" },
+    { name: "Giáo viên & chuyên gia", icon: Users, target: "Giáo viên & chuyên gia" },
     { name: "Thông tin", icon: Info, target: "Thông tin" },
   ];
 
   return (
-    <div className="flex flex-col gap-4 sm:gap-5 animate-fadeIn">
-      {/* 2. SYSTEM TICKER BAR */}
-      <div className="bg-gradient-to-r from-[#FFF9E6] via-[#F0F7FD] to-[#EAF4FE] border border-amber-200/80 rounded-2xl px-3.5 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between shadow-[0_2px_6px_rgba(0,0,0,0.02)]">
-        <div className="flex items-center gap-2 sm:gap-3 overflow-hidden text-xs sm:text-sm lg:text-base">
-          <span className="text-amber-500 text-base sm:text-lg animate-pulse">📢</span>
+    <div data-section="HOME-PAGE" className="home-typography flex flex-col gap-4 sm:gap-5 animate-fadeIn">
+      {/* [HOME-01] THANH THÔNG BÁO HỆ THỐNG — nội dung tin chạy đầu trang chủ */}
+      <div
+        data-section="HOME-01-SYSTEM-NOTICE"
+        className={`relative overflow-hidden bg-gradient-to-r ${activeSystemNotice.surfaceClass} border ${activeSystemNotice.borderClass} rounded-2xl px-3.5 sm:px-5 py-2.5 sm:py-3 flex items-center justify-between shadow-[0_2px_6px_rgba(0,0,0,0.02)] transition-colors duration-500`}
+        onMouseEnter={() => setIsSystemNoticePaused(true)}
+        onMouseLeave={() => setIsSystemNoticePaused(false)}
+        onFocusCapture={() => setIsSystemNoticePaused(true)}
+        onBlurCapture={() => setIsSystemNoticePaused(false)}
+        aria-label="Thông báo hệ thống"
+      >
+        <div className="flex items-center gap-2 sm:gap-3 overflow-hidden text-xs sm:text-[13px]">
+          <span className={`absolute left-0 top-2 bottom-2 w-1 rounded-r-full ${activeSystemNotice.accentClass} transition-colors duration-500`} aria-hidden="true" />
+          <span className={`${activeSystemNotice.iconClass} flex h-5 w-5 shrink-0 items-center justify-center animate-pulse`} aria-hidden="true">
+            <Bell className="h-4 w-4" />
+          </span>
           <span className="font-bold text-amber-800 shrink-0 text-xs sm:text-sm">Thông báo hệ thống</span>
           <span className="text-slate-300">|</span>
-          <p className="text-slate-700 truncate font-medium text-xs sm:text-sm">
-            Kỳ thi HSG Tin học cấp tỉnh năm học 2025–2026 sắp diễn ra. Hãy chuẩn bị thật tốt!
+          <span key={`category-${systemNoticeIndex}`} className={`hidden sm:inline-flex shrink-0 items-center rounded-full border px-2 py-0.5 text-[10px] font-bold leading-tight animate-fadeIn ${activeSystemNotice.categoryClass}`}>
+            {activeSystemNotice.category}
+          </span>
+          <p key={`message-${systemNoticeIndex}`} aria-live="polite" className="min-w-0 text-slate-700 truncate font-medium text-xs sm:text-sm animate-fadeIn">
+            {activeSystemNotice.message}
           </p>
         </div>
         <div className="flex items-center gap-1 sm:gap-2 text-slate-400 shrink-0 ml-2">
-          <button className="p-1 hover:text-blue-600 hover:bg-white rounded-full transition-colors cursor-pointer">
+          <button
+            type="button"
+            aria-label="Thông báo trước"
+            onClick={() => setSystemNoticeIndex((prev) => (prev - 1 + SYSTEM_NOTICES.length) % SYSTEM_NOTICES.length)}
+            className="p-1 hover:text-blue-600 hover:bg-white rounded-full transition-colors cursor-pointer"
+          >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
-          <button className="p-1 hover:text-blue-600 hover:bg-white rounded-full transition-colors cursor-pointer">
+          <span className="hidden sm:inline text-[10px] font-semibold text-slate-400 tabular-nums min-w-7 text-center">
+            {systemNoticeIndex + 1}/{SYSTEM_NOTICES.length}
+          </span>
+          <button
+            type="button"
+            aria-label="Thông báo tiếp theo"
+            onClick={() => setSystemNoticeIndex((prev) => (prev + 1) % SYSTEM_NOTICES.length)}
+            className="p-1 hover:text-blue-600 hover:bg-white rounded-full transition-colors cursor-pointer"
+          >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
         </div>
       </div>
 
-      {/* 3. TOP 3-COLUMN LAYOUT: Left Menu | Main Center | Right Dashboard */}
-      <div className="grid grid-cols-1 lg:grid-cols-[210px_1fr_280px] xl:grid-cols-[240px_1fr_310px] 2xl:grid-cols-[260px_1fr_360px] gap-3.5 sm:gap-4 xl:gap-5 2xl:gap-6 items-start">
-        {/* LEFT SIDEBAR (Menu trái) */}
-        <aside className="hidden lg:flex flex-col gap-3.5 xl:gap-4 shrink-0">
-          {/* Sidebar Menu */}
-          <div className="bg-white rounded-3xl p-3 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)] flex flex-col gap-1.5">
+      {/* [HOME-LAYOUT] LƯỚI CHÍNH 3 CỘT — menu trái | nội dung giữa | sidebar phải */}
+      <div data-section="HOME-MAIN-GRID" className="grid grid-cols-1 lg:grid-cols-[210px_1fr_280px] xl:grid-cols-[240px_1fr_310px] 2xl:grid-cols-[260px_1fr_360px] gap-3.5 sm:gap-4 xl:gap-5 2xl:gap-6 items-start">
+        {/* [HOME-02] MENU TRÁI — điều hướng, banner quảng bá và thẻ giáo viên */}
+        <aside data-section="HOME-02-LEFT-SIDEBAR" className="hidden lg:flex flex-col gap-3.5 xl:gap-4 shrink-0">
+          {/* [HOME-02A] Danh sách điều hướng ở menu trái */}
+          <div data-section="HOME-02A-LEFT-NAV" className="bg-white rounded-3xl p-3 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)] flex flex-col gap-1.5">
             {sidebarNavItems.map((item) => {
               const Icon = item.icon;
               const isSelected = item.name === "Trang chủ";
@@ -370,7 +653,7 @@ export default function HomePage({
                 <button
                   key={item.name}
                   onClick={() => onNavigate(item.target)}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs xl:text-sm font-semibold transition-all text-left cursor-pointer ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs 2xl:text-[13px] font-semibold leading-snug transition-all text-left cursor-pointer ${
                     isSelected
                       ? "bg-[#E6F3FF] text-[#0066CC] font-bold shadow-2xs"
                       : "text-slate-700 hover:bg-sky-50 hover:text-blue-600"
@@ -383,8 +666,9 @@ export default function HomePage({
             })}
           </div>
 
-          {/* Banner: Cùng nhau kiến tạo tương lai số */}
+          {/* [HOME-02B] Banner “Cùng nhau kiến tạo tương lai số” */}
           <div
+            data-section="HOME-02B-PROMO-BANNER"
             onClick={() => onNavigate("Khóa học")}
             className="bg-white rounded-3xl overflow-hidden border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)] cursor-pointer hover:shadow-md transition-all group"
           >
@@ -395,42 +679,69 @@ export default function HomePage({
             />
           </div>
 
-          {/* Teacher Profile Mini Card */}
+          {/* [HOME-02C] Thẻ giáo viên tiêu biểu thu nhỏ */}
           <div
-            onClick={() => onNavigate("Giáo viên tiêu biểu")}
-            className="bg-white rounded-3xl p-3 sm:p-3.5 border border-sky-100/90 shadow-[0_2px_10px_rgba(0,100,220,0.04)] hover:shadow-md transition-all cursor-pointer group"
+            data-section="HOME-02C-TEACHER-CARD"
+            onClick={() => onNavigate("Giáo viên & chuyên gia")}
+            className="relative min-h-[190px] xl:min-h-[205px] overflow-hidden rounded-3xl border border-sky-200/90 bg-gradient-to-br from-white via-[#F3FAFF] to-[#E4F3FF] p-3.5 shadow-[0_8px_24px_rgba(0,100,220,0.09)] transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-300 hover:shadow-[0_12px_30px_rgba(0,100,220,0.14)] cursor-pointer group"
           >
-            <div className="flex items-center gap-2.5 text-left mb-2">
-              <img
-                src="/assets/teacher-thanh.png"
-                alt="Thầy Nguyễn Tiến Thành"
-                className="w-10 h-10 rounded-full border border-sky-200 object-cover shrink-0 shadow-2xs group-hover:scale-105 transition-transform"
-              />
-              <div className="overflow-hidden">
-                <h5 className="text-xs font-extrabold text-[#0B3C78] group-hover:text-blue-600 transition-colors leading-tight truncate">
-                  Thầy Nguyễn Tiến Thành
-                </h5>
-                <p className="text-[10px] text-slate-500 font-medium leading-tight mt-0.5">
-                  Giáo viên trường THPT<br />Chuyên Thái Bình
-                </p>
-              </div>
-            </div>
+            <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-sky-200/35 blur-sm transition-transform duration-500 group-hover:scale-125" />
+            <div className="absolute -bottom-10 -left-8 h-24 w-24 rounded-full bg-blue-100/60 blur-md" />
 
-            <div className="pt-2 border-t border-sky-100 text-center">
-              <p className="text-[11px] font-bold text-[#0050A0] leading-snug">
-                Kiến thức là chìa khóa mở ra tương lai
-              </p>
+            <div className="relative z-10 flex min-h-[160px] xl:min-h-[175px] flex-col">
+              <div className="flex items-center gap-2.5 text-left">
+                <div className="relative shrink-0">
+                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-amber-300 to-blue-500 blur-[2px] opacity-70" />
+                  <img
+                    src="/assets/testi-av-3.png?v=3"
+                    alt="Thầy Nguyễn Tiến Thành"
+                    className="relative w-11 h-11 rounded-full border-2 border-white object-cover shadow-md transition-transform duration-300 group-hover:scale-105"
+                  />
+                  <span className="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-white">
+                    <Award className="h-2.5 w-2.5" />
+                  </span>
+                </div>
+
+                <div className="min-w-0 flex-1">
+                  <h5 className="type-card-title text-[#073B78] group-hover:text-blue-600 transition-colors">
+                    Thầy Nguyễn Tiến Thành
+                  </h5>
+                  <p className="type-meta mt-0.5 text-slate-500">
+                    Giáo viên trường THPT<br />Chuyên Thái Bình
+                  </p>
+                </div>
+              </div>
+
+              <div className="my-3 h-px bg-gradient-to-r from-transparent via-sky-300 to-transparent" />
+
+              <div className="relative flex-1 px-2 text-center">
+                <Sparkles className="absolute -left-0.5 top-0 h-3.5 w-3.5 text-amber-400" />
+                <span className="absolute -right-1 -top-3 select-none text-4xl font-black leading-none text-blue-100">“</span>
+                <p
+                  className="relative text-[17px] xl:text-[19px] font-bold leading-[1.15] text-[#07549A] transition-colors group-hover:text-blue-700"
+                  style={{ fontFamily: "'Dancing Script', cursive" }}
+                >
+                  Kiến thức là chìa khóa<br />mở ra tương lai
+                </p>
+                <svg className="mx-auto mt-1 h-2 w-24 text-sky-500" viewBox="0 0 100 8" fill="none" aria-hidden="true">
+                  <path d="M3 6C25 2 58 1 97 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </div>
+
             </div>
           </div>
         </aside>
 
-        {/* MAIN CENTER COLUMN (Hero, Search Box, Featured Courses, Learning Path) */}
-        <main className="flex flex-col gap-4 sm:gap-5 min-w-0">
-          {/* HERO BANNER WITH ARTISTIC SHADOW & SPACIOUS COMPOSITION */}
+        {/* [HOME-CENTER] CỘT GIỮA — hero, tìm mục tiêu và chương trình học */}
+        <main data-section="HOME-CENTER-CONTENT" className="flex flex-col gap-4 sm:gap-5 min-w-0">
+          {/* [HOME-03] HERO — banner trình chiếu 4 mục tiêu học tập */}
           <section
             id="hero"
+            data-section="HOME-03-HERO"
             onMouseEnter={() => setIsSlidePaused(true)}
             onMouseLeave={() => setIsSlidePaused(false)}
+            onFocusCapture={() => setIsSlidePaused(true)}
+            onBlurCapture={() => setIsSlidePaused(false)}
             className="relative rounded-3xl border border-sky-200/90 shadow-[0_12px_40px_rgba(0,100,220,0.09)] overflow-hidden p-4 sm:p-6 lg:p-7 min-h-[340px] sm:min-h-[380px] lg:min-h-[390px] flex flex-col justify-between group/hero"
           >
             {/* 4 Theme-Specific Ultra-HD Background Artworks */}
@@ -438,424 +749,566 @@ export default function HomePage({
               <img
                 key={slide.id}
                 src={slide.bgImage}
-                alt={slide.subtitle}
+                alt={`${slide.subtitle}. ${slide.description}`}
                 className={`absolute inset-0 w-full h-full object-cover object-right pointer-events-none select-none z-0 transition-opacity duration-700 ease-in-out ${
                   currentSlideIndex === idx ? "opacity-100 scale-100" : "opacity-0 scale-105"
                 }`}
               />
             ))}
 
-            {/* Background gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-r from-white/95 via-white/70 to-transparent pointer-events-none z-0" />
+            {/* Lớp phủ giữ chữ rõ trên ảnh; đậm hơn ở mobile vì nội dung chiếm gần toàn chiều ngang */}
+            <div className="absolute inset-0 z-0 pointer-events-none bg-[linear-gradient(90deg,rgba(255,255,255,0.96)_0%,rgba(255,255,255,0.82)_72%,rgba(255,255,255,0.3)_100%)] sm:bg-gradient-to-r sm:from-white/95 sm:via-white/70 sm:to-transparent" />
 
-            {/* SLIDESHOW TOP TABS & NAVIGATION */}
-            <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 mb-2 pb-1.5 border-b border-sky-100/70">
-              <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto no-scrollbar py-0.5 max-w-full">
+            {/* Nhãn chủ đề của slideshow — giữ phía trên để nhận biết nhanh nội dung đang xem */}
+            <div className="relative z-10 mb-3 max-w-full overflow-x-auto no-scrollbar">
+              <div className="flex w-max min-w-full items-center gap-0.5 rounded-2xl border border-white/80 bg-white/62 p-1 shadow-[0_3px_14px_rgba(31,91,139,0.07)] backdrop-blur-md sm:w-full">
                 {heroSlides.map((slide, idx) => {
                   const isActive = currentSlideIndex === idx;
                   return (
                     <button
+                      type="button"
                       key={slide.id}
                       onClick={() => handleSelectSlide(idx)}
-                      className={`relative px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full text-[11px] sm:text-xs font-bold transition-all cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
+                      aria-pressed={isActive}
+                      className={`relative flex h-7 min-w-[104px] flex-1 shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl px-2.5 text-[11px] font-semibold transition-all cursor-pointer xl:text-xs ${
                         isActive
-                          ? "bg-[#0050A0] text-white shadow-md shadow-blue-900/20"
-                          : "bg-white/90 hover:bg-white text-slate-700 hover:text-blue-700 border border-slate-200/80 shadow-2xs"
+                          ? "bg-[#07549A] text-white shadow-[0_3px_9px_rgba(7,84,154,0.22)]"
+                          : "text-[#4F6C85] hover:bg-white/75 hover:text-[#07549A]"
                       }`}
                     >
                       <span>{slide.tabTitle}</span>
                       {isActive && (
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping hidden sm:inline-block" />
+                        <span className="hidden h-1.5 w-1.5 rounded-full bg-amber-300 sm:inline-block" />
                       )}
                     </button>
                   );
                 })}
               </div>
-
-              {/* Controls */}
-              <div className="flex items-center justify-between sm:justify-end gap-1 shrink-0 bg-white/90 backdrop-blur-xs px-2.5 py-1 rounded-full border border-sky-200/80 shadow-2xs self-end sm:self-auto">
-                <div className="flex items-center gap-1">
-                  <button
-                    onClick={handlePrevSlide}
-                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-sky-50 transition-colors cursor-pointer"
-                    aria-label="Previous slide"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </button>
-                  <div className="flex items-center gap-1 px-1">
-                    {heroSlides.map((_, idx) => (
-                      <button
-                        key={idx}
-                        onClick={() => handleSelectSlide(idx)}
-                        className={`h-1.5 rounded-full transition-all cursor-pointer ${
-                          currentSlideIndex === idx
-                            ? "w-3.5 sm:w-4 bg-[#0050A0]"
-                            : "w-1.5 bg-slate-300 hover:bg-slate-400"
-                        }`}
-                        aria-label={`Go to slide ${idx + 1}`}
-                      />
-                    ))}
-                  </div>
-                  <button
-                    onClick={handleNextSlide}
-                    className="w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-slate-600 hover:text-blue-600 hover:bg-sky-50 transition-colors cursor-pointer"
-                    aria-label="Next slide"
-                  >
-                    <ChevronRight className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                  </button>
-                </div>
-              </div>
             </div>
 
             {/* Main Slide Content Area */}
-            <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 my-auto">
-              <div
-                key={heroSlides[currentSlideIndex].id}
-                className="w-full max-w-full sm:max-w-[62%] lg:max-w-[58%] xl:max-w-[55%] flex flex-col gap-2.5 animate-fadeIn"
-              >
-                {/* Category Pill Tag */}
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border shadow-2xs ${heroSlides[currentSlideIndex].tagStyle}`}
+            <div className="relative z-10 grid w-full my-auto">
+              {heroSlides.map((slide, idx) => {
+                const isActive = currentSlideIndex === idx;
+                const PanelIcon = slide.panelIcon;
+                return (
+                  <div
+                    key={slide.id}
+                    aria-hidden={!isActive}
+                    className={`col-start-1 row-start-1 flex w-full max-w-[92%] flex-col gap-2 transition-opacity duration-500 sm:max-w-[64%] lg:max-w-[60%] xl:max-w-[58%] ${
+                      isActive ? "visible opacity-100" : "invisible pointer-events-none opacity-0"
+                    }`}
                   >
-                    {heroSlides[currentSlideIndex].tag}
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-medium hidden sm:inline">
-                    • Lộ trình chuẩn quốc gia & quốc tế
-                  </span>
-                </div>
-
-                {/* 3D Stylized Title with Golden Orbit */}
-                <div className="flex items-center gap-2">
-                  <h1 className="text-2xl sm:text-4xl lg:text-[42px] font-black text-[#0050A0] tracking-tight leading-none drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] flex items-center gap-2">
-                    <span>Ôn Thi</span>
-                    <span className="text-[#F59E0B] relative inline-block">
-                      360
-                      <svg
-                        className="absolute -bottom-1 -left-2 w-[115%] h-5 text-[#F59E0B] pointer-events-none"
-                        viewBox="0 0 80 20"
-                        fill="none"
+                    {/* Category Pill Tag */}
+                    <div className="flex min-w-0 items-center gap-2">
+                      <span
+                        className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold border shadow-2xs ${slide.tagStyle}`}
                       >
-                        <ellipse
-                          cx="40"
-                          cy="10"
-                          rx="36"
-                          ry="6"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                          strokeDasharray="45 8"
-                          transform="rotate(-8 40 10)"
-                        />
-                      </svg>
-                    </span>
-                  </h1>
-                </div>
+                        {slide.tag}
+                      </span>
+                      <span className="hidden min-w-0 truncate text-[10px] font-medium text-slate-400 2xl:inline">
+                        • Lộ trình chuẩn quốc gia & quốc tế
+                      </span>
+                    </div>
 
-                {/* Dynamic Subtitle */}
-                <h2 className="text-xs sm:text-base lg:text-lg font-bold text-[#0F3A7A] leading-snug">
-                  {heroSlides[currentSlideIndex].subtitle}
-                </h2>
+                    {/* 3D Stylized Title with Golden Orbit */}
+                    <div className="flex items-center gap-2">
+                      <h1 className="type-hero-brand text-[#0050A0] drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] flex items-center gap-2">
+                        <span>Ôn Thi</span>
+                        <span className="text-[#F59E0B] relative inline-block">
+                          360
+                          <svg
+                            className="absolute -bottom-1 -left-2 w-[115%] h-5 text-[#F59E0B] pointer-events-none"
+                            viewBox="0 0 80 20"
+                            fill="none"
+                          >
+                            <ellipse
+                              cx="40"
+                              cy="10"
+                              rx="36"
+                              ry="6"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeDasharray="45 8"
+                              transform="rotate(-8 40 10)"
+                            />
+                          </svg>
+                        </span>
+                      </h1>
+                    </div>
 
-                {/* Dynamic Badges */}
-                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 mt-0.5">
-                  {heroSlides[currentSlideIndex].badges.map((badge) => (
-                    <span
-                      key={badge}
-                      className="inline-flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-bold bg-[#E8F8F0]/95 text-[#0D8A4E] border border-[#A7E8C5] shadow-2xs backdrop-blur-xs whitespace-nowrap shrink-0"
-                    >
-                      <CheckCircle2 className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-[#0D8A4E] fill-[#C7F3DC]" />
-                      <span>{badge}</span>
-                    </span>
-                  ))}
-                </div>
+                    {/* Dynamic Subtitle */}
+                    <h2 className="type-hero-title text-[#0F3A7A]">
+                      {slide.subtitle}
+                    </h2>
+
+                    {/* Mô tả đủ thông tin để tăng độ tin cậy nhưng tách khỏi heading để dễ đọc */}
+                    <p className="type-body max-w-[34rem] font-medium text-[#526E88]">
+                      {slide.description}
+                    </p>
+
+                    {/* Bảng 2×2 tạo cảm giác đầy đặn và thể hiện rõ phạm vi của từng lộ trình */}
+                    <div className={`mt-1.5 max-w-[34rem] rounded-2xl border p-2.5 shadow-[0_5px_18px_rgba(38,91,128,0.1)] backdrop-blur-md ${slide.panelStyle}`}>
+                      <div className="mb-2 flex items-center justify-between gap-2 border-b border-white/80 pb-2">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border shadow-sm ${slide.panelIconStyle}`}>
+                            <PanelIcon className="h-3.5 w-3.5" />
+                          </span>
+                          <span className="truncate text-[10px] font-extrabold uppercase tracking-[0.055em] text-[#31536F]">
+                            Nội dung lộ trình
+                          </span>
+                        </div>
+                        <span className="shrink-0 rounded-full border border-white/90 bg-white/68 px-2 py-0.5 text-[10px] font-bold text-[#607A91]">
+                          4 trọng tâm
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {slide.highlights.map(({ label, icon: HighlightIcon }) => (
+                          <div key={label} className="flex min-w-0 items-center gap-1.5 rounded-lg border border-white/70 bg-white/52 px-1.5 py-1">
+                            <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md ${slide.itemIconStyle}`}>
+                              <HighlightIcon className="h-3 w-3" />
+                            </span>
+                            <span className="text-[10px] font-semibold leading-[1.3] text-[#294D69] sm:text-[10.5px]">
+                              {label}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Điều khiển slideshow — nổi trên ảnh, sát đáy và lệch phải để không chặn nội dung chính */}
+            <div className="absolute bottom-3.5 right-4 sm:bottom-4 sm:right-5 z-20 flex items-center gap-1 rounded-full border border-white/80 bg-white/82 px-1.5 py-1 shadow-[0_5px_18px_rgba(15,58,122,0.16)] backdrop-blur-md">
+              <button
+                type="button"
+                onClick={handlePrevSlide}
+                className="flex h-7 w-7 items-center justify-center rounded-full text-[#42617E] transition-all hover:bg-white hover:text-[#07549A] hover:shadow-sm active:scale-95 cursor-pointer"
+                aria-label="Ảnh trước"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+
+              <div className="flex items-center gap-1 px-0.5" aria-label="Vị trí ảnh trình chiếu">
+                {heroSlides.map((_, idx) => (
+                  <button
+                    type="button"
+                    key={idx}
+                    onClick={() => handleSelectSlide(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-300 cursor-pointer ${
+                      currentSlideIndex === idx
+                        ? "w-5 bg-[#07549A]"
+                        : "w-1.5 bg-[#A9BCCB] hover:bg-[#6E8CA5]"
+                    }`}
+                    aria-label={`Chuyển đến ảnh ${idx + 1}`}
+                  />
+                ))}
               </div>
+
+              <button
+                type="button"
+                onClick={handleNextSlide}
+                className="flex h-7 w-7 items-center justify-center rounded-full bg-[#07549A] text-white shadow-sm transition-all hover:bg-[#06447D] active:scale-95 cursor-pointer"
+                aria-label="Ảnh tiếp theo"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
             </div>
           </section>
 
-          {/* DEDICATED SEARCH & GOAL SELECTOR CARD */}
-          <div className="bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_4px_20px_rgba(0,100,220,0.06)] flex flex-col gap-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-[#0066CC]">
-                <img src="/assets/badge-target.png?v=4" alt="Mục tiêu" className="w-5.5 h-5.5 object-contain shrink-0 rounded-lg shadow-2xs" />
-                <span>Chọn mục tiêu học hoặc lộ trình của bạn</span>
-              </div>
-              <span className="text-[11px] text-slate-400 font-medium hidden sm:inline">Phù hợp học sinh lớp 6 – 12</span>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-[120px_1fr] xl:flex xl:flex-row items-stretch xl:items-center gap-2.5">
-              {/* Dropdown 1: Lớp hiện tại */}
-              <div
-                onClick={() => setSelectedGrade(selectedGrade === "Lớp 10" ? "Lớp 9" : "Lớp 10")}
-                className="bg-[#F0F6FC] hover:bg-sky-100/70 border border-sky-200/90 rounded-2xl px-3 py-2 flex items-center justify-between cursor-pointer transition-colors group xl:w-[125px] xl:shrink-0"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <GraduationCap className="w-4.5 h-4.5 text-[#0066CC] shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-[10px] text-slate-400 font-medium leading-none">Lớp hiện tại</p>
-                    <p className="text-xs sm:text-sm font-extrabold text-[#0359B5] leading-tight mt-0.5 truncate">{selectedGrade}</p>
-                  </div>
+          {/* [HOME-04] TÌM MỤC TIÊU — chọn lớp, mục tiêu và tìm khóa học */}
+          <section
+            data-section="HOME-04-GOAL-SEARCH"
+            className="rounded-[22px] border border-[#DFEBF0] bg-white px-3.5 py-3 sm:px-4 shadow-[0_5px_20px_rgba(45,96,145,0.045)]"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-2.5">
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#CDE8EC] bg-[#E9F7F8] text-[#23869B]">
+                  <Target className="h-[18px] w-[18px]" />
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 transition-colors shrink-0 ml-1" />
-              </div>
-
-              {/* Dropdown 2: Mục tiêu học */}
-              <div
-                onClick={() => setSelectedGoal(selectedGoal.includes("lớp 9") ? "Luyện thi vào lớp 10 chuyên Tin" : "Luyện thi HSG Tin học lớp 9")}
-                className="min-w-0 bg-[#F0F6FC] hover:bg-sky-100/70 border border-sky-200/90 rounded-2xl px-3.5 py-2 flex items-center justify-between cursor-pointer transition-colors group xl:flex-1"
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <img src="/assets/badge-target.png?v=4" alt="Mục tiêu" className="w-5 h-5 object-contain shrink-0" />
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] text-slate-400 font-medium leading-none">Mục tiêu học</p>
-                    <p className="text-xs sm:text-sm font-extrabold text-[#0359B5] leading-tight truncate mt-0.5">{selectedGoal}</p>
-                  </div>
+                <div className="min-w-0">
+                  <h3 className="type-section-title">
+                    Chọn mục tiêu hoặc lộ trình của bạn
+                  </h3>
+                  <p className="mt-0.5 truncate text-[11px] font-normal leading-snug text-[#71869A]">
+                    Gợi ý phù hợp theo năng lực và định hướng học tập
+                  </p>
                 </div>
-                <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 ml-1 group-hover:text-blue-600 transition-colors" />
               </div>
 
-              {/* Yellow CTA Button */}
+              {/* Bộ chọn lớp tối giản: chỉ giữ icon và lớp đang dùng */}
               <button
-                onClick={() => onNavigate("Khóa học")}
-                className="col-span-full xl:col-auto xl:w-auto shrink-0 bg-gradient-to-r from-[#FBBF24] via-[#F59E0B] to-[#F59E0B] hover:brightness-105 active:scale-98 text-[#451A03] font-black text-xs sm:text-sm py-2.5 px-5 sm:px-6 rounded-full shadow-md shadow-amber-200/60 flex items-center justify-center gap-1.5 transition-all cursor-pointer whitespace-nowrap"
+                type="button"
+                onClick={() => setSelectedGrade(selectedGrade === "Lớp 10" ? "Lớp 9" : "Lớp 10")}
+                className="group flex h-8 shrink-0 items-center gap-1.5 rounded-xl border border-[#DCE8ED] bg-[#F8FAFB] px-2.5 text-left transition-all hover:border-[#BFDDE4] hover:bg-[#F2F8F9]"
+                aria-label="Đổi lớp hiện tại"
               >
-                <span>Tìm kiếm lớp học</span>
-                <span className="text-sm font-bold">→</span>
+                <GraduationCap className="h-3.5 w-3.5 text-[#23869B]" />
+                <span className="text-[11px] font-bold leading-none text-[#123B68]">{selectedGrade}</span>
+                <ChevronDown className="h-3 w-3 text-[#8BA0B5] transition-colors group-hover:text-[#126F91]" />
               </button>
             </div>
-          </div>
 
-          {/* COMBINED MAIN TABBED SECTION */}
+            {/* Hàng điều khiển thấp, cùng bán kính và không lồng nhiều lớp nền */}
+            <div className="mt-2.5 flex flex-col gap-2 sm:flex-row sm:items-center">
+              <button
+                type="button"
+                onClick={() => setSelectedGoal(selectedGoal.includes("lớp 9") ? "Luyện thi vào lớp 10 chuyên Tin" : "Luyện thi HSG Tin học lớp 9")}
+                className="group flex h-[42px] min-w-0 flex-1 items-center gap-2 rounded-xl border border-[#DFEAEE] bg-[#F8FAFB] px-2.5 text-left transition-all hover:border-[#C6E0E6] hover:bg-[#F3F8F9]"
+                aria-label="Đổi mục tiêu học"
+              >
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#E7F5F6] text-[#23869B]">
+                  <Target className="h-3.5 w-3.5" />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block text-[10px] font-semibold leading-none text-[#71869A]">Mục tiêu</span>
+                  <span className="mt-1 block truncate text-xs sm:text-[13px] font-semibold leading-none text-[#123B68]">{selectedGoal}</span>
+                </span>
+                <ChevronDown className="h-3.5 w-3.5 shrink-0 text-[#8BA0B5] transition-colors group-hover:text-[#126F91]" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => onNavigate("Khóa học")}
+                className="flex h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl border border-[#ECD78F] bg-[#FFF4C7] px-4 text-xs font-bold text-[#765C18] shadow-[0_2px_7px_rgba(183,143,37,0.09)] transition-all hover:border-[#DFC56F] hover:bg-[#FFEDAA] active:scale-[0.98]"
+              >
+                <span>Xem lộ trình</span>
+                <ChevronRight className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </section>
+
+          {/* [HOME-05] NỘI DUNG HỌC — chuyển tab giữa chương trình nổi bật và lộ trình */}
           <div
-            className="mt-3.5"
+            data-section="HOME-05-LEARNING-CONTENT"
+            className="mt-3.5 rounded-[28px] border border-[#DFEBF4] bg-white p-3.5 sm:p-4 shadow-[0_7px_26px_rgba(45,96,145,0.055)]"
             onMouseEnter={() => setIsMainTabPaused(true)}
             onMouseLeave={() => setIsMainTabPaused(false)}
           >
-            <div className="flex items-center justify-between gap-2 mb-2.5">
-              <div className="flex items-center gap-1.5 bg-white p-1 rounded-2xl border border-sky-200 shadow-[0_4px_16px_rgba(0,102,204,0.1)] w-full sm:w-fit overflow-x-auto no-scrollbar">
+            <div className="mb-2.5 flex flex-col gap-2 border-b border-[#E7EFF5] pb-2.5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex w-full items-center gap-1 rounded-2xl bg-[#F3F8FA] p-1 sm:w-fit overflow-x-auto no-scrollbar">
                 <button
                   onClick={() => setMainSectionTab("courses")}
-                  className={`px-3.5 sm:px-4.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+                  className={`flex items-center gap-2 whitespace-nowrap rounded-xl border px-3 py-2 text-xs sm:text-[13px] font-bold leading-snug transition-all cursor-pointer ${
                     mainSectionTab === "courses"
-                      ? "bg-gradient-to-r from-[#0066CC] to-[#0048A0] text-white shadow-sm scale-102"
-                      : "bg-slate-50 hover:bg-sky-50 text-[#0B3C78] border border-slate-200/70"
+                      ? "border-[#CBE7EE] bg-white text-[#123B68] shadow-[0_2px_8px_rgba(34,126,151,0.08)]"
+                      : "border-transparent text-[#71869A] hover:bg-white/70 hover:text-[#123B68]"
                   }`}
                 >
-                  <img src="/assets/badge-courses.png?v=3" alt="" className="w-4 h-4 object-contain" />
+                  <img src="/assets/badge-courses.png?v=3" alt="" className="w-[18px] h-[18px] object-contain" />
                   <span>Chương trình học nổi bật</span>
                 </button>
 
                 <button
                   onClick={() => setMainSectionTab("path")}
-                  className={`px-3.5 sm:px-4.5 py-1.5 rounded-xl text-xs sm:text-sm font-extrabold transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap ${
+                  className={`flex items-center gap-2 whitespace-nowrap rounded-xl border px-3 py-2 text-xs sm:text-[13px] font-bold leading-snug transition-all cursor-pointer ${
                     mainSectionTab === "path"
-                      ? "bg-gradient-to-r from-[#0066CC] to-[#0048A0] text-white shadow-sm scale-102"
-                      : "bg-slate-50 hover:bg-sky-50 text-[#0B3C78] border border-slate-200/70"
+                      ? "border-[#CBE7EE] bg-white text-[#123B68] shadow-[0_2px_8px_rgba(34,126,151,0.08)]"
+                      : "border-transparent text-[#71869A] hover:bg-white/70 hover:text-[#123B68]"
                   }`}
                 >
-                  <img src="/assets/badge-path.png?v=3" alt="" className="w-4 h-4 object-contain" />
+                  <img src="/assets/badge-path.png?v=3" alt="" className="w-[18px] h-[18px] object-contain" />
                   <span>Lộ trình học chuyên nghiệp</span>
                 </button>
               </div>
 
-              <button
-                onClick={() => onNavigate(mainSectionTab === "courses" ? "Khóa học" : "Luyện tập")}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 hidden sm:flex items-center gap-1 shrink-0 cursor-pointer"
-              >
-                Xem tất cả <span>→</span>
-              </button>
+              {/* Chỉ số carousel và liên kết tổng; nút trước/sau được đặt nổi trên ảnh */}
+              <div className="flex w-full items-center justify-end gap-1.5 sm:w-auto">
+                <span className="mr-0.5 min-w-7 text-center text-[11px] font-semibold leading-snug text-[#71869A]">
+                  {activeCarouselIndex + 1}/{activeCarouselLength}
+                </span>
+                <button
+                  onClick={() => onNavigate(mainSectionTab === "courses" ? "Khóa học" : "Luyện tập")}
+                  className="hidden shrink-0 items-center gap-1 rounded-full px-2 py-1.5 text-[11.5px] font-bold leading-snug text-[#126F91] transition-colors hover:bg-[#EFF9FB] hover:text-[#0B6487] sm:flex cursor-pointer"
+                >
+                  Xem tất cả <ChevronRight className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
 
-            {/* Tab 1: FEATURED COURSES */}
+            {/* [HOME-05A] Tab “Chương trình học nổi bật” */}
             {mainSectionTab === "courses" && (
               <section
                 id="courses"
-                className="relative rounded-3xl p-3 sm:p-4 border border-sky-200/80 shadow-[0_4px_20px_rgba(0,100,220,0.06)] overflow-hidden bg-center bg-no-repeat"
-                style={{ backgroundImage: `url("/assets/courses-bg-cloud.png?v=1")`, backgroundSize: "100% 100%" }}
+                data-section="HOME-05A-FEATURED-PROGRAMS"
+                className="relative overflow-hidden sm:h-[198px]"
               >
-                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2 xl:gap-2.5 text-center">
-                  {featuredCourses.map((course) => (
+                {/* Carousel chương trình: ảnh được hiển thị trọn vẹn, điều hướng nổi trên vùng ảnh */}
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 2xl:grid-cols-4">
+                  {visibleCourses.map(({ item: course, originalIndex, offset }) => (
                     <div
-                      key={course.title}
-                      className={`bg-gradient-to-b ${course.bgClass} rounded-2xl border overflow-hidden flex flex-col items-center justify-between hover:shadow-md transition-all duration-200 group cursor-pointer`}
+                      key={`${course.title}-${originalIndex}`}
+                      className={`group animate-fadeIn overflow-hidden rounded-2xl border bg-gradient-to-b ${course.bgClass} transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md cursor-pointer ${
+                        offset === 0 ? "block" : offset < 3 ? "hidden sm:block" : "hidden 2xl:block"
+                      }`}
                       onClick={() => onNavigate(course.target)}
+                      title={course.desc}
                     >
-                      <div className="w-full h-22 sm:h-24 xl:h-26 overflow-hidden relative">
+                      <div className="relative h-[104px] overflow-hidden border-b border-white/70 bg-white/35">
                         <img
                           src={course.image}
                           alt={course.title}
-                          className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-300"
+                          className="h-full w-full object-contain p-0.5 transition-transform duration-300 group-hover:scale-[1.025]"
                         />
+                        <div className="absolute inset-x-0 bottom-0 h-7 bg-gradient-to-t from-white/35 to-transparent" />
                       </div>
-                      <div className="p-2 flex-1 flex flex-col justify-between w-full">
-                        <div>
-                          <h4 className="text-[11px] sm:text-xs font-bold text-[#0B3C78] leading-snug mb-1 min-h-[26px] flex items-center justify-center">
-                            {course.title}
-                          </h4>
-                          <p className="text-[9.5px] sm:text-[10px] text-slate-600 leading-snug mb-2 line-clamp-2">
-                            {course.desc}
-                          </p>
-                        </div>
-                        <button
-                          className={`w-full py-1 px-2 rounded-full text-[10px] sm:text-[11px] font-bold ${course.btnClass} shadow-2xs transition-opacity flex items-center justify-center gap-1 cursor-pointer`}
-                        >
+                      <div className="flex h-[84px] flex-col px-3 py-2.5 text-left">
+                        <h4 className="text-[13.5px] font-bold leading-snug text-[#123B68] line-clamp-1">
+                          {course.title}
+                        </h4>
+                        <p className="mt-1 line-clamp-1 text-[11px] font-normal leading-[1.45] text-[#536D86]">
+                          {course.desc}
+                        </p>
+                        <span className="mt-auto inline-flex items-center gap-0.5 pt-1 text-[11.5px] font-bold leading-snug text-[#126F91] transition-colors group-hover:text-[#0B6487]">
                           <span>{course.btnText}</span>
-                          <span className="font-bold">→</span>
-                        </button>
+                          <ChevronRight className="h-3 w-3" />
+                        </span>
                       </div>
                     </div>
                   ))}
                 </div>
+
+                <button
+                  type="button"
+                  onClick={() => moveLearningCarousel(-1)}
+                  aria-label="Xem mục trước"
+                  className="absolute left-2 top-[37px] z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/90 bg-white/90 text-[#126F91] shadow-[0_3px_12px_rgba(38,80,100,0.14)] backdrop-blur-sm transition-all hover:bg-white hover:scale-105 cursor-pointer"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveLearningCarousel(1)}
+                  aria-label="Xem mục tiếp theo"
+                  className="absolute right-2 top-[37px] z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/90 bg-white/90 text-[#126F91] shadow-[0_3px_12px_rgba(38,80,100,0.14)] backdrop-blur-sm transition-all hover:bg-white hover:scale-105 cursor-pointer"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
               </section>
             )}
 
-            {/* Tab 2: LEARNING PATH SECTION */}
+            {/* [HOME-05B] Tab “Lộ trình học chuyên nghiệp” */}
             {mainSectionTab === "path" && (
               <section
                 id="path"
-                className="relative rounded-3xl p-3 sm:p-4 border border-sky-200/80 shadow-[0_4px_20px_rgba(0,100,220,0.06)] overflow-hidden bg-center bg-no-repeat"
-                style={{ backgroundImage: `url("/assets/courses-bg-cloud.png?v=1")`, backgroundSize: "100% 100%" }}
+                data-section="HOME-05B-LEARNING-PATH"
+                className="relative overflow-hidden sm:h-[198px]"
               >
-                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-5 gap-2 xl:gap-2.5 items-stretch py-0.5">
-                  {learningSteps.map((step, idx) => (
+                {/* Carousel lộ trình dùng cùng cấu trúc ảnh lớn để hai tab cân bằng thị giác */}
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 2xl:grid-cols-4">
+                  {visibleLearningSteps.map(({ item: step, originalIndex, offset }) => (
                     <div
-                      key={step.step}
+                      key={`${step.step}-${originalIndex}`}
                       onClick={() => onNavigate("Luyện tập")}
-                      className="flex flex-col items-center text-center relative rounded-2xl bg-[#F8FBFE] border border-sky-100/80 overflow-hidden hover:border-sky-200 hover:shadow-md transition-all group cursor-pointer"
+                      className={`group relative h-[188px] animate-fadeIn overflow-hidden rounded-2xl border border-[#DDEAF2] bg-[#F8FBFD] text-left transition-all hover:-translate-y-0.5 hover:border-[#B8DFE8] hover:bg-[#F3FAFC] hover:shadow-sm cursor-pointer ${
+                        offset === 0 ? "block" : offset < 3 ? "hidden sm:block" : "hidden 2xl:block"
+                      }`}
+                      title={step.desc}
                     >
-                      <div className="w-full h-18 sm:h-20 xl:h-22 overflow-hidden relative">
+                      <div className="relative flex h-[104px] items-center justify-center overflow-hidden border-b border-white bg-gradient-to-br from-[#F3FAFC] to-[#E7F3F7]">
                         <img
                           src={step.img}
                           alt={step.step}
-                          className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-300"
+                          className="h-full w-full object-contain p-2 transition-transform duration-300 group-hover:scale-[1.025]"
                         />
+                        <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border border-white bg-white/90 text-[10px] font-bold text-[#126F91] shadow-sm">
+                          {originalIndex + 1}
+                        </span>
                       </div>
-                      <div className="p-2 flex-1 flex flex-col justify-center w-full">
-                        <h5 className="text-[11px] xl:text-[11.5px] font-bold text-[#0B3C78] leading-tight mb-0.5">
+                      <div className="flex h-[84px] min-w-0 flex-col px-3 py-2.5">
+                        <h5 className="text-[13.5px] font-bold leading-snug text-[#123B68] line-clamp-1">
                           {step.step}
                         </h5>
-                        <p className="text-[9.5px] xl:text-[10px] text-slate-500 leading-snug">
+                        <p className="mt-1 line-clamp-2 text-[11px] font-normal leading-[1.45] text-[#536D86]">
                           {step.desc}
                         </p>
                       </div>
-
-                      {idx < learningSteps.length - 1 && (
-                        <span className="hidden xl:block absolute -right-2 top-1/2 -translate-y-1/2 text-sky-400 font-black text-sm z-10 drop-shadow-xs">
-                          ›
-                        </span>
-                      )}
                     </div>
                   ))}
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-2 mt-2 pt-2 border-t border-sky-200/50">
-                  {audiencePills.map((aud) => (
-                    <div
-                      key={aud.title}
-                      onClick={() => onNavigate("Khóa học")}
-                      className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl sm:rounded-2xl bg-[#EAF4FE]/95 hover:bg-[#E0F0FE] border border-[#C6E2FA] hover:border-blue-400 hover:shadow-2xs transition-all group cursor-pointer"
-                    >
-                      <img
-                        src={aud.img}
-                        alt={aud.title}
-                        className="w-8 h-8 rounded-full object-cover border border-sky-300 shadow-2xs shrink-0 group-hover:scale-105 transition-transform"
-                      />
-                      <div className="overflow-hidden text-left">
-                        <h6 className="text-[11px] sm:text-[11.5px] font-extrabold text-[#0C3E8A] truncate leading-tight group-hover:text-blue-600 transition-colors">
-                          {aud.title}
-                        </h6>
-                        <p className="text-[9.5px] sm:text-[10px] text-[#4B6B94] truncate leading-tight mt-0.5 font-medium">
-                          {aud.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <button
+                  type="button"
+                  onClick={() => moveLearningCarousel(-1)}
+                  aria-label="Xem mục trước"
+                  className="absolute left-2 top-[37px] z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/90 bg-white/90 text-[#126F91] shadow-[0_3px_12px_rgba(38,80,100,0.14)] backdrop-blur-sm transition-all hover:bg-white hover:scale-105 cursor-pointer"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => moveLearningCarousel(1)}
+                  aria-label="Xem mục tiếp theo"
+                  className="absolute right-2 top-[37px] z-20 flex h-8 w-8 items-center justify-center rounded-full border border-white/90 bg-white/90 text-[#126F91] shadow-[0_3px_12px_rgba(38,80,100,0.14)] backdrop-blur-sm transition-all hover:bg-white hover:scale-105 cursor-pointer"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </button>
               </section>
             )}
           </div>
         </main>
 
-        {/* RIGHT SIDEBAR */}
-        <aside id="leaderboard" className="flex flex-col gap-3.5 xl:gap-4">
-          {/* Card 1: Hành trình học của bạn */}
-          <div className="bg-white rounded-3xl p-3.5 xl:p-4 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)]">
+        {/* [HOME-RIGHT] SIDEBAR PHẢI — tiến độ, xếp hạng, tài liệu và cuộc thi */}
+        {/* Sidebar phải chỉ trải qua 2 hàng để khối FAQ bên dưới nối liền, không tạo hàng trống sau HOME-10. */}
+        <aside id="leaderboard" data-section="HOME-RIGHT-SIDEBAR" className="flex flex-col gap-3.5 xl:gap-4 lg:row-span-2">
+          {/* [HOME-06] KHÔNG GIAN HỌC TẬP — dữ liệu cá nhân theo vai trò, yêu cầu đăng nhập */}
+          <div data-section="HOME-06-LEARNING-PROGRESS" className="bg-white rounded-3xl p-3.5 xl:p-4 border border-[#DDEAF0] shadow-[0_4px_16px_rgba(52,91,120,0.045)]">
             <div className="flex items-center justify-between mb-2.5">
               <div className="flex items-center gap-1.5 xl:gap-2">
-                <span className="w-4.5 h-4.5 rounded-md bg-blue-600 text-white flex items-center justify-center text-[10px] shadow-2xs font-bold">★</span>
-                <h4 className="text-xs xl:text-sm font-bold text-slate-800 leading-tight">Hành trình học của bạn</h4>
+                {/* Icon tiến độ dùng cùng khung 32px với các header sidebar khác */}
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border border-[#CFE6EC] bg-[#EAF5F8] text-[#2D7FA3]">
+                  <BarChart2 className="h-4 w-4" />
+                </span>
+                <h4 className="type-card-title text-slate-800">Không gian học tập</h4>
               </div>
-              <div
-                onClick={() => setSelectedGrade(selectedGrade === "Lớp 10" ? "Lớp 9" : "Lớp 10")}
-                className="bg-[#F0F6FC] hover:bg-sky-100/70 border border-sky-200/90 rounded-xl px-2 py-0.5 flex items-center gap-1 cursor-pointer transition-colors text-[10.5px] font-semibold text-slate-700"
-              >
-                <span>{selectedGrade}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
+              {!isGuest && activeJourney.contexts ? (
+                <div className="relative max-w-[132px]">
+                  <label htmlFor="journey-context" className="sr-only">{activeJourney.contextLabel}</label>
+                  <select
+                    id="journey-context"
+                    value={journeyContextIndex}
+                    onChange={(event) => setJourneyContextIndex(Number(event.target.value))}
+                    className="type-label w-full appearance-none rounded-xl border border-[#DCE8ED] bg-[#F5F8FA] py-1 pl-2 pr-6 text-[#536D7E] outline-none transition-colors hover:bg-[#EEF5F7] focus:border-[#A9D2DF]"
+                  >
+                    {activeJourney.contexts.map((context, index) => (
+                      <option key={context.label} value={index}>{context.label}</option>
+                    ))}
+                  </select>
+                  <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 h-3 w-3 -translate-y-1/2 text-slate-400" />
+                </div>
+              ) : !isGuest && (
+                <div
+                  onClick={() => setSelectedGrade(selectedGrade === "Lớp 10" ? "Lớp 9" : "Lớp 10")}
+                  className="type-label bg-[#F5F8FA] hover:bg-[#EEF5F7] border border-[#DCE8ED] rounded-xl px-2 py-0.5 flex items-center gap-1 cursor-pointer transition-colors text-[#536D7E]"
+                >
+                  <span>{selectedGrade}</span>
+                  <ChevronDown className="w-3 h-3 text-slate-400" />
+                </div>
+              )}
+            </div>
+
+            {isGuest ? (
+              /* [HOME-06G] Trạng thái khách — giữ chỗ trong sidebar và giải thích rõ vì sao cần đăng nhập */
+              <div className="rounded-2xl border border-sky-100 bg-gradient-to-br from-[#F5FAFD] to-[#EEF7FB] p-3.5 text-center">
+                <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-2xl border border-sky-100 bg-white text-[#3E88A6] shadow-[0_2px_8px_rgba(64,125,151,0.08)]">
+                  <LockKeyhole className="h-5 w-5" />
+                </span>
+                <p className="type-card-title mt-2.5 text-[#245B7A]">Đăng nhập để xem hành trình</p>
+                <p className="type-body mt-1 text-slate-500">Tiến độ, lịch học và báo cáo sẽ được cá nhân hóa theo vai trò của bạn.</p>
+                <button
+                  type="button"
+                  onClick={() => onOpenAccess?.("auth")}
+                  className="mt-3 inline-flex items-center justify-center gap-1.5 rounded-xl border border-[#B9DCE8] bg-white px-3.5 py-2 text-xs font-bold text-[#216F8E] shadow-[0_2px_7px_rgba(64,125,151,0.08)] transition-colors hover:border-[#8FC6D8] hover:bg-[#F7FCFE]"
+                >
+                  Đăng nhập ngay <ChevronRight className="h-3.5 w-3.5" />
+                </button>
               </div>
+            ) : (
+              <>
+            {/* [HOME-06A] Bộ chọn vai trò — đổi nhanh góc nhìn học sinh, phụ huynh hoặc giáo viên */}
+            <div role="tablist" aria-label="Vai trò xem hành trình học" className="mb-3 grid grid-cols-3 gap-1 rounded-2xl bg-[#F3F7F9] p-1">
+              {Object.entries(JOURNEY_ROLE_VIEWS).map(([roleKey, roleView]) => {
+                const RoleIcon = roleView.icon;
+                const isSelected = journeyRole === roleKey;
+                return (
+                  <button
+                    key={roleKey}
+                    type="button"
+                    role="tab"
+                    aria-selected={isSelected}
+                    onClick={() => setJourneyRole(roleKey)}
+                    className={`flex min-w-0 items-center justify-center gap-1 rounded-xl px-1.5 py-1.5 text-[10px] font-bold transition-all ${
+                      isSelected
+                        ? "bg-white text-[#245B7A] shadow-[0_2px_7px_rgba(64,105,125,0.12)]"
+                        : "text-[#78909E] hover:bg-white/70 hover:text-[#39728B]"
+                    }`}
+                  >
+                    <RoleIcon className={`h-3.5 w-3.5 shrink-0 ${isSelected ? roleView.iconClass : "text-[#9AB0BA]"}`} />
+                    <span className="truncate">{roleView.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Progress Bar */}
             <div className="mb-2.5">
               <div className="flex justify-between text-xs font-bold mb-1">
-                <span className="text-blue-600">Tiến độ tổng thể</span>
-                <span className="text-blue-600">65%</span>
+                <span className="text-[#2E718F]">{activeJourneyData.progressLabel}</span>
+                <span className="text-[#2E718F]">{activeJourneyData.progress}%</span>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                <div className="bg-gradient-to-r from-sky-400 to-blue-600 h-1.5 rounded-full w-[65%] shadow-xs"></div>
+              <div className="w-full bg-[#E8F0F3] rounded-full h-1.5 overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-[#6CC7C4] to-[#3EA7B2] h-1.5 rounded-full transition-[width] duration-500"
+                  style={{ width: `${activeJourneyData.progress}%` }}
+                ></div>
               </div>
             </div>
 
-            {/* Tiếp tục học */}
+            {/* [HOME-06B] Thẻ hành động theo vai trò — luôn chỉ ra việc nên làm tiếp theo */}
             <div
-              onClick={() => onOpenCodeWorkspace && onOpenCodeWorkspace({ title: "Bài 12: Cấu trúc dữ liệu và giải thuật", id: "DS_12" })}
-              className="bg-gradient-to-r from-blue-50/70 to-sky-50/70 border border-blue-100 rounded-2xl p-2 xl:p-2.5 mb-2.5 flex items-center justify-between cursor-pointer hover:border-blue-200 transition-colors"
+              onClick={() => {
+                if (journeyRole === "student") {
+                  onOpenCodeWorkspace && onOpenCodeWorkspace({ title: "Bài 12: Cấu trúc dữ liệu và giải thuật", id: "DS_12" });
+                } else if (journeyRole === "parent") {
+                  onNavigate("Bảng xếp hạng");
+                } else {
+                  onNavigate("Giáo viên & chuyên gia");
+                }
+              }}
+              className="bg-[#F5FAFB] border border-[#DCECEF] rounded-2xl p-2 xl:p-2.5 mb-2.5 flex items-center justify-between cursor-pointer hover:border-[#C5E1E7] transition-colors"
             >
               <div className="overflow-hidden">
-                <p className="text-[9.5px] xl:text-[10px] font-bold text-blue-600 uppercase tracking-wide">Tiếp tục học</p>
-                <p className="text-xs font-bold text-[#0B3C78] truncate mt-0.5">Bài 12: Cấu trúc dữ liệu và giải thuật</p>
+                <p className="type-meta font-bold text-[#2E7E94] uppercase tracking-wide">{activeJourneyData.nextLabel}</p>
+                <p className="type-card-title truncate mt-0.5">{activeJourneyData.nextTitle}</p>
+                <p className="type-meta mt-0.5 text-slate-500 truncate">{activeJourneyData.nextMeta}</p>
               </div>
-              <ChevronRight className="w-4 h-4 text-blue-500 shrink-0 ml-1.5" />
+              <ChevronRight className="w-4 h-4 text-[#6F9CAC] shrink-0 ml-1.5" />
             </div>
 
-            {/* 3 Stats counters */}
+            {/* [HOME-06C] Chỉ số tóm tắt — số liệu thay đổi theo vai trò đang xem */}
             <div className="grid grid-cols-3 gap-1.5 text-center">
-              <div className="bg-slate-50 rounded-xl p-1.5 xl:p-2 border border-slate-100">
-                <p className="text-base xl:text-lg font-black text-blue-600 leading-tight">12</p>
-                <p className="text-[9.5px] xl:text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Bài đã xong</p>
-              </div>
-              <div className="bg-slate-50 rounded-xl p-1.5 xl:p-2 border border-slate-100">
-                <p className="text-base xl:text-lg font-black text-emerald-600 leading-tight">8</p>
-                <p className="text-[9.5px] xl:text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Đang học</p>
-              </div>
-              <div className="bg-slate-50 rounded-xl p-1.5 xl:p-2 border border-slate-100">
-                <p className="text-base xl:text-lg font-black text-amber-500 leading-tight">3</p>
-                <p className="text-[9.5px] xl:text-[10px] text-slate-500 font-medium leading-tight mt-0.5">Chưa học</p>
-              </div>
+              {activeJourneyData.stats.map((stat) => (
+                <div key={stat.label} className="bg-[#F8FAFB] rounded-xl p-1.5 xl:p-2 border border-[#E7EDF0]">
+                  <p className={`text-base xl:text-lg font-extrabold leading-tight ${stat.valueClass}`}>{stat.value}</p>
+                  <p className="type-meta mt-0.5 text-slate-500 truncate">{stat.label}</p>
+                </div>
+              ))}
             </div>
+              </>
+            )}
           </div>
 
-          {/* Card 2: Combined Tabbed Card (Top xuất sắc | Thông báo) */}
-          <div className="bg-white rounded-3xl p-3.5 xl:p-4 border border-sky-100 shadow-[0_2px_8px_rgba(0,100,220,0.04)]">
+          {/* [HOME-07] XẾP HẠNG & THÔNG BÁO — card có hai tab chuyển đổi */}
+          <div data-section="HOME-07-RANKING-NOTIFICATIONS" className="bg-white rounded-3xl p-3.5 xl:p-4 border border-[#DDEAF0] shadow-[0_4px_16px_rgba(52,91,120,0.045)]">
             <div className="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
-              <div className="flex items-center gap-1 bg-slate-100 p-0.5 rounded-xl w-full">
+              <div className="flex items-center gap-1 bg-[#F2F6F8] p-0.5 rounded-xl w-full">
                 <button
+                  type="button"
                   onClick={() => setSidebarTab("leaderboard")}
+                  aria-selected={sidebarTab === "leaderboard"}
                   className={`flex-1 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
                     sidebarTab === "leaderboard"
-                      ? "bg-blue-600 text-white shadow-2xs"
-                      : "text-slate-600 hover:text-blue-600"
+                      ? "border border-[#CDE4EA] bg-white text-[#216F8E] shadow-[0_1px_4px_rgba(44,102,124,0.07)]"
+                      : "border border-transparent text-[#6D8293] hover:bg-white/60 hover:text-[#2D718D]"
                   }`}
                 >
-                  <span>⭐ Top xuất sắc</span>
+                  <Trophy className="h-3.5 w-3.5 text-[#B77A22]" />
+                  <span>Top xuất sắc</span>
                 </button>
                 <button
+                  type="button"
                   onClick={() => setSidebarTab("notifications")}
+                  aria-selected={sidebarTab === "notifications"}
                   className={`flex-1 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1 ${
                     sidebarTab === "notifications"
-                      ? "bg-blue-600 text-white shadow-2xs"
-                      : "text-slate-600 hover:text-blue-600"
+                      ? "border border-[#CDE4EA] bg-white text-[#216F8E] shadow-[0_1px_4px_rgba(44,102,124,0.07)]"
+                      : "border border-transparent text-[#6D8293] hover:bg-white/60 hover:text-[#2D718D]"
                   }`}
                 >
-                  <span>🔔 Thông báo</span>
+                  <Bell className="h-3.5 w-3.5 text-[#5E8098]" />
+                  <span>Thông báo</span>
                 </button>
               </div>
             </div>
@@ -870,7 +1323,15 @@ export default function HomePage({
                       className="flex items-center justify-between py-1 px-1.5 rounded-xl hover:bg-sky-50 transition-colors text-xs cursor-pointer"
                     >
                       <div className="flex items-center gap-2">
-                        <span className="w-4 text-center font-bold text-slate-500 text-xs">
+                        <span className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] font-extrabold ${
+                          st.rank === 1
+                            ? "border-[#E8CD77] bg-[#FFF4D7] text-[#A76D0B]"
+                            : st.rank === 2
+                              ? "border-[#C9D6DF] bg-[#F0F5F7] text-[#5D7485]"
+                              : st.rank === 3
+                                ? "border-[#E4C4A7] bg-[#FFF0E4] text-[#A66A42]"
+                                : "border-[#DDE8EE] bg-[#F7FAFB] text-[#6D8495]"
+                        }`}>
                           {st.rank}
                         </span>
                         <img
@@ -882,7 +1343,7 @@ export default function HomePage({
                       </div>
                       <div className="flex items-center gap-2">
                         <span className="text-[10px] text-slate-400">{st.class}</span>
-                        <span className="text-xs font-bold text-blue-600">{st.score}</span>
+                        <span className="text-xs font-bold text-[#2E6FA7]">{st.score}</span>
                       </div>
                     </div>
                   ))}
@@ -904,194 +1365,151 @@ export default function HomePage({
             {sidebarTab === "notifications" && (
               <div className="flex flex-col gap-1.5 py-1">
                 {[
-                  { title: "Kỳ thi HSG Tin học cấp tỉnh sắp diễn ra", time: "3 ngày trước", icon: "⭐" },
-                  { title: "Lịch học lớp Toán Tin 10A1 tuần này", time: "5 giờ trước", icon: "📅" },
-                  { title: "Bài tập mới: Cấu trúc dữ liệu cơ bản", time: "1 ngày trước", icon: "💡" },
-                  { title: "Bạn đã nộp được một bài tập hôm nay!", time: "2 ngày trước", icon: "⭐" }
+                  { title: "Kỳ thi HSG Tin học cấp tỉnh sắp diễn ra", time: "3 ngày trước", icon: Trophy, iconStyle: "bg-[#FFF4D7] text-[#B77A22]" },
+                  { title: "Lịch học lớp Toán Tin 10A1 tuần này", time: "5 giờ trước", icon: Calendar, iconStyle: "bg-[#E7F3FB] text-[#3A77A2]" },
+                  { title: "Bài tập mới: Cấu trúc dữ liệu cơ bản", time: "1 ngày trước", icon: FileText, iconStyle: "bg-[#EAF5F8] text-[#2D7FA3]" },
+                  { title: "Bạn đã nộp được một bài tập hôm nay!", time: "2 ngày trước", icon: CheckCircle2, iconStyle: "bg-[#E8F7F0] text-[#258667]" }
                 ].map((item, idx) => (
                   <div key={idx} className="flex items-start gap-2 text-xs group cursor-pointer hover:bg-sky-50/70 p-2 rounded-xl transition-colors">
-                    <span className="text-xs sm:text-sm mt-0.5">{item.icon}</span>
+                    <span className={`mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-lg ${item.iconStyle}`}>
+                      <item.icon className="h-3.5 w-3.5" />
+                    </span>
                     <div className="flex-1 overflow-hidden">
                       <p className="text-xs font-semibold text-slate-800 group-hover:text-blue-600 transition-colors leading-snug">
                         {item.title}
                       </p>
-                      <p className="text-[9.5px] text-slate-400 mt-0.5">{item.time}</p>
+                      <p className="type-meta mt-0.5 text-slate-400">{item.time}</p>
                     </div>
                   </div>
                 ))}
               </div>
             )}
           </div>
-        </aside>
-      </div>
 
-      {/* 4. FULL-WIDTH MIDDLE SECTION: TÀI LIỆU NỔI BẬT */}
-      <section
-        id="materials"
-        className="mt-2 bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)]"
-      >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-3.5">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs shrink-0">
-              <FileText className="w-4.5 h-4.5 text-white" />
+          {/* [HOME-08] TÀI LIỆU NỔI BẬT — danh sách xem nhanh ở sidebar phải */}
+          <section
+            id="materials"
+            data-section="HOME-08-FEATURED-MATERIALS"
+            className="bg-white rounded-3xl p-3.5 xl:p-4 border border-[#DDEAF0] shadow-[0_4px_16px_rgba(52,91,120,0.045)]"
+          >
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-8 h-8 rounded-xl border border-[#D5E6EF] bg-[#EAF3F8] flex items-center justify-center text-[#3A77A2] shrink-0">
+                  <FileText className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="type-card-title">Tài liệu nổi bật</h3>
+                  <p className="type-meta mt-0.5 truncate text-slate-500">Chọn lọc cho mục tiêu của bạn</p>
+                </div>
+              </div>
+              <button
+                onClick={() => onNavigate("Tài liệu")}
+                className="type-action text-[#3A7598] hover:text-[#285F7D] whitespace-nowrap cursor-pointer"
+              >
+                Tất cả →
+              </button>
             </div>
-            <div>
-              <h3 className="text-sm sm:text-base font-bold text-[#0B3C78] leading-tight">Tài liệu nổi bật</h3>
-              <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
-                Sách, chuyên đề, đề thi chất lượng, biên soạn bởi giáo viên và chuyên gia uy tín
-              </p>
-            </div>
-          </div>
 
-          <div className="flex items-center gap-2">
-            <div className="inline-flex bg-slate-100 p-0.5 rounded-xl text-xs font-medium">
-              {["Sách", "Chuyên đề", "Đề thi"].map((tab) => (
+            <div className="flex flex-col gap-2">
+              {books.slice(0, 2).map((book) => (
                 <button
-                  key={tab}
-                  onClick={() => setActiveDocTab(tab)}
-                  className={`px-3 py-1 rounded-lg text-xs transition-all cursor-pointer ${
-                    activeDocTab === tab
-                      ? "bg-blue-600 text-white shadow-2xs font-bold"
-                      : "text-slate-600 hover:text-blue-600"
-                  }`}
+                  key={book.title}
+                  onClick={() => onNavigate("Tài liệu")}
+                  className="group w-full flex items-center gap-2.5 rounded-2xl border border-[#E1EBF0] bg-[#F8FAFB] p-2 text-left transition-all hover:border-[#C9DFE8] hover:bg-[#F3F8FA] hover:shadow-sm cursor-pointer"
                 >
-                  {tab}
+                  <img
+                    src={book.image}
+                    alt={book.title}
+                    className="w-12 h-14 rounded-xl object-cover border border-sky-100 shrink-0"
+                  />
+                  <div className="min-w-0 flex-1">
+                    <h4 className="type-card-title line-clamp-2 group-hover:text-blue-600">
+                      {book.title}
+                    </h4>
+                    <p className="type-meta mt-1 truncate text-slate-500">{book.pages} • {book.tag}</p>
+                  </div>
+                  <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600 shrink-0" />
                 </button>
               ))}
             </div>
+
             <button
               onClick={() => onNavigate("Tài liệu")}
-              className="text-xs font-bold text-blue-600 hover:text-blue-700 ml-1 cursor-pointer"
+              className="mt-2.5 w-full rounded-xl border border-[#DCEAF0] bg-[#F1F7FA] py-2 text-xs font-bold text-[#2F718F] transition-colors hover:bg-[#E8F3F6] cursor-pointer"
             >
-              Xem tất cả →
+              Khám phá kho tài liệu
             </button>
-          </div>
-        </div>
+          </section>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
-          {books.map((b) => (
-            <div
-              key={b.title}
-              onClick={() => onNavigate("Tài liệu")}
-              className="bg-white rounded-2xl border border-sky-100 overflow-hidden flex flex-row items-stretch gap-2.5 hover:shadow-md hover:border-sky-200 transition-all duration-200 group min-h-[155px] cursor-pointer"
-            >
-              <div className="w-[36%] shrink-0 relative overflow-hidden bg-slate-50">
-                <img
-                  src={b.image}
-                  alt={b.title}
-                  className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-300"
-                />
-              </div>
-
-              <div className="w-[64%] p-2.5 py-3 pr-3 flex flex-col justify-between text-left">
-                <div>
-                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0B3C78] leading-snug line-clamp-2 mb-1.5">
-                    {b.title}
-                  </h4>
-
-                  <div className="flex flex-col gap-0.5 text-[11px] text-slate-500 mb-2">
-                    <div className="flex items-center gap-1">
-                      <span className="text-blue-500 text-[11px]">👤</span>
-                      <span className="truncate">{b.tag}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-blue-500 text-[11px]">📄</span>
-                      <span>{b.pages}</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-amber-500 text-[11px]">💡</span>
-                      <span className="truncate">{b.highlight}</span>
-                    </div>
-                  </div>
+          {/* [HOME-09] CUỘC THI & KHẢO SÁT — danh sách xem nhanh ở sidebar phải */}
+          <section
+            id="contests"
+            data-section="HOME-09-CONTESTS"
+            className="bg-white rounded-3xl p-3.5 xl:p-4 border border-[#DDEAF0] shadow-[0_4px_16px_rgba(52,91,120,0.045)]"
+          >
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-8 h-8 rounded-xl border border-[#F0DEB2] bg-[#FFF6DF] flex items-center justify-center text-[#B47A22] shrink-0">
+                  <Trophy className="w-4 h-4" />
                 </div>
-
-                <button
-                  className={`w-full py-1.5 px-2.5 rounded-full text-xs font-bold transition-all flex items-center justify-center gap-1 cursor-pointer shadow-2xs ${b.btnStyle}`}
-                >
-                  <span>{b.btnText}</span>
-                  <span className="font-bold">→</span>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 5. 2-COLUMN SECTION: CUỘC THI & KHẢO SÁT | CÂU CHUYỆN ĐỒNG HÀNH */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Col 1: Cuộc thi & khảo sát */}
-        <section
-          id="contests"
-          className="bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2.5">
-                <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs">
-                  <Trophy className="w-4.5 h-4.5 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-sm sm:text-base font-bold text-[#0B3C78] leading-tight">
-                    Cuộc thi & khảo sát
-                  </h3>
-                  <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
-                    Được tổ chức thường xuyên, công bằng và uy tín
-                  </p>
+                <div className="min-w-0">
+                  <h3 className="type-card-title">Cuộc thi & khảo sát</h3>
+                  <p className="type-meta mt-0.5 truncate text-slate-500">Sự kiện đang và sắp diễn ra</p>
                 </div>
               </div>
               <button
                 onClick={() => onNavigate("Cuộc thi")}
-                className="text-xs font-bold text-blue-600 hover:text-blue-700 cursor-pointer"
+                className="type-action text-[#3A7598] hover:text-[#285F7D] whitespace-nowrap cursor-pointer"
               >
-                Xem tất cả →
+                Tất cả →
               </button>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-              {competitions.map((c) => (
-                <div
-                  key={c.title}
+            <div className="flex flex-col gap-2">
+              {competitions.slice(0, 2).map((competition) => (
+                <button
+                  key={competition.title}
                   onClick={() => onNavigate("Cuộc thi")}
-                  className="bg-[#F8FBFE] rounded-2xl border border-sky-100/80 overflow-hidden flex flex-col justify-between hover:shadow-md transition-all group cursor-pointer"
+                  className="group w-full overflow-hidden rounded-2xl border border-[#E7E5DE] bg-[#FAFBFB] text-left transition-all hover:border-[#E6D6AD] hover:bg-[#FFFCF4] hover:shadow-sm cursor-pointer"
                 >
-                  <div className="w-full h-24 sm:h-26 xl:h-28 overflow-hidden relative">
+                  <div className="flex items-stretch">
                     <img
-                      src={c.image}
-                      alt={c.title}
-                      className="w-full h-full object-cover group-hover:scale-106 transition-transform duration-300"
+                      src={competition.image}
+                      alt={competition.title}
+                      className="w-16 min-h-18 object-cover shrink-0"
                     />
-                  </div>
-
-                  <div className="p-2.5 flex-1 flex flex-col justify-between">
-                    <div>
-                      <h4 className="text-xs font-bold text-[#0B3C78] leading-snug line-clamp-2 mb-1.5">
-                        {c.title}
+                    <div className="min-w-0 flex-1 p-2.5">
+                      <h4 className="type-card-title line-clamp-2 group-hover:text-blue-600">
+                        {competition.title}
                       </h4>
-                      <div className="flex items-center gap-1 text-[11px] text-slate-500 mb-1">
-                        <Calendar className="w-3 h-3 text-slate-400" />
-                        <span className="truncate">{c.time}</span>
-                      </div>
-                      <div className="flex items-center gap-1 text-[11px] font-semibold mb-2.5">
-                        <span className={`w-2 h-2 rounded-full ${c.statusDot}`}></span>
-                        <span className={c.statusColor}>{c.status}</span>
-                      </div>
+                      <p className="type-meta mt-1 flex items-center gap-1 truncate text-slate-500">
+                        <Calendar className="w-3 h-3 shrink-0" />
+                        <span className="truncate">{competition.time}</span>
+                      </p>
+                      <p className={`type-meta mt-1 flex items-center gap-1 font-bold ${competition.statusColor}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${competition.statusDot}`} />
+                        {competition.status}
+                      </p>
                     </div>
-
-                    <button className="w-full py-1.5 px-2.5 rounded-full text-xs font-bold text-white bg-[#38BDF8] hover:bg-sky-500 shadow-2xs transition-all flex items-center justify-center gap-1 cursor-pointer">
-                      <span>Xem cuộc thi</span>
-                      <span className="font-bold">→</span>
-                    </button>
                   </div>
-                </div>
+                </button>
               ))}
             </div>
-          </div>
-        </section>
 
-        {/* Col 2: Câu chuyện đồng hành */}
+            <button
+              onClick={() => onNavigate("Cuộc thi")}
+              className="mt-2.5 w-full rounded-xl border border-[#F0E2BD] bg-[#FFF8E8] py-2 text-xs font-bold text-[#976921] transition-colors hover:bg-[#FFF3D4] cursor-pointer"
+            >
+              Xem lịch cuộc thi
+            </button>
+          </section>
+        </aside>
+
+      {/* [HOME-10] CÂU CHUYỆN ĐỒNG HÀNH — cảm nhận của học sinh, phụ huynh, giáo viên */}
         <section
           id="testimonials"
-          className="bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between"
+          data-section="HOME-10-TESTIMONIALS"
+          className="lg:col-span-2 bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between"
         >
           <div>
             <div className="flex items-center justify-between mb-3">
@@ -1100,16 +1518,16 @@ export default function HomePage({
                   <Heart className="w-4.5 h-4.5 text-white fill-white" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-bold text-[#0B3C78] leading-tight">
+                  <h3 className="type-section-title">
                     Câu chuyện đồng hành
                   </h3>
-                  <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                  <p className="type-body mt-0.5 text-slate-500">
                     Những câu chuyện thật, truyền cảm hứng thật
                   </p>
                 </div>
               </div>
               <button
-                onClick={() => onNavigate("Giáo viên tiêu biểu")}
+                  onClick={() => onNavigate("Giáo viên & chuyên gia")}
                 className="text-xs font-bold text-blue-600 hover:text-blue-700 cursor-pointer"
               >
                 Xem thêm câu chuyện →
@@ -1131,7 +1549,7 @@ export default function HomePage({
                   </div>
 
                   <div className="p-2.5 flex-1 flex flex-col justify-between bg-white m-1.5 rounded-xl border border-sky-50 shadow-2xs">
-                    <p className="text-[11px] text-slate-600 italic leading-relaxed line-clamp-3 mb-2">
+                    <p className="type-body mb-2 line-clamp-3 italic text-slate-600">
                       {t.quote}
                     </p>
                     <div className="flex items-center gap-2 pt-2 border-t border-slate-100">
@@ -1141,10 +1559,10 @@ export default function HomePage({
                         className="w-6.5 h-6.5 rounded-full object-cover border border-sky-200 shadow-2xs"
                       />
                       <div className="overflow-hidden text-left">
-                        <p className="text-xs font-bold text-[#0B3C78] truncate leading-none">
+                        <p className="type-card-title truncate">
                           {t.author}
                         </p>
-                        <p className="text-[10px] text-slate-400 truncate leading-none mt-0.5">
+                        <p className="type-meta mt-0.5 truncate text-slate-400">
                           {t.role}
                         </p>
                       </div>
@@ -1153,24 +1571,48 @@ export default function HomePage({
                 </div>
               ))}
             </div>
+
+            {/* [HOME-10A] Chân khối đồng hành — dải họa tiết nhẹ giúp kết thúc card và cân bằng khoảng trống */}
+            <div className="relative mt-4 overflow-hidden rounded-2xl border border-[#DDEEF4] bg-gradient-to-r from-[#F3FAFC] via-white to-[#F8F5FF] px-3.5 py-2.5">
+              <svg className="pointer-events-none absolute inset-x-0 bottom-0 h-8 w-full text-[#DCEFF4]" viewBox="0 0 720 56" fill="none" aria-hidden="true">
+                <path d="M0 42C96 10 158 10 244 36C326 60 401 57 482 26C568 -7 639 8 720 35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                <path d="M0 51C96 19 158 19 244 45C326 69 401 66 482 35C568 2 639 17 720 44" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity=".7" />
+              </svg>
+              <div className="relative flex items-center gap-2.5">
+                <div className="flex shrink-0 -space-x-2">
+                  {testimonials.slice(0, 3).map((t) => (
+                    <img
+                      key={`supporter-${t.author}`}
+                      src={t.avatar}
+                      alt=""
+                      className="h-7 w-7 rounded-full border-2 border-white object-cover shadow-[0_2px_6px_rgba(55,104,123,0.12)]"
+                    />
+                  ))}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="type-card-title truncate text-[#245B7A]">Đồng hành để tiến bộ mỗi ngày</p>
+                  <p className="type-meta mt-0.5 truncate text-slate-500">Học sinh, gia đình và thầy cô cùng chung một mục tiêu.</p>
+                </div>
+                <Heart className="h-4 w-4 shrink-0 text-[#74B6C5]" aria-hidden="true" />
+              </div>
+            </div>
           </div>
         </section>
-      </div>
 
-      {/* 6. 2-COLUMN SECTION: CÂU HỎI THƯỜNG GẶP | CẦN HỖ TRỢ? */}
-      <div id="support" className="grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
-        {/* Col 1: Câu hỏi thường gặp */}
-        <section className="h-full bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between">
+      {/* [HOME-11] HỖ TRỢ TOÀN CHIỀU NGANG — FAQ bên trái, liên hệ hỗ trợ bên phải */}
+      <div id="support" data-section="HOME-11-SUPPORT-ROW" className="lg:col-span-3 grid grid-cols-1 lg:grid-cols-2 gap-4 items-stretch">
+        {/* [HOME-11A] Câu hỏi thường gặp */}
+        <section data-section="HOME-11A-FAQ" className="h-full bg-white rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between">
           <div>
             <div className="flex items-center gap-2.5 mb-3">
               <div className="w-8.5 h-8.5 rounded-xl bg-blue-600 flex items-center justify-center text-white text-sm shadow-2xs">
                 <HelpCircle className="w-4.5 h-4.5 text-white" />
               </div>
               <div>
-                <h3 className="text-sm sm:text-base font-bold text-[#0B3C78] leading-tight">
+                <h3 className="type-section-title">
                   Câu hỏi thường gặp
                 </h3>
-                <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">
+                <p className="type-body mt-0.5 text-slate-500">
                   Giải đáp nhanh những thắc mắc phổ biến
                 </p>
               </div>
@@ -1183,7 +1625,7 @@ export default function HomePage({
                   <div key={idx} className="transition-colors">
                     <button
                       onClick={() => setOpenFaq(isOpen ? null : idx)}
-                      className="w-full text-left px-4 py-2.5 flex items-center justify-between text-xs sm:text-sm font-bold text-slate-800 hover:text-blue-600 transition-colors cursor-pointer"
+                      className="type-card-title w-full text-left px-4 py-2.5 flex items-center justify-between text-slate-800 hover:text-blue-600 transition-colors cursor-pointer"
                     >
                       <span className="pr-2">{faq.q}</span>
                       <ChevronDown
@@ -1193,7 +1635,7 @@ export default function HomePage({
                       />
                     </button>
                     {isOpen && (
-                      <div className="px-4 pb-3 text-xs text-slate-600 bg-sky-50/40 leading-relaxed border-t border-sky-50">
+                      <div className="type-body px-4 pb-3 text-slate-600 bg-sky-50/40 border-t border-sky-50">
                         {faq.a}
                       </div>
                     )}
@@ -1204,8 +1646,8 @@ export default function HomePage({
           </div>
         </section>
 
-        {/* Col 2: Cần hỗ trợ? */}
-        <section className="h-full relative overflow-hidden rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between min-h-[300px] sm:min-h-[320px]">
+        {/* [HOME-11B] Liên hệ tư vấn và hỗ trợ */}
+        <section data-section="HOME-11B-CONTACT-SUPPORT" className="h-full relative overflow-hidden rounded-3xl p-4 sm:p-5 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col justify-between min-h-[300px] sm:min-h-[320px]">
           <img
             src="/assets/support-banner-bg.jpg"
             alt="Cần hỗ trợ?"
@@ -1225,8 +1667,8 @@ export default function HomePage({
                   <Headphones className="w-4.5 h-4.5 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-sm sm:text-base font-extrabold text-[#0B3C78] leading-tight">Cần hỗ trợ?</h3>
-                  <p className="text-[11px] sm:text-xs text-slate-600 font-medium mt-0.5 leading-snug">
+                  <h3 className="type-section-title">Cần hỗ trợ?</h3>
+                  <p className="type-body mt-0.5 text-slate-600">
                     Đội ngũ tư vấn luôn sẵn sàng đồng hành cùng bạn trên hành trình chinh phục tri thức.
                   </p>
                 </div>
@@ -1259,6 +1701,7 @@ export default function HomePage({
             </div>
           </div>
         </section>
+      </div>
       </div>
     </div>
   );

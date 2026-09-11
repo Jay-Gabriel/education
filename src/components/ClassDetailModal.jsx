@@ -63,48 +63,56 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
   ];
 
   return (
-    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-fadeIn">
-      <div className="relative flex h-[calc(100dvh-24px)] w-full max-w-4xl flex-col overflow-hidden rounded-2xl border border-sky-100 bg-white shadow-2xl sm:h-auto sm:max-h-[92vh] sm:rounded-3xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/45 p-2 backdrop-blur-sm sm:p-4 animate-fadeIn">
+      <div className="relative flex h-[calc(100dvh-24px)] w-full max-w-5xl flex-col overflow-hidden rounded-2xl border border-sky-100 bg-[#F8FAFB] shadow-2xl sm:h-auto sm:max-h-[92vh] sm:rounded-3xl">
         {/* Header with Background Accent */}
-        <div className="bg-gradient-to-r from-[#0050A0] via-[#0066CC] to-[#0284C7] p-4 sm:p-6 text-white relative shrink-0">
+        <div className="relative shrink-0 border-b border-sky-100 bg-white">
+          <div className="h-1 bg-[#126F91]" />
           <button
+            type="button"
             onClick={onClose}
-            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-colors cursor-pointer"
+            aria-label="Đóng chi tiết lớp học"
+            className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-xl border border-slate-200 bg-white text-slate-500 shadow-sm transition-colors hover:border-sky-200 hover:bg-sky-50 hover:text-[#126F91] cursor-pointer"
           >
             <X className="w-5 h-5" />
           </button>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div className="flex flex-col items-start gap-4 p-4 pr-14 sm:flex-row sm:items-center sm:p-6 sm:pr-16">
             <img
               src={course.image || "/assets/course-img-1.png"}
               alt={course.title}
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-white/40 shadow-md shrink-0"
+              className="h-16 w-16 shrink-0 rounded-2xl border border-sky-100 object-cover shadow-sm sm:h-20 sm:w-20"
             />
             <div className="flex-1">
-              <div className="flex flex-wrap items-center gap-2 mb-1.5">
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-400 text-amber-950 shadow-2xs">
+              <div className="mb-2 flex flex-wrap items-center gap-1.5">
+                <span className="rounded-full bg-amber-50 px-2.5 py-1 text-[10px] font-bold text-amber-700 border border-amber-100">
                   {course.tag || "Lớp Chuyên Tin"}
                 </span>
-                <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-white/20 text-white backdrop-blur-xs">
+                <span className="rounded-full border border-sky-100 bg-sky-50 px-2.5 py-1 text-[10px] font-bold text-[#126F91]">
                   Mã lớp: {course.classCode || "10CT-2026"}
                 </span>
-                <span className="flex items-center gap-1 text-[11px] font-bold text-amber-300">
-                  <Star className="w-3.5 h-3.5 fill-amber-300" />
-                  <span>4.9 (128 đánh giá đã xác thực)</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold text-emerald-700">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Đang học
                 </span>
               </div>
 
-              <h2 className="text-lg sm:text-xl font-black text-white leading-tight">
+              <h2 className="text-lg font-bold leading-tight text-[#123B68] sm:text-xl">
                 {course.title}
               </h2>
-              <p className="text-xs text-sky-100 mt-1 line-clamp-1">
+              <p className="mt-1 line-clamp-1 text-xs text-slate-500">
                 Giảng viên: <strong>{course.instructor || "Thầy Nguyễn Tiến Thành (THPT Chuyên Thái Bình)"}</strong>
               </p>
+              <div className="mt-2 flex items-center gap-1.5 text-[11px] font-semibold text-amber-600">
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                <span>4.9</span>
+                <span className="font-medium text-slate-400">· 128 đánh giá đã xác thực</span>
+              </div>
             </div>
           </div>
 
           {/* Navigation Tabs Bar */}
-          <div className="flex items-center gap-1 overflow-x-auto mt-4 pt-3 border-t border-white/20">
+          <div className="flex items-center gap-1 overflow-x-auto border-t border-sky-100 px-3 py-2 sm:px-5">
             {tabs.map((t) => {
               const Icon = t.icon;
               const isActive = activeTab === t.id;
@@ -114,8 +122,8 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
                   onClick={() => setActiveTab(t.id)}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? "bg-white text-[#0066CC] shadow-md"
-                      : "text-white/80 hover:bg-white/15 hover:text-white"
+                      ? "bg-[#126F91] text-white shadow-sm"
+                      : "text-slate-500 hover:bg-sky-50 hover:text-[#126F91]"
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -124,11 +132,11 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
               );
             })}
           </div>
-          <p className="mt-1 text-[9px] font-medium text-sky-100 sm:hidden">Vuốt ngang để xem thêm mục</p>
+          <p className="px-3 pb-2 text-[9px] font-medium text-slate-400 sm:hidden">Vuốt ngang để xem thêm mục</p>
         </div>
 
         {/* Modal Body Content */}
-        <div className="p-4 sm:p-6 overflow-y-auto flex-1 bg-[#F8FBFE]">
+        <div className="flex-1 overflow-y-auto bg-[#F8FBFE] p-4 sm:p-6">
           {/* TAB 1: OVERVIEW */}
           {activeTab === "overview" && (
             <div className="flex flex-col gap-4">
@@ -139,48 +147,49 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="bg-white rounded-2xl p-3.5 border border-sky-100 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
-                    ⏱️
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <div className="flex items-center gap-3 rounded-2xl border border-sky-100 bg-white p-3.5">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-sky-50 text-[#126F91]">
+                    <Clock className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-400 font-medium">Thời lượng</p>
-                    <p className="text-xs font-bold text-slate-800">36 buổi (72 giờ)</p>
+                    <p className="text-[10px] font-medium text-slate-400">Thời lượng</p>
+                    <p className="text-xs font-bold text-slate-800">36 buổi · 72 giờ</p>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-3.5 border border-sky-100 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">
-                    📝
+                <div className="flex items-center gap-3 rounded-2xl border border-sky-100 bg-white p-3.5">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-emerald-50 text-emerald-700">
+                    <FileText className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-400 font-medium">Hệ thống bài tập</p>
-                    <p className="text-xs font-bold text-slate-800">120+ bài code OJ</p>
+                    <p className="text-[10px] font-medium text-slate-400">Hệ thống bài tập</p>
+                    <p className="text-xs font-bold text-slate-800">120+ bài chấm OJ</p>
                   </div>
                 </div>
 
-                <div className="bg-white rounded-2xl p-3.5 border border-sky-100 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600 font-bold">
-                    🎓
+                <div className="flex items-center gap-3 rounded-2xl border border-sky-100 bg-white p-3.5">
+                  <div className="grid h-10 w-10 place-items-center rounded-xl bg-amber-50 text-amber-700">
+                    <Award className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="text-[10px] text-slate-400 font-medium">Mục tiêu</p>
-                    <p className="text-xs font-bold text-slate-800">Đỗ Chuyên Tin & HSG</p>
+                    <p className="text-[10px] font-medium text-slate-400">Mục tiêu</p>
+                    <p className="text-xs font-bold text-slate-800">Chuyên Tin & HSG</p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-4 flex items-center justify-between">
+              <div className="flex items-center justify-between gap-4 rounded-2xl border border-amber-100 bg-amber-50/70 p-4">
                 <div>
-                  <h5 className="text-xs font-bold text-amber-900">Tiến độ lớp học</h5>
-                  <p className="text-[11px] text-amber-700 mt-0.5">Bạn đã hoàn thành 8/24 bài tập được giao (33%)</p>
+                  <h5 className="text-xs font-bold text-amber-900">Tiến độ của bạn</h5>
+                  <p className="mt-0.5 text-[11px] text-amber-700">Đã hoàn thành 8/24 bài tập được giao · 33%</p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => setActiveTab("syllabus")}
-                  className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold text-xs shadow-xs cursor-pointer"
+                  className="shrink-0 rounded-xl bg-amber-500 px-3.5 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:bg-amber-600 cursor-pointer"
                 >
-                  Vào làm bài ngay →
+                  Vào lộ trình
                 </button>
               </div>
             </div>
@@ -189,23 +198,23 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
           {/* TAB 2: SYLLABUS & PROBLEMS */}
           {activeTab === "syllabus" && (
             <div className="flex flex-col gap-4">
-              <div className="flex items-center justify-between bg-white p-3 rounded-2xl border border-sky-100">
+              <div className="flex flex-wrap items-center justify-between gap-2 rounded-2xl border border-sky-100 bg-white p-3">
                 <span className="text-xs font-bold text-[#0B3C78]">Danh sách bài tập và đề đánh giá</span>
-                <span className="text-[11px] text-slate-500">Giáo viên mở bài theo tuần học</span>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-medium text-slate-500"><Unlock className="h-3.5 w-3.5 text-emerald-600" />Giáo viên mở bài theo tuần học</span>
               </div>
 
               {syllabusUnits.map((u, idx) => (
                 <div key={idx} className="bg-white rounded-2xl border border-sky-100 overflow-hidden shadow-2xs">
-                  <div className="bg-slate-50/80 px-4 py-2.5 border-b border-sky-100 flex items-center justify-between">
+                  <div className="flex items-center justify-between border-b border-sky-100 bg-sky-50/50 px-4 py-3">
                     <h5 className="text-xs font-bold text-[#0050A0]">{u.unit}</h5>
-                    <span className="text-[10px] font-semibold text-slate-500">{u.lessons.length} bài học</span>
+                    <span className="rounded-full bg-white px-2 py-1 text-[10px] font-semibold text-slate-500 border border-sky-100">{u.lessons.length} bài</span>
                   </div>
 
                   <div className="divide-y divide-slate-100">
                     {u.lessons.map((lesson) => (
                       <div
                         key={lesson.id}
-                        className="p-3 sm:px-4 flex items-center justify-between gap-3 hover:bg-sky-50/50 transition-colors"
+                        className="flex items-center justify-between gap-3 px-3 py-3 transition-colors hover:bg-sky-50/50 sm:px-4"
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           {lesson.status === "opened" ? (
@@ -220,9 +229,12 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
 
                           <div className="min-w-0">
                             <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold text-slate-800 truncate">{lesson.title}</span>
-                              <span className="text-[9.5px] px-1.5 py-0.2 rounded-md bg-slate-100 text-slate-600 font-mono">
+                              <span className="truncate text-xs font-bold text-slate-800">{lesson.title}</span>
+                              <span className="rounded-md bg-slate-100 px-1.5 py-0.5 font-mono text-[9.5px] text-slate-600">
                                 {lesson.id}
+                              </span>
+                              <span className={"hidden rounded-md px-1.5 py-0.5 text-[9.5px] font-bold sm:inline " + (lesson.type === "quiz" ? "bg-amber-50 text-amber-700" : "bg-sky-50 text-[#126F91]")}>
+                                {lesson.type === "quiz" ? "Trắc nghiệm" : "Lập trình"}
                               </span>
                             </div>
 
@@ -239,7 +251,7 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
                                 onClose();
                                 if (onOpenCodeWorkspace) onOpenCodeWorkspace(lesson);
                               }}
-                              className="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-2xs cursor-pointer flex items-center gap-1.5"
+                              className="flex items-center gap-1.5 rounded-xl bg-[#126F91] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#0F607E] cursor-pointer"
                             >
                               <span>{lesson.passed ? "Luyện lại" : "Làm bài"}</span>
                               <span className="font-bold">→</span>
@@ -415,20 +427,22 @@ export default function ClassDetailModal({ course, isOpen, onClose, onOpenCodeWo
         </div>
 
         {/* Modal Footer */}
-        <div className="p-3.5 sm:p-4 bg-white border-t border-sky-100 flex items-center justify-between shrink-0">
+        <div className="flex shrink-0 items-center justify-between border-t border-sky-100 bg-white p-3.5 sm:p-4">
           <span className="text-xs text-slate-500 font-medium hidden sm:inline">
             Khóa học có bản quyền của <strong>Ôn Thi 360</strong>
           </span>
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
             <button
+              type="button"
               onClick={onClose}
               className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition-colors"
             >
               Đóng
             </button>
             <button
+              type="button"
               onClick={() => setActiveTab("syllabus")}
-              className="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-sky-500 hover:brightness-105 text-white font-bold text-xs shadow-md cursor-pointer"
+              className="rounded-xl bg-[#126F91] px-4 py-2.5 text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#0F607E] cursor-pointer"
             >
               Lộ trình bài tập →
             </button>

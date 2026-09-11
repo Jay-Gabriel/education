@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   FileText,
   Search,
@@ -9,17 +9,64 @@ import {
   Lock,
   Sparkles,
   Award,
+  ChevronLeft,
   ChevronRight,
   ShieldCheck,
   KeyRound,
   Printer,
-  FileCheck
+  FileCheck,
+  X
 } from "lucide-react";
+
+function MaterialsPagination({ page, totalPages, onChange, label }) {
+  if (totalPages <= 1) return null;
+
+  return (
+    <nav aria-label={label} className="mt-1 flex flex-col items-center justify-between gap-2 rounded-2xl border border-[#DDEAF0] bg-white p-2.5 sm:flex-row">
+      <span className="text-[11px] text-[#71869A]">
+        Trang <b className="text-[#536D86]">{page}</b> / {totalPages}
+      </span>
+      <div className="flex items-center gap-1.5">
+        <button
+          type="button"
+          aria-label="Trang trước"
+          disabled={page === 1}
+          onClick={() => onChange(Math.max(1, page - 1))}
+          className="grid h-9 w-9 place-items-center rounded-xl border border-[#DDEAF0] text-[#536D86] transition hover:border-[#9DC8D7] hover:bg-[#EAF5F8] disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        {Array.from({ length: totalPages }, (_, index) => index + 1).map((pageNumber) => (
+          <button
+            type="button"
+            key={pageNumber}
+            aria-label={`Trang ${pageNumber}`}
+            aria-current={page === pageNumber ? "page" : undefined}
+            onClick={() => onChange(pageNumber)}
+            className={`grid h-9 min-w-9 place-items-center rounded-xl px-2 text-[11px] font-extrabold transition ${page === pageNumber ? "bg-[#0066CC] text-white shadow-[0_3px_8px_rgba(0,102,204,0.18)]" : "text-[#536D86] hover:bg-[#F8FAFB]"}`}
+          >
+            {pageNumber}
+          </button>
+        ))}
+        <button
+          type="button"
+          aria-label="Trang sau"
+          disabled={page === totalPages}
+          onClick={() => onChange(Math.min(totalPages, page + 1))}
+          className="grid h-9 w-9 place-items-center rounded-xl border border-[#DDEAF0] text-[#536D86] transition hover:border-[#9DC8D7] hover:bg-[#EAF5F8] disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    </nav>
+  );
+}
 
 export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
   const [activeTab, setActiveTab] = useState("books"); // books, topics, exams
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState(null);
+  const [page, setPage] = useState(1);
 
   const materialsData = {
     books: [
@@ -135,6 +182,22 @@ export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
   };
 
   const currentItems = materialsData[activeTab] || materialsData.books;
+  const filteredItems = currentItems.filter((item) => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return true;
+    return `${item.title} ${item.tag} ${item.highlight} ${item.author}`.toLowerCase().includes(query);
+  });
+  const pageSize = 3;
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize));
+  const visibleItems = filteredItems.slice((page - 1) * pageSize, page * pageSize);
+
+  useEffect(() => {
+    setPage(1);
+  }, [activeTab, searchQuery]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [page, totalPages]);
 
   return (
     <div className="flex flex-col gap-5 animate-fadeIn">
@@ -152,7 +215,7 @@ export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
             <span>Kho học liệu & Sách giáo trình có bản quyền</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white leading-tight">
+          <h1 className="text-2xl font-black tracking-tight text-white leading-tight">
             Tài liệu, Giáo trình & Bộ đề thi
           </h1>
 
@@ -191,19 +254,24 @@ export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
       <div className="bg-white rounded-3xl p-4 border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex items-center gap-2 bg-slate-100 p-1 rounded-2xl w-full sm:w-auto">
           {[
-            { id: "books", label: "📚 Sách giáo trình", count: "4" },
-            { id: "topics", label: "📄 Chuyên đề thuật toán", count: "2" },
-            { id: "exams", label: "🎯 Tuyển tập đề thi", count: "2" }
+            { id: "books", label: "Sách giáo trình", count: materialsData.books.length, icon: BookOpen, tone: "text-[#2D7FA3]" },
+            { id: "topics", label: "Chuyên đề thuật toán", count: materialsData.topics.length, icon: Sparkles, tone: "text-[#786BB1]" },
+            { id: "exams", label: "Tuyển tập đề thi", count: materialsData.exams.length, icon: Award, tone: "text-[#AF7C32]" }
           ].map((tab) => (
             <button
+              type="button"
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              aria-pressed={activeTab === tab.id}
+              className={`flex-1 sm:flex-none min-h-10 px-4 py-2 rounded-xl text-[11px] font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9DC8D7] ${
                 activeTab === tab.id
                   ? "bg-[#0066CC] text-white shadow-2xs"
-                  : "text-slate-600 hover:text-blue-600"
+                  : "text-[#536D86] hover:bg-white hover:text-[#126F91]"
               }`}
             >
+              <span className={`grid h-5 w-5 place-items-center rounded-lg ${activeTab === tab.id ? "bg-white/15" : "bg-[#EAF5F8]"}`}>
+                <tab.icon className={`h-3.5 w-3.5 ${activeTab === tab.id ? "text-white" : tab.tone}`} />
+              </span>
               <span>{tab.label}</span>
               <span className={`text-[10px] px-1.5 py-0.2 rounded-full ${activeTab === tab.id ? "bg-white/20 text-white" : "bg-slate-200 text-slate-600"}`}>
                 {tab.count}
@@ -226,7 +294,7 @@ export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
 
       {/* 3. MATERIALS GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        {currentItems.map((item) => (
+        {visibleItems.map((item) => (
           <div
             key={item.id}
             className="bg-white rounded-3xl border border-sky-100 shadow-[0_4px_16px_rgba(0,100,220,0.05)] overflow-hidden flex flex-col justify-between hover:shadow-lg hover:border-sky-200 transition-all duration-300 group"
@@ -247,8 +315,9 @@ export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
               {/* Info */}
               <div className="p-4">
                 <div className="flex items-center justify-between gap-1 text-xs mb-1.5">
-                  <span className="text-[10.5px] text-slate-500 font-medium">
-                    📄 {item.pages}
+                  <span className="inline-flex items-center gap-1 text-[10.5px] text-slate-500 font-medium">
+                    <FileText className="h-3.5 w-3.5 text-[#2D7FA3]" />
+                    {item.pages}
                   </span>
                   <div className="flex items-center gap-1 text-amber-500 font-bold text-xs">
                     <Star className="w-3.5 h-3.5 fill-amber-400" />
@@ -261,8 +330,9 @@ export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
                   {item.title}
                 </h3>
 
-                <p className="text-[11px] text-slate-500 line-clamp-2 mb-2">
-                  💡 {item.highlight}
+                <p className="flex items-start gap-1 text-[11px] text-slate-500 line-clamp-2 mb-2">
+                  <Sparkles className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#AF7C32]" />
+                  <span>{item.highlight}</span>
                 </p>
 
                 <p className="text-[10px] text-slate-400">
@@ -291,18 +361,21 @@ export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
           </div>
         ))}
       </div>
-      {currentItems.length === 0 && <div className="rounded-3xl border border-dashed border-sky-200 bg-white p-10 text-center"><Search className="mx-auto h-9 w-9 text-sky-300"/><h2 className="mt-3 text-sm font-black text-slate-800">Không tìm thấy tài liệu</h2><p className="mt-1 text-xs text-slate-500">Thử chọn danh mục khác hoặc xóa từ khóa tìm kiếm.</p><button onClick={() => setSearchQuery("")} className="mt-4 text-xs font-bold text-blue-600">Xóa tìm kiếm</button></div>}
+      <MaterialsPagination page={page} totalPages={totalPages} onChange={setPage} label="Phân trang tài liệu" />
+      {filteredItems.length === 0 && <div className="rounded-3xl border border-dashed border-sky-200 bg-white p-10 text-center"><Search className="mx-auto h-9 w-9 text-sky-300"/><h2 className="mt-3 text-sm font-black text-slate-800">Không tìm thấy tài liệu</h2><p className="mt-1 text-xs text-slate-500">Thử chọn danh mục khác hoặc xóa từ khóa tìm kiếm.</p><button type="button" onClick={() => setSearchQuery("")} className="mt-4 text-xs font-bold text-blue-600">Xóa tìm kiếm</button></div>}
 
       {/* Detail & Buy Modal */}
       {selectedItem && (
         <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-fadeIn">
           <div className="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-6 shadow-2xl border border-sky-100 relative">
-            <button
-              onClick={() => setSelectedItem(null)}
-              className="absolute top-4 right-4 p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
-            >
-              ✕
-            </button>
+              <button
+                type="button"
+                aria-label="Đóng thông tin tài liệu"
+                onClick={() => setSelectedItem(null)}
+                className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-xl text-slate-400 transition hover:bg-slate-100 hover:text-slate-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#9DC8D7]"
+              >
+                <X className="h-4 w-4" />
+              </button>
 
             <div className="flex gap-4 mb-4">
               <img src={selectedItem.image} alt="" className="w-24 h-32 object-contain rounded-xl border border-slate-200" />
@@ -312,9 +385,12 @@ export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
                 </span>
                 <h3 className="text-sm font-bold text-[#0B3C78] mt-1">{selectedItem.title}</h3>
                 <p className="text-xs text-slate-500 mt-1">Tác giả: {selectedItem.author}</p>
-                <div className="flex items-center gap-1 text-amber-500 text-xs font-bold mt-2">
-                  {"★".repeat(5)} <span>{selectedItem.rating} (Đã xác thực)</span>
-                </div>
+                  <div className="mt-2 flex items-center gap-1 text-xs font-bold text-amber-500">
+                    <span className="inline-flex items-center gap-0.5" aria-label={`${selectedItem.rating} trên 5 sao`}>
+                      {Array.from({ length: 5 }, (_, index) => <Star key={index} className="h-3.5 w-3.5 fill-amber-400" />)}
+                    </span>
+                    <span>{selectedItem.rating} (Đã xác thực)</span>
+                  </div>
               </div>
             </div>
 
@@ -329,8 +405,9 @@ export default function MaterialsPage({ onOpenActivation, onOpenCheckout }) {
                   <strong className="text-amber-600">{selectedItem.pricePrint}</strong>
                 </div>
               )}
-              <div className="text-[11px] text-slate-400 pt-1 border-t border-sky-100">
-                ✓ Được cấp quyền truy cập ngay sau khi nhập mã kích hoạt hợp lệ.
+              <div className="flex items-start gap-1.5 border-t border-sky-100 pt-1 text-[11px] text-slate-400">
+                <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#3B9374]" />
+                <span>Được cấp quyền truy cập ngay sau khi nhập mã kích hoạt hợp lệ.</span>
               </div>
             </div>
 

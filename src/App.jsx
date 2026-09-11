@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { BookOpen, Code2, Home, Menu } from "lucide-react";
+
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import HomePage from "./components/HomePage";
@@ -33,7 +33,7 @@ export default function App() {
   const [selectedReviewTarget, setSelectedReviewTarget] = useState(null);
   const [assessmentModalOpen, setAssessmentModalOpen] = useState(false);
   const [accessModal, setAccessModal] = useState(null);
-  const [mobileMoreOpen, setMobileMoreOpen] = useState(false);
+
 
   // Home states for goal search
   const [selectedGrade, setSelectedGrade] = useState("Lớp 10");
@@ -105,72 +105,65 @@ export default function App() {
           />
         )}
 
-        {activeNav === "Trang chủ" && (
+        {!workspaceMode && activeNav === "Trang chủ" && (
           <HomePage
             onNavigate={handlePublicNavigate}
             onOpenClassDetail={handleOpenClassDetail}
             onOpenActivation={() => setActivationModalOpen(true)}
+            onOpenAccess={(mode) => setAccessModal(mode)}
             onOpenCodeWorkspace={handleOpenCodeWorkspace}
             selectedGrade={selectedGrade}
             setSelectedGrade={setSelectedGrade}
             selectedGoal={selectedGoal}
             setSelectedGoal={setSelectedGoal}
+            userRole={userRole}
           />
         )}
 
-        {(activeNav === "Khóa học" || activeNav === "Lớp học") && (
+        {!workspaceMode && (activeNav === "Khóa học" || activeNav === "Lớp học") && (
           <CoursesPage
             onOpenClassDetail={handleOpenClassDetail}
             onOpenActivation={() => setActivationModalOpen(true)}
           />
         )}
 
-        {activeNav === "Luyện tập" && (
+        {!workspaceMode && activeNav === "Luyện tập" && (
           <PracticePage
             onOpenCodeWorkspace={handleOpenCodeWorkspace}
           />
         )}
 
-        {activeNav === "Tài liệu" && (
+        {!workspaceMode && activeNav === "Tài liệu" && (
           <MaterialsPage
             onOpenActivation={() => setActivationModalOpen(true)}
             onOpenCheckout={() => setAccessModal("checkout")}
           />
         )}
 
-        {activeNav === "Cuộc thi" && (
+        {!workspaceMode && activeNav === "Cuộc thi" && (
           <ContestsPage
             onOpenCodeWorkspace={handleOpenCodeWorkspace}
           />
         )}
 
-        {activeNav === "Bảng xếp hạng" && (
+        {!workspaceMode && activeNav === "Bảng xếp hạng" && (
           <LeaderboardPage />
         )}
 
-        {(activeNav === "Giáo viên tiêu biểu" || activeNav === "Giáo viên & Chuyên gia") && (
+        {!workspaceMode && (activeNav === "Giáo viên & chuyên gia" || activeNav === "Giáo viên & Chuyên gia") && (
           <TeachersPage
             onNavigateCourses={handlePublicNavigate}
           />
         )}
 
-        {activeNav === "Thông tin" && (
+        {!workspaceMode && activeNav === "Thông tin" && (
           <InfoPage />
         )}
       </div>
 
-      {/* 3. SHARED FOOTER */}
-      <Footer onNavigate={handlePublicNavigate} />
+      {/* 3. SHARED FOOTER — workspace có shell riêng, không lặp lại footer public */}
+      {!workspaceMode && <Footer onNavigate={handlePublicNavigate} />}
 
-      {!workspaceMode && !activationModalOpen && !classDetailModalOpen && !codeWorkspaceModalOpen && !reviewModalOpen && !assessmentModalOpen && !accessModal && (
-        <>
-          <nav className="md:hidden fixed bottom-3 left-3 right-3 z-[55] flex items-center justify-around rounded-2xl border border-sky-100 bg-white/95 p-2 shadow-xl backdrop-blur-md">
-            {[["Trang chủ", Home], ["Khóa học", BookOpen], ["Luyện tập", Code2]].map(([label, Icon]) => <button key={label} onClick={() => handlePublicNavigate(label)} className={`min-w-16 py-1.5 flex flex-col items-center gap-0.5 text-[10px] font-bold ${activeNav === label ? "text-blue-600" : "text-slate-500"}`}><Icon className="w-4 h-4"/>{label}</button>)}
-            <button onClick={() => setMobileMoreOpen(true)} className="min-w-16 py-1.5 flex flex-col items-center gap-0.5 text-[10px] font-bold text-slate-500"><Menu className="w-4 h-4"/>Thêm</button>
-          </nav>
-          {mobileMoreOpen && <div className="md:hidden fixed inset-0 z-[65] bg-slate-950/35 flex items-end" onClick={() => setMobileMoreOpen(false)}><div className="w-full rounded-t-3xl bg-white p-5" onClick={e => e.stopPropagation()}><div className="mx-auto h-1.5 w-10 rounded-full bg-slate-200"/><h3 className="mt-4 text-base font-black text-slate-800">Khám phá thêm</h3><div className="mt-3 grid grid-cols-2 gap-2">{["Tài liệu", "Cuộc thi", "Bảng xếp hạng", "Giáo viên tiêu biểu", "Thông tin"].map(item => <button key={item} onClick={() => { setMobileMoreOpen(false); handlePublicNavigate(item); }} className="rounded-xl bg-sky-50 px-3 py-3 text-left text-xs font-bold text-slate-700">{item}</button>)}</div></div></div>}
-        </>
-      )}
 
       {/* 4. MODALS & WORKSPACES */}
       <ActivationModal
@@ -192,6 +185,7 @@ export default function App() {
         problem={selectedProblem}
         isOpen={codeWorkspaceModalOpen}
         onClose={() => setCodeWorkspaceModalOpen(false)}
+        onNextProblem={handleOpenCodeWorkspace}
       />
 
       <ReviewModal
