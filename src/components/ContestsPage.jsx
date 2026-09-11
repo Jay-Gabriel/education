@@ -99,8 +99,8 @@ const CONTESTS_DATA = [
         { rank: 1, name: "Nguyễn Hoàng Nam", school: "THPT Chuyên Hà Nội - Amsterdam", score: 300, time: "85'", medal: "🥇" },
         { rank: 2, name: "Trần Minh Đức", school: "THPT Chuyên Lê Hồng Phong (TP.HCM)", score: 300, time: "102'", medal: "🥈" },
         { rank: 3, name: "Lê Bảo Châu", school: "THPT Chuyên Khoa học Tự nhiên", score: 300, time: "120'", medal: "🥉" },
-        { rank: 4, name: "Phạm Hải Long", school: "THPT Chuyên Phan Bội Châu", score: 295, time: "135'", medal: "Top 4" },
-        { rank: 5, name: "Vũ Gia Huy", school: "THPT Chuyên Bắc Giang", score: 290, time: "140'", medal: "Top 5" }
+        { rank: 4, name: "Phạm Hải Long", school: "THPT Chuyên Phan Bội Châu", score: 295, time: "135'", medal: "4" },
+        { rank: 5, name: "Vũ Gia Huy", school: "THPT Chuyên Bắc Giang", score: 290, time: "140'", medal: "5" }
       ]
     },
     // CỤM 3: VÒNG TIẾP THEO DIỄN RA NGÀY NÀO
@@ -170,8 +170,8 @@ const CONTESTS_DATA = [
         { rank: 1, name: "Đặng Thu Thảo", school: "THPT Chuyên Lam Sơn", score: 200, time: "45'", medal: "🥇" },
         { rank: 2, name: "Vũ Gia Huy", school: "THPT Chuyên Bắc Giang", score: 200, time: "58'", medal: "🥈" },
         { rank: 3, name: "Nguyễn Tuấn Anh", school: "THPT Chuyên Lương Văn Tụy", score: 195, time: "65'", medal: "🥉" },
-        { rank: 4, name: "Hoàng Mai Linh", school: "THPT Chuyên Chu Văn An", score: 190, time: "70'", medal: "Top 4" },
-        { rank: 5, name: "Trần Đức Nam", school: "THPT Chuyên Thái Bình", score: 185, time: "80'", medal: "Top 5" }
+        { rank: 4, name: "Hoàng Mai Linh", school: "THPT Chuyên Chu Văn An", score: 190, time: "70'", medal: "4" },
+        { rank: 5, name: "Trần Đức Nam", school: "THPT Chuyên Thái Bình", score: 185, time: "80'", medal: "5" }
       ]
     },
     nextRound: {
@@ -828,87 +828,89 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
                   </div>
 
                   {selectedContest.pastRoundsStats?.roundsChart?.length > 0 ? (
-                    <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-2xs">
-                      {/* VÙNG BIỂU ĐỒ CỘT DỌC */}
-                      <div className="relative h-44 flex items-end justify-around gap-6 pt-6 pb-2 px-6">
-                        {/* Các đường gióng ngang mờ */}
-                        <div className="absolute inset-x-4 top-6 border-b border-dashed border-slate-200 pointer-events-none flex justify-between">
-                          <span className="text-[9px] font-bold text-slate-300 -mt-3 bg-white px-1">Tối đa (100%)</span>
-                        </div>
-                        <div className="absolute inset-x-4 top-[48%] border-b border-dashed border-slate-100 pointer-events-none flex justify-between">
-                          <span className="text-[9px] font-bold text-slate-300 -mt-3 bg-white px-1">50%</span>
-                        </div>
+                    <div className="bg-white p-3 sm:p-4 rounded-xl border border-slate-200/80 shadow-2xs overflow-x-auto no-scrollbar">
+                      <div className="min-w-[300px]">
+                        {/* VÙNG BIỂU ĐỒ CỘT DỌC */}
+                        <div className="relative h-44 flex items-end justify-around gap-4 sm:gap-6 pt-6 pb-2 px-2 sm:px-6">
+                          {/* Các đường gióng ngang mờ */}
+                          <div className="absolute inset-x-2 sm:inset-x-4 top-6 border-b border-dashed border-slate-200 pointer-events-none flex justify-between">
+                            <span className="text-[9px] font-bold text-slate-300 -mt-3 bg-white px-1">Tối đa (100%)</span>
+                          </div>
+                          <div className="absolute inset-x-2 sm:inset-x-4 top-[48%] border-b border-dashed border-slate-100 pointer-events-none flex justify-between">
+                            <span className="text-[9px] font-bold text-slate-300 -mt-3 bg-white px-1">50%</span>
+                          </div>
 
-                        {/* Các cụm cột cho từng vòng */}
-                        {selectedContest.pastRoundsStats.roundsChart.map((round, idx) => {
-                          const topPct = Math.min(100, Math.max(14, (round.topScore / round.maxScore) * 100));
-                          const myPct = round.myScore !== undefined ? Math.min(100, Math.max(14, (round.myScore / round.maxScore) * 100)) : null;
-                          const avgPct = Math.min(100, Math.max(14, (round.avgScore / round.maxScore) * 100));
+                          {/* Các cụm cột cho từng vòng */}
+                          {selectedContest.pastRoundsStats.roundsChart.map((round, idx) => {
+                            const topPct = Math.min(100, Math.max(14, (round.topScore / round.maxScore) * 100));
+                            const myPct = round.myScore !== undefined ? Math.min(100, Math.max(14, (round.myScore / round.maxScore) * 100)) : null;
+                            const avgPct = Math.min(100, Math.max(14, (round.avgScore / round.maxScore) * 100));
 
-                          return (
-                            <div key={idx} className="flex-1 max-w-[150px] flex items-end justify-center gap-2 sm:gap-3 h-full z-10">
-                              {/* Cột 1: Thủ khoa */}
-                              <div className="flex flex-col items-center justify-end h-full group flex-1">
-                                <span className="text-[10px] font-black text-emerald-700 mb-1 leading-none">
-                                  {round.topScore}đ
-                                </span>
-                                <div
-                                  className="w-full max-w-[28px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-lg shadow-sm hover:brightness-110 transition-all cursor-pointer"
-                                  style={{ height: `${topPct}%` }}
-                                  title={`Thủ khoa: ${round.topScore}/${round.maxScore} điểm`}
-                                />
-                              </div>
-
-                              {/* Cột 2: Điểm của bạn */}
-                              {myPct !== null && (
+                            return (
+                              <div key={idx} className="flex-1 max-w-[150px] flex items-end justify-center gap-2 sm:gap-3 h-full z-10">
+                                {/* Cột 1: Thủ khoa */}
                                 <div className="flex flex-col items-center justify-end h-full group flex-1">
-                                  <span className="text-[10px] font-black text-blue-700 bg-blue-100 px-1 py-0.5 rounded shadow-2xs mb-1 leading-none">
-                                    {round.myScore}đ
+                                  <span className="text-[10px] font-black text-emerald-700 mb-1 leading-none">
+                                    {round.topScore}đ
                                   </span>
                                   <div
-                                    className="w-full max-w-[28px] bg-gradient-to-t from-blue-700 via-blue-600 to-sky-400 rounded-t-lg shadow-md ring-2 ring-blue-300/80 hover:brightness-110 transition-all cursor-pointer"
-                                    style={{ height: `${myPct}%` }}
-                                    title={`Điểm của bạn: ${round.myScore}/${round.maxScore} điểm (${round.myRank})`}
+                                    className="w-full max-w-[28px] bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-lg shadow-sm hover:brightness-110 transition-all cursor-pointer"
+                                    style={{ height: `${topPct}%` }}
+                                    title={`Thủ khoa: ${round.topScore}/${round.maxScore} điểm`}
                                   />
                                 </div>
-                              )}
 
-                              {/* Cột 3: Điểm trung bình */}
-                              <div className="flex flex-col items-center justify-end h-full group flex-1">
-                                <span className="text-[10px] font-semibold text-slate-500 mb-1 leading-none">
-                                  {round.avgScore}đ
-                                </span>
-                                <div
-                                  className="w-full max-w-[28px] bg-gradient-to-t from-slate-400 to-slate-200 rounded-t-lg hover:brightness-110 transition-all cursor-pointer"
-                                  style={{ height: `${avgPct}%` }}
-                                  title={`Điểm trung bình giải: ${round.avgScore}/${round.maxScore} điểm`}
-                                />
+                                {/* Cột 2: Điểm của bạn */}
+                                {myPct !== null && (
+                                  <div className="flex flex-col items-center justify-end h-full group flex-1">
+                                    <span className="text-[10px] font-black text-blue-700 bg-blue-100 px-1 py-0.5 rounded shadow-2xs mb-1 leading-none">
+                                      {round.myScore}đ
+                                    </span>
+                                    <div
+                                      className="w-full max-w-[28px] bg-gradient-to-t from-blue-700 via-blue-600 to-sky-400 rounded-t-lg shadow-md ring-2 ring-blue-300/80 hover:brightness-110 transition-all cursor-pointer"
+                                      style={{ height: `${myPct}%` }}
+                                      title={`Điểm của bạn: ${round.myScore}/${round.maxScore} điểm (${round.myRank})`}
+                                    />
+                                  </div>
+                                )}
+
+                                {/* Cột 3: Điểm trung bình */}
+                                <div className="flex flex-col items-center justify-end h-full group flex-1">
+                                  <span className="text-[10px] font-semibold text-slate-500 mb-1 leading-none">
+                                    {round.avgScore}đ
+                                  </span>
+                                  <div
+                                    className="w-full max-w-[28px] bg-gradient-to-t from-slate-400 to-slate-200 rounded-t-lg hover:brightness-110 transition-all cursor-pointer"
+                                    style={{ height: `${avgPct}%` }}
+                                    title={`Điểm trung bình giải: ${round.avgScore}/${round.maxScore} điểm`}
+                                  />
+                                </div>
                               </div>
+                            );
+                          })}
+                        </div>
+
+                        {/* ĐƯỜNG ĐÁY TRỤC HOÀNH (BASELINE) */}
+                        <div className="h-0.5 bg-slate-300 w-full mb-3" />
+
+                        {/* NHÃN THÔNG TIN TỪNG VÒNG (NẰM HOÀN TOÀN DƯỚI ĐÁY CỘT) */}
+                        <div className="flex justify-around gap-4 sm:gap-6 px-2 sm:px-6">
+                          {selectedContest.pastRoundsStats.roundsChart.map((round, idx) => (
+                            <div key={idx} className="flex-1 max-w-[150px] text-center space-y-1">
+                              <strong className="block text-[11px] sm:text-xs font-bold text-slate-800 leading-tight">
+                                {round.roundName}
+                              </strong>
+                              <p className="text-[9px] sm:text-[10px] text-slate-500">
+                                {round.date} · {round.participants?.toLocaleString()} thí sinh
+                              </p>
+                              {round.myRank && (
+                                <span className="inline-block px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-bold text-[9px] sm:text-[10px]">
+                                  Thứ hạng: {round.myRank}
+                                </span>
+                              )}
                             </div>
-                          );
-                        })}
-                      </div>
-
-                      {/* ĐƯỜNG ĐÁY TRỤC HOÀNH (BASELINE) */}
-                      <div className="h-0.5 bg-slate-300 w-full mb-3" />
-
-                      {/* NHÃN THÔNG TIN TỪNG VÒNG (NẰM HOÀN TOÀN DƯỚI ĐÁY CỘT) */}
-                      <div className="flex justify-around gap-6 px-6">
-                        {selectedContest.pastRoundsStats.roundsChart.map((round, idx) => (
-                          <div key={idx} className="flex-1 max-w-[150px] text-center space-y-1">
-                            <strong className="block text-xs font-bold text-slate-800 leading-tight">
-                              {round.roundName}
-                            </strong>
-                            <p className="text-[10px] text-slate-500">
-                              {round.date} · {round.participants?.toLocaleString()} thí sinh
-                            </p>
-                            {round.myRank && (
-                              <span className="inline-block px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200 font-bold text-[10px]">
-                                Thứ hạng: {round.myRank}
-                              </span>
-                            )}
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </div>
                   ) : (
@@ -947,10 +949,18 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
                           }`}
                         >
                           <div className="flex items-center gap-2.5 min-w-0">
-                            <span className={`w-6 h-6 rounded-lg font-black text-xs flex items-center justify-center shrink-0 ${
-                              isTop1 ? "bg-amber-400 text-amber-950 shadow-xs" : "bg-slate-100 text-slate-700"
-                            }`}>
-                              {val.medal}
+                            <span
+                              className={`w-7 h-7 rounded-xl font-black text-xs flex items-center justify-center shrink-0 shadow-2xs ${
+                                val.rank === 1
+                                  ? "bg-amber-400 text-amber-950 ring-2 ring-amber-300"
+                                  : val.rank === 2
+                                  ? "bg-slate-200 text-slate-800 border border-slate-300"
+                                  : val.rank === 3
+                                  ? "bg-amber-100 text-amber-900 border border-amber-300"
+                                  : "bg-slate-100 text-slate-700 font-bold border border-slate-200"
+                              }`}
+                            >
+                              {val.medal || val.rank}
                             </span>
                             <div className="min-w-0">
                               <p className="font-bold text-slate-900 truncate leading-tight">{val.name}</p>
