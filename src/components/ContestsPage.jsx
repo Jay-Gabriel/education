@@ -27,7 +27,7 @@ import {
   Zap
 } from "lucide-react";
 
-// Mock Data for Grand Contests (8 comprehensive contests to ensure rich pagination)
+// Mock Data for Grand Contests (8 comprehensive contests)
 const CONTESTS_DATA = [
   {
     id: "OLYMPIC_2026",
@@ -54,6 +54,7 @@ const CONTESTS_DATA = [
       totalScore: 280,
       badge: "Top 1% Vòng Sơ loại"
     },
+    // CỤM 1: VÒNG ĐANG DIỄN RA
     activeRound: {
       id: "OLYMPIC_2026_R2",
       roundNumber: 2,
@@ -68,6 +69,7 @@ const CONTESTS_DATA = [
       candidateId: "SBD-OLY-0842",
       note: "Bạn đã đủ điều kiện dự thi và đã có số báo danh. Hãy nộp bài trước giờ đóng đề 12:00."
     },
+    // CỤM 2: BIỂU ĐỒ ĐIỂM SỐ CÁC VÒNG ĐÃ QUA & TOP 5 THỦ KHOA
     pastStats: {
       userRounds: [
         { name: "Vòng 1: Khởi động & Sơ loại Toàn quốc", score: 280, maxScore: 300, percentage: 93.3, rank: "#14 / 3,250", ac: "3/3 AC (80đ câu 3)", date: "15/08/2026" },
@@ -81,6 +83,7 @@ const CONTESTS_DATA = [
         { rank: 5, name: "Vũ Gia Huy", school: "THPT Chuyên Bắc Giang", score: 290, time: "140'", medal: "5" }
       ]
     },
+    // CỤM 3: KẾ HOẠCH VÒNG TIẾP THEO
     nextRound: {
       id: "OLYMPIC_2026_R3",
       roundNumber: 3,
@@ -313,10 +316,7 @@ const CONTESTS_DATA = [
     description: "Kỳ thi đánh giá sau đợt tập huấn chuyên sâu các chủ đề đồ thị nâng cao và quy hoạch động quy mô lớn.",
     myOverallStatus: null,
     activeRound: null,
-    pastStats: {
-      userRounds: [],
-      top5Valedictorians: []
-    },
+    pastStats: { userRounds: [], top5Valedictorians: [] },
     nextRound: {
       id: "CAMP_R1",
       roundNumber: 1,
@@ -355,7 +355,7 @@ const CONTESTS_DATA = [
       targetDate: "12/11/2026",
       scheduleTime: "19:00 – 21:00",
       duration: "120 phút",
-      advancementCondition: "Mở tự do.",
+      advancementCondition: "Mở tự do cho học sinh THCS.",
       isRegistered: false
     }
   },
@@ -446,6 +446,16 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
     setCurrentPage(1);
   }, [searchTerm, statusFilter, categoryFilter, seasonFilter]);
 
+  const handleSelectContest = (contest) => {
+    setSelectedContest(contest);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleBackToList = () => {
+    setSelectedContest(null);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleResetFilters = () => {
     setSearchTerm("");
     setStatusFilter("all");
@@ -471,14 +481,14 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
       )}
 
       {/* ========================================================================= */}
-      {/* VIEW 1: CHI TIẾT CUỘC THI — GIAO DIỆN CAO CẤP, 3 KHỐI TRỌNG TÂM MẠCH LẠC */}
+      {/* VIEW 1: CHI TIẾT CUỘC THI — ĐẦY ĐỦ 3 CỤM THÔNG TIN RÕ RÀNG VÀ GỌN GÀNG     */}
       {/* ========================================================================= */}
       {selectedContest ? (
         <div className="flex flex-col gap-4">
-          {/* Top Bar Navigation */}
+          {/* NÚT QUAY LẠI DANH SÁCH Ở ĐẦU TRANG */}
           <div className="flex items-center justify-between bg-white px-4 py-3 rounded-2xl border border-sky-100 shadow-[0_2px_10px_rgba(0,100,220,0.04)]">
             <button
-              onClick={() => setSelectedContest(null)}
+              onClick={handleBackToList}
               className="inline-flex items-center gap-2 text-xs font-bold text-sky-700 hover:text-blue-800 bg-sky-50 hover:bg-sky-100 px-3.5 py-2 rounded-xl transition-all cursor-pointer active:scale-98"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -491,7 +501,7 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
             </div>
           </div>
 
-          {/* Premium Hero Banner (High Contrast, White Crisp Text) */}
+          {/* Banner tiêu đề cuộc thi (Trắng sáng, tương phản cao) */}
           <div className="relative rounded-3xl overflow-hidden border border-sky-200 shadow-[0_12px_35px_rgba(0,100,220,0.12)] bg-gradient-to-r from-[#003B7A] via-[#0055B3] to-[#0284C7] p-6 sm:p-7 text-white">
             <img
               src={selectedContest.bannerImage}
@@ -529,7 +539,7 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
                 </div>
               </div>
 
-              {/* My Overall Status Badge */}
+              {/* Thẻ SBD của thí sinh */}
               {selectedContest.myOverallStatus && (
                 <div className="w-full lg:w-72 bg-white/15 backdrop-blur-md border border-white/30 rounded-2xl p-4 shadow-xl text-white">
                   <div className="flex items-center justify-between pb-2 border-b border-white/20">
@@ -564,7 +574,7 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
           </div>
 
           {/* ======================================================================= */}
-          {/* KHỐI 1: VÒNG THI ĐANG DIỄN RA (SPOTLIGHT CHÍNH)                          */}
+          {/* CỤM 1: VÒNG THI ĐANG DIỄN RA (HIỆN TẠI & NỔI BẬT NHẤT)                  */}
           {/* ======================================================================= */}
           {selectedContest.activeRound ? (
             <div className="rounded-3xl border border-emerald-300/80 bg-gradient-to-b from-[#F0FDF4] via-white to-white p-5 sm:p-6 shadow-[0_4px_20px_rgba(16,185,129,0.08)]">
@@ -634,14 +644,14 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
           )}
 
           {/* ======================================================================= */}
-          {/* KHỐI 2: THỐNG KÊ KẾT QUẢ ĐÃ QUA & TOP 5 THỦ KHOA                         */}
+          {/* CỤM 2: BIỂU ĐỒ ĐIỂM SỐ CÁC VÒNG ĐÃ QUA & TOP 5 THỦ KHOA (QUÁ KHỨ)         */}
           {/* ======================================================================= */}
           <div className="rounded-3xl border border-sky-100 bg-white p-5 sm:p-6 shadow-[0_4px_20px_rgba(0,100,220,0.06)] space-y-5">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-5 rounded-full bg-blue-600" />
                 <h3 className="text-sm sm:text-base font-black text-slate-900">
-                  Kết quả các Vòng thi trước & Top 5 Thủ khoa
+                  Biểu đồ điểm số các vòng đã qua & Top 5 Thủ khoa
                 </h3>
               </div>
               <span className="text-[11px] text-slate-400 font-medium">Đối soát kết quả chính thức</span>
@@ -735,7 +745,7 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
           </div>
 
           {/* ======================================================================= */}
-          {/* KHỐI 3: VÒNG TIẾP THEO DIỄN RA NGÀY NÀO                                 */}
+          {/* CỤM 3: VÒNG TIẾP THEO DIỄN RA NGÀY NÀO (TƯƠNG LAI)                      */}
           {/* ======================================================================= */}
           {selectedContest.nextRound && (
             <div className="rounded-3xl border border-sky-200 bg-gradient-to-r from-sky-50/70 via-white to-sky-50/70 p-5 sm:p-6 shadow-sm space-y-3.5">
@@ -787,10 +797,10 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
             </div>
           )}
 
-          {/* Bottom Back Button */}
+          {/* NÚT QUAY LẠI DANH SÁCH Ở CUỐI TRANG */}
           <div className="pt-3 flex justify-center">
             <button
-              onClick={() => setSelectedContest(null)}
+              onClick={handleBackToList}
               className="inline-flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-blue-700 bg-white hover:bg-sky-50 px-6 py-2.5 rounded-xl border border-slate-200 transition-all cursor-pointer shadow-2xs"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -800,10 +810,10 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
         </div>
       ) : (
         /* ========================================================================= */
-        /* VIEW 2: DANH SÁCH CUỘC THI CÓ TÌM KIẾM, BỘ LỌC VÀ PHÂN TRANG               */
+        /* VIEW 2: DANH SÁCH TẤT CẢ CUỘC THI (TÌM KIẾM, BỘ LỌC, PHÂN TRANG)          */
         /* ========================================================================= */
         <>
-          {/* Hero Banner */}
+          {/* Hero Banner với Spotlight mở nhanh Olympic 2026 */}
           <div className="relative rounded-3xl overflow-hidden border border-sky-200 shadow-[0_10px_35px_rgba(0,100,220,0.08)] bg-gradient-to-r from-[#003B7A] via-[#0055B3] to-[#0284C7] p-6 sm:p-7 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
             <img
               src="/assets/page-contests-hero.jpg"
@@ -826,10 +836,18 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
               </p>
             </div>
 
-            <div className="relative z-10 bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-4 text-white text-xs shrink-0 text-center w-full md:w-auto">
-              <span className="text-[10px] text-sky-200 block uppercase font-bold">Kỳ thi đang mở hôm nay</span>
-              <strong className="text-amber-300 font-mono text-sm font-black block mt-0.5">Olympic 2026 · Vòng 2</strong>
-              <span className="text-[11px] text-white/90">08:00 – 12:00</span>
+            {/* Quick Action Box: Nhấn vào đây là xem ngay 3 cụm của giải Olympic 2026 */}
+            <div className="relative z-10 bg-white/15 backdrop-blur-md border border-white/25 rounded-2xl p-4 text-white text-xs shrink-0 text-center w-full md:w-auto space-y-2">
+              <div>
+                <span className="text-[10px] text-sky-200 block uppercase font-bold">Đang mở hôm nay</span>
+                <strong className="text-amber-300 font-mono text-sm font-black block">Olympic 2026 · Vòng 2</strong>
+              </div>
+              <button
+                onClick={() => handleSelectContest(contests[0])}
+                className="w-full py-2 px-3 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-black text-xs transition-all cursor-pointer shadow-sm"
+              >
+                Xem chi tiết 3 cụm →
+              </button>
             </div>
           </div>
 
@@ -979,10 +997,10 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
 
                   <div className="p-5 pt-0">
                     <button
-                      onClick={() => setSelectedContest(c)}
+                      onClick={() => handleSelectContest(c)}
                       className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-blue-600 to-[#0050A0] hover:brightness-110 text-white text-xs font-black shadow-md flex items-center justify-center gap-2 transition-all cursor-pointer active:scale-98"
                     >
-                      <span>Xem chi tiết cuộc thi & Vào thi</span>
+                      <span>Xem chi tiết 3 cụm & Vào thi</span>
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
@@ -1005,7 +1023,7 @@ export default function ContestsPage({ onOpenCodeWorkspace }) {
             </div>
           )}
 
-          {/* PHÂN TRANG (LUÔN LUÔN HIỂN THỊ RÕ RÀNG) */}
+          {/* PHÂN TRANG (PAGINATION LUÔN LUÔN HIỆN DIỆN) */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-sky-100 shadow-2xs mt-2">
             <span className="text-xs text-slate-500 font-medium">
               Hiển thị <strong>{filteredContests.length > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0}</strong> -{" "}
