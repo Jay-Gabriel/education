@@ -147,7 +147,7 @@ export default function App() {
         )}
 
         {!workspaceMode && activeNav === "Bảng xếp hạng" && (
-          <LeaderboardPage />
+          <LeaderboardPage onNavigate={handlePublicNavigate} />
         )}
 
         {!workspaceMode && (activeNav === "Giáo viên & chuyên gia" || activeNav === "Giáo viên & Chuyên gia") && (

@@ -1,1220 +1,1286 @@
-import React, { useMemo, useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
-  Award,
-  BarChart3,
-  CalendarDays,
-  CheckCircle2,
-  ChevronLeft,
+  Home,
   ChevronRight,
-  Crown,
-  Eye,
-  Flame,
-  Globe2,
-  GraduationCap,
-  Medal,
-  RotateCcw,
-  School,
+  ChevronLeft,
   Search,
-  ShieldCheck,
-  Sparkles,
-  Star,
-  Target,
-  TrendingDown,
-  TrendingUp,
+  Check,
   Trophy,
-  UserCheck,
+  Award,
+  Sparkles,
+  RotateCcw,
+  MapPin,
+  ChevronDown,
+  ArrowLeft,
+  Star,
   Users,
+  School,
+  Medal,
+  Flame,
+  Zap,
+  Eye,
   X,
-  Zap
+  Target,
+  TrendingUp,
+  TrendingDown,
+  BookOpen,
+  Calendar,
+  Clock,
+  ShieldCheck,
+  Crown
 } from "lucide-react";
 
-// Danh mục chế độ lọc thời gian
-const scopes = [
-  { id: "all-time", label: "Toàn thời gian 🌟" },
-  { id: "month", label: "Tháng 9/2026 📅" },
-  { id: "week", label: "Tuần này ⚡" },
-  { id: "contest", label: "Olympic 2026 🏆" }
-];
-
-// Phân loại khối lớp
-const gradeFilters = [
-  { id: "all", label: "Tất cả Cấp độ" },
-  { id: "12", label: "Khối 12" },
-  { id: "11", label: "Khối 11" },
-  { id: "10", label: "Khối 10" },
-  { id: "national", label: "Đội tuyển Quốc gia" }
-];
-
-// Top 3 Thần đồng Bục Vinh Quang (Podium)
-const podiumLeaders = [
+// Danh mục các cuộc thi trong hệ sinh thái Ôn Thi 360
+const CONTEST_TABS = [
   {
-    rank: 2,
-    name: "Trần Đức Duy",
-    school: "THPT Chuyên Sư Phạm Hà Nội",
-    city: "Hà Nội",
-    grade: "12 Tin",
-    score: 9620,
-    ac: 138,
-    totalSubmissions: 144,
-    streak: 24,
-    avatar: "/assets/testi-av-2.png",
-    badge: "Master",
-    badgeColor: "bg-purple-100 text-purple-800 border-purple-300",
-    rating: 2180,
-    trend: "+45",
-    trendType: "up",
-    skills: { dp: 95, graph: 92, ds: 94, math: 88, strings: 90 },
-    recentContests: [
-      { name: "Olympic Tin học 2026 - Vòng 1", rank: "#2", score: "300/300" },
-      { name: "Đấu trường Mini Lần 2", rank: "#1", score: "200/200" }
-    ]
+    id: "global-confidence",
+    badge: "CUỘC THI TIẾNG ANH",
+    badgeBg: "bg-gradient-to-r from-orange-500 to-amber-500",
+    category: "english",
+    title: 'Cuộc thi "Tự Tin Vươn Thế Giới"',
+    description:
+      'Tự Tin Vươn Thế Giới là cuộc thi Tiếng Anh Hàng Năm do Liên Hiệp Quốc các nước Đông Nam Á tổ chức nhằm tạo sân chơi lành mạnh cho các bạn trẻ.',
+    currentStep: 2,
+    totalParticipants: 4820,
+    topScore: 100,
+    timeRemaining: "12 ngày 08 giờ",
+    steps: [
+      { id: 1, label: "Đăng ký", status: "completed", date: "01/09 - 10/09" },
+      { id: 2, label: "Diễn ra", status: "active", date: "11/09 - 25/09" },
+      { id: 3, label: "Kết thúc", status: "upcoming", date: "28/09/2026" }
+    ],
+    userStanding: {
+      rank: 7,
+      score: 50,
+      gapToNext: 15,
+      targetRank: 6,
+      statusMessage: "Bạn đang ở Top 10%! Hoàn thành thêm 1 đề để vào Top 5"
+    }
   },
   {
-    rank: 1,
-    name: "Nguyễn Minh Anh",
-    school: "THPT Chuyên Khoa học Tự nhiên",
-    city: "Hà Nội",
-    grade: "12 Chuyên Tin",
-    score: 9850,
-    ac: 142,
-    totalSubmissions: 145,
-    streak: 28,
-    avatar: "/assets/testi-av-1.png",
-    badge: "Grandmaster",
-    badgeColor: "bg-amber-100 text-amber-900 border-amber-300",
-    rating: 2450,
-    trend: "+120",
-    trendType: "up",
-    skills: { dp: 98, graph: 96, ds: 99, math: 95, strings: 94 },
-    recentContests: [
-      { name: "Olympic Tin học 2026 - Vòng 1", rank: "#1", score: "300/300 (85')" },
-      { name: "HSG Quốc gia Tin học Mở rộng", rank: "#1", score: "300/300" }
-    ]
+    id: "olympic-informatics",
+    badge: "ĐẤU TRƯỜNG TOÀN QUỐC",
+    badgeBg: "bg-gradient-to-r from-blue-600 to-indigo-600",
+    category: "informatics",
+    title: 'Kỳ thi Olympic Tin học Trẻ Mở Rộng 2026',
+    description:
+      'Sân chơi tranh tài thuật toán đỉnh cao dành cho học sinh THCS & THPT toàn quốc chuẩn bị cho các kỳ thi HSG Quốc gia và Quốc tế.',
+    currentStep: 2,
+    totalParticipants: 6350,
+    topScore: 300,
+    timeRemaining: "04 ngày 15 giờ",
+    steps: [
+      { id: 1, label: "Vòng Sơ Loại", status: "completed", date: "15/08 - 28/08" },
+      { id: 2, label: "Vòng Bán Kết", status: "active", date: "05/09 - 20/09" },
+      { id: 3, label: "Chung Kết Toàn Quốc", status: "upcoming", date: "10/10/2026" }
+    ],
+    userStanding: {
+      rank: 14,
+      score: 280,
+      gapToNext: 10,
+      targetRank: 10,
+      statusMessage: "Bạn đang nằm trong nhóm giành vé vào Vòng Chung Kết"
+    }
   },
   {
-    rank: 3,
-    name: "Lê Phương Thảo",
-    school: "THPT Chuyên Hà Nội - Amsterdam",
-    city: "Hà Nội",
-    grade: "11 Tin",
-    score: 9480,
-    ac: 131,
-    totalSubmissions: 139,
-    streak: 19,
-    avatar: "/assets/testi-av-3.png",
-    badge: "Candidate Master",
-    badgeColor: "bg-blue-100 text-blue-800 border-blue-300",
-    rating: 1980,
-    trend: "+30",
-    trendType: "up",
-    skills: { dp: 90, graph: 89, ds: 92, math: 94, strings: 86 },
-    recentContests: [
-      { name: "Olympic Tin học 2026 - Vòng 1", rank: "#3", score: "300/300" },
-      { name: "Khảo sát Năng lực Thuật toán 2026", rank: "#2", score: "290/300" }
-    ]
+    id: "math-code-arena",
+    badge: "TOÁN TIN ỨNG DỤNG",
+    badgeBg: "bg-gradient-to-r from-teal-600 to-emerald-600",
+    category: "math",
+    title: 'Đấu trường Toán Tin 360 - Mùa Thu Khởi Sắc',
+    description:
+      'Thử thách tư duy logic kết hợp lập trình ứng dụng giải quyết các bài toán khoa học dữ liệu thực tiễn cho học sinh xuất sắc.',
+    currentStep: 3,
+    totalParticipants: 3190,
+    topScore: 200,
+    timeRemaining: "Đã hoàn thành",
+    steps: [
+      { id: 1, label: "Đăng ký & Ôn tập", status: "completed", date: "01/08 - 15/08" },
+      { id: 2, label: "Tranh tài Trực tuyến", status: "completed", date: "16/08 - 30/08" },
+      { id: 3, label: "Vinh danh Trao giải", status: "active", date: "05/09 - 15/09" }
+    ],
+    userStanding: {
+      rank: 5,
+      score: 185,
+      gapToNext: 5,
+      targetRank: 3,
+      statusMessage: "Xuất sắc giành Giải Ba toàn quốc!"
+    }
   }
 ];
 
-// Danh sách xếp hạng cá nhân đầy đủ (Top 4 - 20)
-const rankingEntries = [
-  {
-    rank: 4,
-    name: "Phạm Hoàng Nam",
-    school: "THPT Chuyên Thái Bình",
-    city: "Thái Bình",
-    grade: "12 Tin",
-    score: 9320,
-    ac: 125,
-    totalSubmissions: 134,
-    streak: 15,
-    avatar: "/assets/rank-avatar-1.png",
-    badge: "Expert",
-    badgeColor: "bg-cyan-50 text-cyan-800 border-cyan-200",
-    rating: 1840,
-    trend: "+2",
-    trendType: "up",
-    category: "12"
-  },
-  {
-    rank: 5,
-    name: "Vũ Thị Mai",
-    school: "THPT Chuyên Lam Sơn",
-    city: "Thanh Hóa",
-    grade: "11 Tin",
-    score: 9210,
-    ac: 120,
-    totalSubmissions: 130,
-    streak: 12,
-    avatar: "/assets/rank-avatar-2.png",
-    badge: "Expert",
-    badgeColor: "bg-cyan-50 text-cyan-800 border-cyan-200",
-    rating: 1790,
-    trend: "+5",
-    trendType: "up",
-    category: "11"
-  },
-  {
-    rank: 6,
-    name: "Đỗ Quốc Bảo",
-    school: "THPT Chuyên Lê Hồng Phong",
-    city: "TP. Hồ Chí Minh",
-    grade: "12 Tin",
-    score: 9050,
-    ac: 118,
-    totalSubmissions: 128,
-    streak: 10,
-    avatar: "/assets/rank-avatar-3.png",
-    badge: "Expert",
-    badgeColor: "bg-cyan-50 text-cyan-800 border-cyan-200",
-    rating: 1750,
-    trend: "0",
-    trendType: "same",
-    category: "12"
-  },
-  {
-    rank: 7,
-    name: "Hoàng Minh Tuấn",
-    school: "THPT Chuyên Bắc Ninh",
-    city: "Bắc Ninh",
-    grade: "11 Tin",
-    score: 8940,
-    ac: 114,
-    totalSubmissions: 125,
-    streak: 9,
-    avatar: "/assets/rank-avatar-4.png",
-    badge: "Specialist",
-    badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
-    rating: 1690,
-    trend: "-1",
-    trendType: "down",
-    category: "11"
-  },
-  {
-    rank: 8,
-    name: "Nguyễn Hà Linh",
-    school: "THPT Chuyên Phan Bội Châu",
-    city: "Nghệ An",
-    grade: "12 Tin",
-    score: 8820,
-    ac: 109,
-    totalSubmissions: 120,
-    streak: 7,
-    avatar: "/assets/rank-avatar-5.png",
-    badge: "Specialist",
-    badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
-    rating: 1650,
-    trend: "+3",
-    trendType: "up",
-    category: "12"
-  },
-  {
-    rank: 9,
-    name: "Bùi Gia Khiêm",
-    school: "THPT Chuyên Quốc Học Huế",
-    city: "Thừa Thiên Huế",
-    grade: "10 Tin",
-    score: 8710,
-    ac: 106,
-    totalSubmissions: 115,
-    streak: 14,
-    avatar: "/assets/testi-1.png",
-    badge: "Specialist",
-    badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
-    rating: 1620,
-    trend: "+6",
-    trendType: "up",
-    category: "10"
-  },
-  {
-    rank: 10,
-    name: "Đặng Thu Thảo",
-    school: "THPT Chuyên Lam Sơn",
-    city: "Thanh Hóa",
-    grade: "11 Tin",
-    score: 8640,
-    ac: 104,
-    totalSubmissions: 112,
-    streak: 11,
-    avatar: "/assets/testi-2.png",
-    badge: "Specialist",
-    badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
-    rating: 1590,
-    trend: "-2",
-    trendType: "down",
-    category: "11"
-  },
-  {
-    rank: 11,
-    name: "Lê Văn Thành",
-    school: "THPT Chuyên Lương Văn Tụy",
-    city: "Ninh Bình",
-    grade: "12 Tin",
-    score: 8520,
-    ac: 101,
-    totalSubmissions: 110,
-    streak: 8,
-    avatar: "/assets/testi-3.png",
-    badge: "Specialist",
-    badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
-    rating: 1570,
-    trend: "+1",
-    trendType: "up",
-    category: "12"
-  },
-  {
-    rank: 12,
-    name: "Trần Bảo Ngọc",
-    school: "THPT Chuyên Trần Phú",
-    city: "Hải Phòng",
-    grade: "10 Tin",
-    score: 8430,
-    ac: 98,
-    totalSubmissions: 108,
-    streak: 16,
-    avatar: "/assets/rank-avatar-1.png",
-    badge: "Specialist",
-    badgeColor: "bg-emerald-50 text-emerald-800 border-emerald-200",
-    rating: 1540,
-    trend: "+4",
-    trendType: "up",
-    category: "10"
-  },
-  {
-    rank: 13,
-    name: "Vũ Hải Đăng",
-    school: "THPT Chuyên Bắc Giang",
-    city: "Bắc Giang",
-    grade: "12 Tin",
-    score: 8350,
-    ac: 96,
-    totalSubmissions: 105,
-    streak: 6,
-    avatar: "/assets/rank-avatar-2.png",
-    badge: "Pupil",
-    badgeColor: "bg-slate-100 text-slate-700 border-slate-200",
-    rating: 1480,
-    trend: "0",
-    trendType: "same",
-    category: "12"
-  },
-  {
-    rank: 14,
-    name: "Phan Đình Trọng",
-    school: "THPT Chuyên Lê Quý Đôn",
-    city: "Đà Nẵng",
-    grade: "11 Tin",
-    score: 8210,
-    ac: 93,
-    totalSubmissions: 102,
-    streak: 9,
-    avatar: "/assets/rank-avatar-3.png",
-    badge: "Pupil",
-    badgeColor: "bg-slate-100 text-slate-700 border-slate-200",
-    rating: 1440,
-    trend: "-1",
-    trendType: "down",
-    category: "11"
-  },
-  {
-    rank: 15,
-    name: "Mai Tuấn Kiệt",
-    school: "THPT Chuyên Tiền Giang",
-    city: "Tiền Giang",
-    grade: "12 Tin",
-    score: 8100,
-    ac: 90,
-    totalSubmissions: 100,
-    streak: 5,
-    avatar: "/assets/rank-avatar-4.png",
-    badge: "Pupil",
-    badgeColor: "bg-slate-100 text-slate-700 border-slate-200",
-    rating: 1410,
-    trend: "+2",
-    trendType: "up",
-    category: "12"
-  },
-  {
-    rank: 16,
-    name: "Nguyễn Khánh Huyền",
-    school: "THPT Chuyên Bến Tre",
-    city: "Bến Tre",
-    grade: "10 Tin",
-    score: 7980,
-    ac: 87,
-    totalSubmissions: 96,
-    streak: 13,
-    avatar: "/assets/rank-avatar-5.png",
-    badge: "Pupil",
-    badgeColor: "bg-slate-100 text-slate-700 border-slate-200",
-    rating: 1380,
-    trend: "+5",
-    trendType: "up",
-    category: "10"
-  },
-  {
-    rank: 17,
-    name: "Lâm Quang Huy",
-    school: "THPT Chuyên Nguyễn Bỉnh Khiêm",
-    city: "Vĩnh Long",
-    grade: "11 Tin",
-    score: 7850,
-    ac: 85,
-    totalSubmissions: 94,
-    streak: 4,
-    avatar: "/assets/testi-1.png",
-    badge: "Pupil",
-    badgeColor: "bg-slate-100 text-slate-700 border-slate-200",
-    rating: 1350,
-    trend: "-3",
-    trendType: "down",
-    category: "11"
-  },
-  {
-    rank: 18,
-    name: "Hồ Việt Hoàng",
-    school: "THPT Chuyên Thăng Long",
-    city: "Lâm Đồng",
-    grade: "12 Tin",
-    score: 7720,
-    ac: 82,
-    totalSubmissions: 92,
-    streak: 7,
-    avatar: "/assets/testi-2.png",
-    badge: "Pupil",
-    badgeColor: "bg-slate-100 text-slate-700 border-slate-200",
-    rating: 1320,
-    trend: "+1",
-    trendType: "up",
-    category: "12"
-  }
-];
+// Dữ liệu bảng vàng thí sinh phong phú, tên đa dạng thực tế
+const CONTEST_LEADERBOARDS = {
+  "global-confidence": [
+    {
+      rank: 1,
+      name: "Võ Thị Quỳnh Giang",
+      score: 100,
+      city: "Hà Tĩnh",
+      school: "THPT Chuyên Hà Tĩnh",
+      grade: "11 Anh",
+      avatar: "/assets/leaderboard-rank1.jpg",
+      badgeType: "rank1",
+      isCurrentUser: false,
+      accuracy: "100%",
+      time: "38 phút",
+      submissions: 10,
+      streak: 18,
+      trend: "up",
+      trendVal: "+1",
+      badgeLabel: "Quán Quân Bảng Vàng"
+    },
+    {
+      rank: 2,
+      name: "Trần Minh Thư",
+      score: 90,
+      city: "Hà Nội",
+      school: "THPT Chuyên Hà Nội - Amsterdam",
+      grade: "12 Anh 1",
+      avatar: "/assets/leaderboard-rank2.jpg",
+      badgeType: "rank2",
+      isCurrentUser: false,
+      accuracy: "96%",
+      time: "42 phút",
+      submissions: 10,
+      streak: 15,
+      trend: "up",
+      trendVal: "+3",
+      badgeLabel: "Á Quân 1"
+    },
+    {
+      rank: 3,
+      name: "Nguyễn Hoàng Nam",
+      score: 75,
+      city: "TP. Hồ Chí Minh",
+      school: "THPT Chuyên Lê Hồng Phong",
+      grade: "11 Anh",
+      avatar: "/assets/leaderboard-rank3.jpg",
+      badgeType: "rank3",
+      isCurrentUser: false,
+      accuracy: "92%",
+      time: "49 phút",
+      submissions: 9,
+      streak: 12,
+      trend: "same",
+      trendVal: "0",
+      badgeLabel: "Á Quân 2"
+    },
+    {
+      rank: 4,
+      name: "Lê Phương Thảo",
+      score: 70,
+      city: "Đà Nẵng",
+      school: "THPT Chuyên Lê Quý Đôn",
+      grade: "10 Anh",
+      avatar: "/assets/leaderboard-girl.jpg",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "88%",
+      time: "52 phút",
+      submissions: 8,
+      streak: 9,
+      trend: "up",
+      trendVal: "+2"
+    },
+    {
+      rank: 5,
+      name: "Phạm Đức Duy",
+      score: 65,
+      city: "Nam Định",
+      school: "THPT Chuyên Lê Hồng Phong",
+      grade: "12 Chuyên",
+      avatar: "/assets/leaderboard-boy.jpg",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "85%",
+      time: "55 phút",
+      submissions: 8,
+      streak: 14,
+      trend: "down",
+      trendVal: "-1"
+    },
+    {
+      rank: 6,
+      name: "Hoàng Khánh Linh",
+      score: 65,
+      city: "Nghệ An",
+      school: "THPT Chuyên Phan Bội Châu",
+      grade: "11 Anh",
+      avatar: "/assets/leaderboard-girl.jpg",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "84%",
+      time: "58 phút",
+      submissions: 8,
+      streak: 11,
+      trend: "up",
+      trendVal: "+1"
+    },
+    {
+      rank: 7,
+      name: "Nguyễn Hà My (Bạn)",
+      score: 50,
+      city: "Hà Tĩnh",
+      school: "THPT Chuyên Hà Tĩnh",
+      grade: "11 Chuyên",
+      avatar: "/assets/leaderboard-user.jpg",
+      badgeType: "normal",
+      isCurrentUser: true,
+      gapToNextRank: 16,
+      accuracy: "80%",
+      time: "62 phút",
+      submissions: 6,
+      streak: 8,
+      trend: "up",
+      trendVal: "+4",
+      badgeLabel: "Vị Trí Của Bạn"
+    },
+    {
+      rank: 8,
+      name: "Bùi Gia Khiêm",
+      score: 35,
+      city: "Thừa Thiên Huế",
+      school: "THPT Chuyên Quốc Học Huế",
+      grade: "10 Anh",
+      avatar: "/assets/leaderboard-boy.jpg",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "72%",
+      time: "68 phút",
+      submissions: 5,
+      streak: 6,
+      trend: "down",
+      trendVal: "-2"
+    },
+    {
+      rank: 9,
+      name: "Đặng Thu Thảo",
+      score: 35,
+      city: "Thanh Hóa",
+      school: "THPT Chuyên Lam Sơn",
+      grade: "11 Anh",
+      avatar: "/assets/leaderboard-girl.jpg",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "70%",
+      time: "71 phút",
+      submissions: 5,
+      streak: 7,
+      trend: "same",
+      trendVal: "0"
+    },
+    {
+      rank: 10,
+      name: "Lê Văn Thành",
+      score: 25,
+      city: "Ninh Bình",
+      school: "THPT Chuyên Lương Văn Tụy",
+      grade: "12 Anh",
+      avatar: "/assets/leaderboard-boy.jpg",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "65%",
+      time: "76 phút",
+      submissions: 4,
+      streak: 5,
+      trend: "down",
+      trendVal: "-1"
+    },
+    {
+      rank: 11,
+      name: "Trần Bảo Ngọc",
+      score: 25,
+      city: "Hải Phòng",
+      school: "THPT Chuyên Trần Phú",
+      grade: "10 Anh",
+      avatar: "/assets/rank-avatar-1.png",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "62%",
+      time: "80 phút",
+      submissions: 4,
+      streak: 4,
+      trend: "up",
+      trendVal: "+2"
+    },
+    {
+      rank: 12,
+      name: "Vũ Hải Đăng",
+      score: 20,
+      city: "Bắc Giang",
+      school: "THPT Chuyên Bắc Giang",
+      grade: "11 Anh",
+      avatar: "/assets/rank-avatar-2.png",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "58%",
+      time: "84 phút",
+      submissions: 3,
+      streak: 3,
+      trend: "same",
+      trendVal: "0"
+    }
+  ],
+  "olympic-informatics": [
+    {
+      rank: 1,
+      name: "Nguyễn Minh Anh",
+      score: 300,
+      city: "Hà Nội",
+      school: "THPT Chuyên Khoa học Tự nhiên",
+      grade: "12 Tin",
+      avatar: "/assets/leaderboard-rank1.jpg",
+      badgeType: "rank1",
+      isCurrentUser: false,
+      accuracy: "100%",
+      time: "85 phút",
+      submissions: 4,
+      streak: 28,
+      trend: "same",
+      trendVal: "0",
+      badgeLabel: "Grandmaster"
+    },
+    {
+      rank: 2,
+      name: "Trần Đức Duy",
+      score: 300,
+      city: "Hà Nội",
+      school: "THPT Chuyên Sư Phạm Hà Nội",
+      grade: "12 Tin",
+      avatar: "/assets/leaderboard-rank2.jpg",
+      badgeType: "rank2",
+      isCurrentUser: false,
+      accuracy: "100%",
+      time: "102 phút",
+      submissions: 4,
+      streak: 24,
+      trend: "up",
+      trendVal: "+1",
+      badgeLabel: "Master"
+    },
+    {
+      rank: 3,
+      name: "Lê Phương Thảo",
+      score: 290,
+      city: "Hà Nội",
+      school: "THPT Chuyên Hà Nội - Amsterdam",
+      grade: "11 Tin",
+      avatar: "/assets/leaderboard-rank3.jpg",
+      badgeType: "rank3",
+      isCurrentUser: false,
+      accuracy: "96%",
+      time: "110 phút",
+      submissions: 4,
+      streak: 19,
+      trend: "same",
+      trendVal: "0",
+      badgeLabel: "Candidate Master"
+    },
+    {
+      rank: 4,
+      name: "Phạm Hoàng Nam",
+      score: 285,
+      city: "Thái Bình",
+      school: "THPT Chuyên Thái Bình",
+      grade: "12 Tin",
+      avatar: "/assets/leaderboard-boy.jpg",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "95%",
+      time: "115 phút",
+      submissions: 4,
+      streak: 15,
+      trend: "up",
+      trendVal: "+2"
+    },
+    {
+      rank: 5,
+      name: "Vũ Thị Mai",
+      score: 280,
+      city: "Thanh Hóa",
+      school: "THPT Chuyên Lam Sơn",
+      grade: "11 Tin",
+      avatar: "/assets/leaderboard-girl.jpg",
+      badgeType: "normal",
+      isCurrentUser: false,
+      accuracy: "93%",
+      time: "120 phút",
+      submissions: 4,
+      streak: 12,
+      trend: "down",
+      trendVal: "-1"
+    }
+  ],
+  "math-code-arena": [
+    {
+      rank: 1,
+      name: "Đỗ Quốc Bảo",
+      score: 200,
+      city: "TP. Hồ Chí Minh",
+      school: "THPT Chuyên Lê Hồng Phong",
+      grade: "12 Tin",
+      avatar: "/assets/leaderboard-rank1.jpg",
+      badgeType: "rank1",
+      isCurrentUser: false,
+      accuracy: "100%",
+      time: "55 phút",
+      submissions: 6,
+      streak: 20,
+      trend: "up",
+      trendVal: "+1"
+    },
+    {
+      rank: 2,
+      name: "Hoàng Minh Tuấn",
+      score: 195,
+      city: "Bắc Ninh",
+      school: "THPT Chuyên Bắc Ninh",
+      grade: "11 Toán",
+      avatar: "/assets/leaderboard-rank2.jpg",
+      badgeType: "rank2",
+      isCurrentUser: false,
+      accuracy: "98%",
+      time: "60 phút",
+      submissions: 6,
+      streak: 16,
+      trend: "same",
+      trendVal: "0"
+    },
+    {
+      rank: 3,
+      name: "Nguyễn Hà Linh",
+      score: 190,
+      city: "Nghệ An",
+      school: "THPT Chuyên Phan Bội Châu",
+      grade: "12 Toán Tin",
+      avatar: "/assets/leaderboard-rank3.jpg",
+      badgeType: "rank3",
+      isCurrentUser: false,
+      accuracy: "95%",
+      time: "65 phút",
+      submissions: 6,
+      streak: 14,
+      trend: "up",
+      trendVal: "+3"
+    }
+  ]
+};
 
-// Danh sách Bảng Xếp Hạng Trường THPT (Toàn đoàn)
-const schoolRankings = [
+// Bảng xếp hạng Trường Học Toàn Đoàn
+const SCHOOL_RANKINGS = [
   {
     rank: 1,
     name: "THPT Chuyên Khoa học Tự nhiên",
     city: "Hà Nội",
     studentsCount: 245,
+    topScoreSum: 2890,
     goldMedals: 12,
     silverMedals: 18,
-    bronzeMedals: 24,
-    totalScore: 48200,
-    avgScore: 196.7,
-    passRate: "94.2%",
-    banner: "🏛️ ĐHQG Hà Nội"
+    bronzeMedals: 25,
+    badge: "🏆 Nhất Toàn Đoàn"
   },
   {
     rank: 2,
     name: "THPT Chuyên Hà Nội - Amsterdam",
     city: "Hà Nội",
-    studentsCount: 220,
+    studentsCount: 210,
+    topScoreSum: 2740,
     goldMedals: 10,
     silverMedals: 16,
-    bronzeMedals: 22,
-    totalScore: 44500,
-    avgScore: 202.3,
-    passRate: "93.8%",
-    banner: "🏛️ Sở GD&ĐT Hà Nội"
+    bronzeMedals: 20,
+    badge: "🥈 Nhì Toàn Đoàn"
   },
   {
     rank: 3,
-    name: "THPT Chuyên Sư Phạm Hà Nội",
-    city: "Hà Nội",
-    studentsCount: 210,
-    goldMedals: 9,
-    silverMedals: 14,
-    bronzeMedals: 19,
-    totalScore: 41200,
-    avgScore: 196.2,
-    passRate: "91.5%",
-    banner: "🏛️ ĐH Sư Phạm Hà Nội"
-  },
-  {
-    rank: 4,
     name: "THPT Chuyên Lê Hồng Phong",
     city: "TP. Hồ Chí Minh",
     studentsCount: 195,
+    topScoreSum: 2610,
     goldMedals: 8,
-    silverMedals: 13,
-    bronzeMedals: 17,
-    totalScore: 38600,
-    avgScore: 197.9,
-    passRate: "89.7%",
-    banner: "🏛️ Sở GD&ĐT TP.HCM"
+    silverMedals: 14,
+    bronzeMedals: 19,
+    badge: "🥉 Ba Toàn Đoàn"
+  },
+  {
+    rank: 4,
+    name: "THPT Chuyên Phan Bội Châu",
+    city: "Nghệ An",
+    studentsCount: 160,
+    topScoreSum: 2480,
+    goldMedals: 6,
+    silverMedals: 11,
+    bronzeMedals: 15,
+    badge: "Top 5 Xuất Sắc"
   },
   {
     rank: 5,
-    name: "THPT Chuyên Lam Sơn",
-    city: "Thanh Hóa",
-    studentsCount: 170,
-    goldMedals: 7,
-    silverMedals: 11,
-    bronzeMedals: 16,
-    totalScore: 35800,
-    avgScore: 210.5,
-    passRate: "88.2%",
-    banner: "🏛️ Sở GD&ĐT Thanh Hóa"
-  },
-  {
-    rank: 6,
-    name: "THPT Chuyên Phan Bội Châu",
-    city: "Nghệ An",
-    studentsCount: 165,
-    goldMedals: 6,
-    silverMedals: 10,
-    bronzeMedals: 15,
-    totalScore: 33400,
-    avgScore: 202.4,
-    passRate: "87.5%",
-    banner: "🏛️ Sở GD&ĐT Nghệ An"
-  },
-  {
-    rank: 7,
-    name: "THPT Chuyên Quốc Học Huế",
-    city: "Thừa Thiên Huế",
-    studentsCount: 150,
-    goldMedals: 6,
+    name: "THPT Chuyên Hà Tĩnh",
+    city: "Hà Tĩnh",
+    studentsCount: 145,
+    topScoreSum: 2390,
+    goldMedals: 5,
     silverMedals: 9,
     bronzeMedals: 14,
-    totalScore: 31900,
-    avgScore: 212.6,
-    passRate: "86.0%",
-    banner: "🏛️ Sở GD&ĐT TT-Huế"
-  },
-  {
-    rank: 8,
-    name: "THPT Chuyên Bắc Giang",
-    city: "Bắc Giang",
-    studentsCount: 140,
-    goldMedals: 5,
-    silverMedals: 8,
-    bronzeMedals: 12,
-    totalScore: 29400,
-    avgScore: 210.0,
-    passRate: "84.3%",
-    banner: "🏛️ Sở GD&ĐT Bắc Giang"
+    badge: "Top 5 Xuất Sắc"
   }
 ];
 
-const formatNumber = (val) => new Intl.NumberFormat("vi-VN").format(val);
+// Danh sách các Tỉnh/Thành phố
+const PROVINCES = [
+  "Tất cả Tỉnh/Thành",
+  "Hà Tĩnh",
+  "Hà Nội",
+  "TP. Hồ Chí Minh",
+  "Đà Nẵng",
+  "Hải Phòng",
+  "Nghệ An",
+  "Thanh Hóa",
+  "Nam Định",
+  "Ninh Bình"
+];
 
-export default function LeaderboardPage() {
-  const [viewMode, setViewMode] = useState("individual"); // "individual" | "school"
-  const [scope, setScope] = useState("all-time");
-  const [gradeFilter, setGradeFilter] = useState("all");
+// Phân loại khối lớp
+const GRADE_FILTERS = [
+  { id: "all", label: "Tất cả Khối" },
+  { id: "10", label: "Khối 10" },
+  { id: "11", label: "Khối 11" },
+  { id: "12", label: "Khối 12" }
+];
+
+export default function LeaderboardPage({ onNavigate }) {
+  const [selectedContestId, setSelectedContestId] = useState("global-confidence");
+  const [selectedProvince, setSelectedProvince] = useState("Tất cả Tỉnh/Thành");
+  const [selectedGrade, setSelectedGrade] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [anonymous, setAnonymous] = useState(false);
-  const [selectedStudent, setSelectedStudent] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 8;
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [isCityDropdownOpen, setIsCityDropdownOpen] = useState(false);
+  const [activeViewTab, setActiveViewTab] = useState("individuals"); // 'individuals' | 'podium' | 'schools'
 
-  const currentScopeLabel = scopes.find((s) => s.id === scope)?.label || "Toàn thời gian";
+  const currentContest = useMemo(() => {
+    return CONTEST_TABS.find((c) => c.id === selectedContestId) || CONTEST_TABS[0];
+  }, [selectedContestId]);
 
-  // Lọc danh sách cá nhân
-  const filteredIndividuals = useMemo(() => {
-    let list = [...rankingEntries];
-    if (gradeFilter !== "all") {
-      list = list.filter((p) => p.category === gradeFilter);
-    }
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase();
-      list = list.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.school.toLowerCase().includes(q) ||
-          p.city.toLowerCase().includes(q)
-      );
-    }
-    return list;
-  }, [gradeFilter, searchQuery]);
+  const rawList = useMemo(() => {
+    return CONTEST_LEADERBOARDS[selectedContestId] || CONTEST_LEADERBOARDS["global-confidence"];
+  }, [selectedContestId]);
 
-  // Lọc danh sách trường
-  const filteredSchools = useMemo(() => {
-    let list = [...schoolRankings];
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase();
-      list = list.filter(
-        (s) => s.name.toLowerCase().includes(q) || s.city.toLowerCase().includes(q)
-      );
-    }
-    return list;
-  }, [searchQuery]);
+  // Bộ lọc danh sách thí sinh
+  const filteredData = useMemo(() => {
+    return rawList.filter((item) => {
+      const matchCity =
+        selectedProvince === "Tất cả Tỉnh/Thành" || item.city === selectedProvince;
+      const matchGrade =
+        selectedGrade === "all" || (item.grade && item.grade.includes(selectedGrade));
+      const matchSearch =
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.school.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.city.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchCity && matchGrade && matchSearch;
+    });
+  }, [rawList, selectedProvince, selectedGrade, searchQuery]);
+
+  // Top 3 Podium
+  const top3Podium = useMemo(() => {
+    return rawList.slice(0, 3);
+  }, [rawList]);
 
   // Phân trang
-  const totalItems = viewMode === "individual" ? filteredIndividuals.length : filteredSchools.length;
-  const totalPages = Math.max(1, Math.ceil(totalItems / itemsPerPage));
-  const currentItems = useMemo(() => {
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage) || 1;
+  const paginatedData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
-    return viewMode === "individual"
-      ? filteredIndividuals.slice(start, start + itemsPerPage)
-      : filteredSchools.slice(start, start + itemsPerPage);
-  }, [viewMode, filteredIndividuals, filteredSchools, currentPage]);
+    return filteredData.slice(start, start + itemsPerPage);
+  }, [filteredData, currentPage]);
 
-  const handleResetFilters = () => {
-    setScope("all-time");
-    setGradeFilter("all");
-    setSearchQuery("");
-    setCurrentPage(1);
+  const handleReturn = () => {
+    if (onNavigate) {
+      onNavigate("Cuộc thi");
+    }
+  };
+
+  const handlePracticeNow = () => {
+    if (onNavigate) {
+      onNavigate("Luyện tập");
+    }
   };
 
   return (
-    <div className="flex flex-col gap-6 animate-fadeIn pb-12">
-      {/* ========================================================================= */}
-      {/* HERO BANNER & REAL-TIME TICKER STATS                                      */}
-      {/* ========================================================================= */}
-      <section className="relative overflow-hidden rounded-3xl border border-sky-200 shadow-[0_12px_35px_rgba(0,100,220,0.12)] bg-gradient-to-r from-[#003B7A] via-[#0055B3] to-[#0284C7] p-6 sm:p-7 text-white">
-        <img
-          src="/assets/page-leaderboard-hero.jpg"
-          alt=""
-          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-right opacity-20 mix-blend-luminosity"
-        />
+    <div className="w-full max-w-6xl mx-auto space-y-6 pb-20 font-sans">
+      {/* 1. BREADCRUMB THANH ĐIỀU HƯỚNG */}
+      <nav className="flex items-center gap-2 text-xs sm:text-sm text-slate-500 px-1">
+        <button
+          onClick={() => onNavigate && onNavigate("Trang chủ")}
+          className="flex items-center gap-1 hover:text-blue-600 transition-colors cursor-pointer group"
+          title="Trang chủ"
+        >
+          <Home className="w-4 h-4 text-slate-400 group-hover:text-blue-600 transition-colors" />
+        </button>
+        <span className="text-slate-300">/</span>
+        <button
+          onClick={() => onNavigate && onNavigate("Cuộc thi")}
+          className="hover:text-blue-600 transition-colors cursor-pointer"
+        >
+          Cuộc thi
+        </button>
+        <span className="text-slate-300">/</span>
+        <span className="text-slate-600 font-medium truncate max-w-[180px] sm:max-w-none">
+          {currentContest.title.replace(/Cuộc thi |Kỳ thi /g, "")}
+        </span>
+        <span className="text-slate-300">/</span>
+        <span className="text-slate-900 font-bold">Bảng xếp hạng</span>
+      </nav>
 
-        <div className="relative z-10 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-black bg-amber-400 text-amber-950 shadow-sm mb-3">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Đại sảnh Danh vọng & Vinh danh Coder Toàn quốc</span>
+      {/* 2. CARD 1: HEADER THÔNG TIN CUỘC THI & TIMELINE */}
+      <section className="bg-white rounded-3xl p-6 sm:p-9 shadow-sm border border-[#E2EDF8] relative overflow-hidden transition-all">
+        {/* Glow ambient background decoration */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-amber-100/40 via-sky-50/50 to-transparent rounded-full blur-3xl pointer-events-none -mr-28 -mt-28"></div>
+
+        <div className="relative z-10 space-y-6">
+          {/* Top Bar: Badge & Selector Tabs */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span
+              className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs sm:text-sm font-black tracking-wider text-white shadow-sm uppercase ${currentContest.badgeBg}`}
+            >
+              {currentContest.badge}
+            </span>
+
+            {/* Quick Switcher Between Contests */}
+            <div className="flex items-center gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200/70 text-xs">
+              {CONTEST_TABS.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => {
+                    setSelectedContestId(tab.id);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-3 py-1.5 rounded-xl font-semibold transition-all cursor-pointer ${
+                    selectedContestId === tab.id
+                      ? "bg-white text-slate-900 shadow-xs font-bold"
+                      : "text-slate-500 hover:text-slate-800"
+                  }`}
+                >
+                  {tab.id === "global-confidence"
+                    ? "Tự Tin Vươn Thế Giới"
+                    : tab.id === "olympic-informatics"
+                    ? "Olympic Tin Học"
+                    : "Toán Tin 360"}
+                </button>
+              ))}
             </div>
+          </div>
 
-            <h1 className="text-2xl sm:text-3xl font-black text-white leading-tight">
-              Bảng Xếp Hạng Thuật Toán 2026
+          {/* Tiêu đề & Mô tả */}
+          <div className="space-y-2">
+            <h1 className="text-2xl sm:text-3xl lg:text-[32px] font-black text-slate-800 tracking-tight leading-snug">
+              {currentContest.title}
             </h1>
-
-            <p className="text-xs sm:text-sm text-sky-100 mt-2 leading-relaxed max-w-xl">
-              Tôn vinh nỗ lực học tập, bài nộp AC chuẩn ACM/ICPC, thành tích các kỳ thi chuyên đề và chuỗi ngày rèn luyện bền bỉ mỗi ngày.
+            <p className="text-slate-600 text-sm sm:text-base leading-relaxed max-w-4xl">
+              {currentContest.description}
             </p>
-
-            {/* Real-time Ticker Metrics */}
-            <div className="mt-4 flex flex-wrap items-center gap-2.5 text-xs text-sky-100">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 font-bold backdrop-blur-xs">
-                <Users className="w-3.5 h-3.5 text-amber-300" />
-                <strong>12.480+</strong> thí sinh đang tranh tài
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 font-bold backdrop-blur-xs">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-300" />
-                <strong>184.200+</strong> lượt AC tự động
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/10 border border-white/20 font-bold backdrop-blur-xs">
-                <CalendarDays className="w-3.5 h-3.5 text-sky-200" />
-                Cập nhật Real-time
-              </span>
-            </div>
           </div>
 
-          {/* VỊ TRÍ CỦA BẠN (SPOTLIGHT CARD) */}
-          <div className="w-full lg:w-80 bg-white/15 backdrop-blur-md border border-white/30 rounded-2xl p-4 shadow-xl text-white">
-            <div className="flex items-center justify-between pb-2.5 border-b border-white/20">
-              <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                <Medal className="w-4 h-4" />
-                Hồ sơ Xếp hạng của bạn
+          {/* Quick Stats Pill Row */}
+          <div className="flex flex-wrap items-center gap-3 pt-1 text-xs text-slate-600">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/70 font-medium">
+              <Users className="w-3.5 h-3.5 text-blue-500" />
+              <span>
+                Thí sinh: <strong className="text-slate-800">{currentContest.totalParticipants.toLocaleString()}</strong>
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/80 font-bold text-white shadow-2xs">
-                Top 0.01%
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/70 font-medium">
+              <Clock className="w-3.5 h-3.5 text-amber-500" />
+              <span>
+                Thời gian: <strong className="text-slate-800">{currentContest.timeRemaining}</strong>
               </span>
-            </div>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/70 font-medium">
+              <Trophy className="w-3.5 h-3.5 text-emerald-500" />
+              <span>
+                Điểm cao nhất: <strong className="text-slate-800">{currentContest.topScore}đ</strong>
+              </span>
+            </span>
+          </div>
 
-            <div className="mt-3 flex items-center gap-3">
-              <div className="relative">
-                <img
-                  src="/assets/testi-av-1.png"
-                  alt=""
-                  className="w-12 h-12 rounded-full object-cover border-2 border-amber-400 shadow-md"
+          {/* Timeline 3 Bước */}
+          <div className="pt-2 pb-2 max-w-2xl mx-auto sm:mx-0">
+            <div className="flex items-center justify-between relative">
+              {/* Connector Bar */}
+              <div className="absolute left-[36px] right-[36px] top-1/2 -translate-y-1/2 h-[2px] bg-slate-200 z-0">
+                <div
+                  className="h-full bg-blue-500 transition-all duration-500"
+                  style={{
+                    width:
+                      currentContest.currentStep === 1
+                        ? "0%"
+                        : currentContest.currentStep === 2
+                        ? "50%"
+                        : "100%"
+                  }}
                 />
-                <span className="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-amber-400 text-amber-950 font-black text-[10px] flex items-center justify-center border border-white">
-                  1
-                </span>
               </div>
 
-              <div className="min-w-0 flex-1">
-                <p className="font-bold text-xs text-white truncate">
-                  {anonymous ? "Học viên đã xác thực" : "Nguyễn Minh Anh"}
-                </p>
-                <div className="flex items-center gap-1 text-[11px] text-amber-300 font-black">
-                  <span className="text-base font-black">#1</span>
-                  <span className="text-[10px] text-sky-200 font-normal">/ 12.480 toàn quốc</span>
+              {/* Step 1 */}
+              <div className="relative z-10 flex items-center gap-2 bg-white pr-3">
+                <div className="w-7 h-7 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                  <Check className="w-4 h-4 stroke-[3]" />
                 </div>
-                <div className="flex items-center gap-2 text-[10px] text-sky-100 mt-0.5">
-                  <span className="text-emerald-300 font-bold flex items-center gap-0.5">
-                    <TrendingUp className="w-3 h-3" /> +120 pts
+                <div>
+                  <span className="text-xs sm:text-sm font-semibold text-slate-700 block">
+                    {currentContest.steps[0].label}
                   </span>
-                  <span>•</span>
-                  <span className="flex items-center gap-0.5 text-orange-300">
-                    <Flame className="w-3 h-3" /> 28 ngày
+                  <span className="text-[10px] text-slate-400 hidden sm:block">
+                    {currentContest.steps[0].date}
                   </span>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* ========================================================================= */}
-      {/* BỤC VINH QUANG 3 VỊ TRÍ DẪN ĐẦU (TRUE STEPPED OLYMPIC PODIUM)               */}
-      {/* ========================================================================= */}
-      <section className="rounded-3xl border border-sky-100 bg-gradient-to-b from-sky-50/50 via-white to-amber-50/30 p-5 sm:p-7 shadow-[0_4px_25px_rgba(0,100,220,0.06)] space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2 pb-3 border-b border-slate-100">
-          <div>
-            <div className="flex items-center gap-2">
-              <Trophy className="w-5 h-5 text-amber-500" />
-              <span className="text-xs font-black text-[#0050A0] uppercase tracking-wider">
-                Bục Vinh Quang · Hall of Fame
-              </span>
-            </div>
-            <h2 className="text-lg sm:text-xl font-black text-slate-900 mt-0.5">
-              Top 3 Thủ Khoa Thuật Toán Toàn Quốc
-            </h2>
-          </div>
-          <p className="text-xs text-slate-500">
-            Dữ liệu vinh danh theo phạm vi: <strong className="text-blue-700">{currentScopeLabel}</strong>
-          </p>
-        </div>
-
-        {/* Cấu trúc Bục 3 bậc: Hạng 2 (Trái) — Hạng 1 (Giữa, Cao nhất) — Hạng 3 (Phải) */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-end pt-4">
-          {/* HẠNG 2: Á KHOA 1 (Bên Trái) */}
-          <div
-            onClick={() => setSelectedStudent(podiumLeaders[0])}
-            className="order-2 md:order-1 bg-white rounded-3xl border-2 border-slate-200 p-5 text-center shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group relative flex flex-col items-center justify-between min-h-[300px]"
-          >
-            <div className="w-full flex justify-between items-center pb-2 border-b border-slate-100 text-xs">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-slate-100 text-slate-700 border border-slate-300">
-                🥈 Á KHOA 1
-              </span>
-              <span className="text-emerald-600 font-bold text-[10px] flex items-center gap-0.5">
-                <TrendingUp className="w-3 h-3" /> {podiumLeaders[0].trend}
-              </span>
-            </div>
-
-            <div className="relative mt-3">
-              <img
-                src={podiumLeaders[0].avatar}
-                alt={podiumLeaders[0].name}
-                className="w-18 h-18 rounded-full object-cover ring-4 ring-slate-300 shadow-md group-hover:scale-105 transition-transform"
-              />
-              <span className="absolute -top-2.5 -right-2 w-7 h-7 rounded-full bg-slate-200 text-slate-800 font-black text-xs flex items-center justify-center border-2 border-white shadow-sm">
-                2
-              </span>
-            </div>
-
-            <div className="mt-3 space-y-1">
-              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black border ${podiumLeaders[0].badgeColor}`}>
-                {podiumLeaders[0].badge} (Rating {podiumLeaders[0].rating})
-              </span>
-              <h3 className="text-base font-black text-slate-900 group-hover:text-blue-600 transition-colors">
-                {anonymous ? "Học viên đã xác thực" : podiumLeaders[0].name}
-              </h3>
-              <p className="text-[11px] text-slate-500 line-clamp-1">{podiumLeaders[0].school}</p>
-            </div>
-
-            <div className="w-full mt-4 pt-3 border-t border-slate-100 bg-slate-50/70 p-2.5 rounded-2xl space-y-1.5 text-xs">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 font-medium">Tổng điểm:</span>
-                <strong className="text-blue-700 font-black text-sm">{formatNumber(podiumLeaders[0].score)} pts</strong>
+              {/* Step 2 */}
+              <div className="relative z-10 flex items-center gap-2 bg-white px-3">
+                <div className="w-7 h-7 rounded-full bg-[#1C64F2] text-white flex items-center justify-center font-bold text-xs shadow-md ring-4 ring-blue-100 animate-pulse">
+                  2
+                </div>
+                <div>
+                  <span className="text-xs sm:text-sm font-bold text-[#1C64F2] block">
+                    {currentContest.steps[1].label}
+                  </span>
+                  <span className="text-[10px] text-blue-500 hidden sm:block">
+                    {currentContest.steps[1].date}
+                  </span>
+                </div>
               </div>
-              <div className="flex justify-between items-center text-[11px] text-slate-600">
-                <span className="text-emerald-700 font-bold">{podiumLeaders[0].ac} bài AC</span>
-                <span className="flex items-center gap-1 text-orange-600 font-bold">
-                  <Flame className="w-3.5 h-3.5 fill-orange-500" /> {podiumLeaders[0].streak} ngày
-                </span>
+
+              {/* Step 3 */}
+              <div className="relative z-10 flex items-center gap-2 bg-white pl-3">
+                <div className="w-7 h-7 rounded-full bg-slate-100 text-slate-400 border border-slate-300 flex items-center justify-center font-bold text-xs">
+                  3
+                </div>
+                <div>
+                  <span className="text-xs sm:text-sm font-medium text-slate-400 block">
+                    {currentContest.steps[2].label}
+                  </span>
+                  <span className="text-[10px] text-slate-400 hidden sm:block">
+                    {currentContest.steps[2].date}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* HẠNG 1: THỦ KHOA TOÀN QUỐC (Ở Giữa - Cao nhất & Nổi bật nhất) */}
-          <div
-            onClick={() => setSelectedStudent(podiumLeaders[1])}
-            className="order-1 md:order-2 bg-gradient-to-b from-amber-100/90 via-amber-50/60 to-white rounded-3xl border-2 border-amber-400 p-6 text-center shadow-[0_12px_35px_rgba(245,158,11,0.22)] hover:-translate-y-1.5 transition-all duration-300 cursor-pointer group relative flex flex-col items-center justify-between min-h-[350px]"
-          >
-            {/* Crown Decoration */}
-            <div className="absolute -top-5 left-1/2 -translate-x-1/2 flex items-center justify-center">
-              <div className="bg-gradient-to-r from-amber-400 to-amber-500 text-amber-950 p-2 rounded-full shadow-lg border-2 border-white animate-bounce">
-                <Crown className="w-5 h-5 fill-amber-950" />
-              </div>
-            </div>
-
-            <div className="w-full flex justify-between items-center pt-2 pb-2 border-b border-amber-200/80 text-xs">
-              <span className="px-3 py-0.5 rounded-full text-[10px] font-black bg-amber-400 text-amber-950 shadow-2xs">
-                🥇 THỦ KHOA TOÀN QUỐC
-              </span>
-              <span className="text-emerald-700 font-bold text-[10px] flex items-center gap-0.5 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                <TrendingUp className="w-3 h-3" /> {podiumLeaders[1].trend} pts
-              </span>
-            </div>
-
-            <div className="relative mt-3">
-              <img
-                src={podiumLeaders[1].avatar}
-                alt={podiumLeaders[1].name}
-                className="w-22 h-22 rounded-full object-cover ring-4 ring-amber-400 shadow-xl group-hover:scale-105 transition-transform"
-              />
-              <span className="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-gradient-to-tr from-amber-500 to-yellow-300 text-amber-950 font-black text-sm flex items-center justify-center border-2 border-white shadow-md">
-                1
-              </span>
-            </div>
-
-            <div className="mt-3 space-y-1">
-              <span className={`inline-block px-3 py-0.5 rounded-full text-[10px] font-black border ${podiumLeaders[1].badgeColor} shadow-2xs`}>
-                ⭐ {podiumLeaders[1].badge} (Rating {podiumLeaders[1].rating})
-              </span>
-              <h3 className="text-lg font-black text-slate-900 group-hover:text-blue-700 transition-colors">
-                {anonymous ? "Học viên đã xác thực" : podiumLeaders[1].name}
-              </h3>
-              <p className="text-xs text-slate-600 font-semibold line-clamp-1">{podiumLeaders[1].school}</p>
-            </div>
-
-            <div className="w-full mt-4 pt-3 border-t border-amber-200 bg-amber-50/80 p-3 rounded-2xl space-y-1.5 text-xs">
-              <div className="flex justify-between items-center">
-                <span className="text-amber-900 font-bold">Tổng điểm mùa giải:</span>
-                <strong className="text-blue-900 font-black text-base">{formatNumber(podiumLeaders[1].score)} pts</strong>
-              </div>
-              <div className="flex justify-between items-center text-[11px] text-slate-700">
-                <span className="text-emerald-800 font-bold">{podiumLeaders[1].ac} bài AC (98.6%)</span>
-                <span className="flex items-center gap-1 text-orange-600 font-black bg-white px-2 py-0.5 rounded-md border border-orange-200">
-                  <Flame className="w-3.5 h-3.5 fill-orange-500" /> {podiumLeaders[1].streak} ngày
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* HẠNG 3: Á KHOA 2 (Bên Phải) */}
-          <div
-            onClick={() => setSelectedStudent(podiumLeaders[2])}
-            className="order-3 md:order-3 bg-white rounded-3xl border-2 border-amber-700/20 p-5 text-center shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group relative flex flex-col items-center justify-between min-h-[290px]"
-          >
-            <div className="w-full flex justify-between items-center pb-2 border-b border-slate-100 text-xs">
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black bg-amber-100 text-amber-900 border border-amber-300">
-                🥉 Á KHOA 2
-              </span>
-              <span className="text-emerald-600 font-bold text-[10px] flex items-center gap-0.5">
-                <TrendingUp className="w-3 h-3" /> {podiumLeaders[2].trend}
-              </span>
-            </div>
-
-            <div className="relative mt-3">
-              <img
-                src={podiumLeaders[2].avatar}
-                alt={podiumLeaders[2].name}
-                className="w-18 h-18 rounded-full object-cover ring-4 ring-amber-600/30 shadow-md group-hover:scale-105 transition-transform"
-              />
-              <span className="absolute -top-2.5 -right-2 w-7 h-7 rounded-full bg-amber-100 text-amber-900 font-black text-xs flex items-center justify-center border-2 border-white shadow-sm">
-                3
-              </span>
-            </div>
-
-            <div className="mt-3 space-y-1">
-              <span className={`inline-block px-2.5 py-0.5 rounded-full text-[10px] font-black border ${podiumLeaders[2].badgeColor}`}>
-                {podiumLeaders[2].badge} (Rating {podiumLeaders[2].rating})
-              </span>
-              <h3 className="text-base font-black text-slate-900 group-hover:text-blue-600 transition-colors">
-                {anonymous ? "Học viên đã xác thực" : podiumLeaders[2].name}
-              </h3>
-              <p className="text-[11px] text-slate-500 line-clamp-1">{podiumLeaders[2].school}</p>
-            </div>
-
-            <div className="w-full mt-4 pt-3 border-t border-slate-100 bg-slate-50/70 p-2.5 rounded-2xl space-y-1.5 text-xs">
-              <div className="flex justify-between items-center">
-                <span className="text-slate-500 font-medium">Tổng điểm:</span>
-                <strong className="text-blue-700 font-black text-sm">{formatNumber(podiumLeaders[2].score)} pts</strong>
-              </div>
-              <div className="flex justify-between items-center text-[11px] text-slate-600">
-                <span className="text-emerald-700 font-bold">{podiumLeaders[2].ac} bài AC</span>
-                <span className="flex items-center gap-1 text-orange-600 font-bold">
-                  <Flame className="w-3.5 h-3.5 fill-orange-500" /> {podiumLeaders[2].streak} ngày
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* BỘ LỌC TÌM KIẾM, PHẠM VI THỜI GIAN & CHẾ ĐỘ XEM                            */}
-      {/* ========================================================================= */}
-      <section className="bg-white p-4 sm:p-5 rounded-3xl border border-sky-100 shadow-[0_2px_12px_rgba(0,100,220,0.04)] space-y-4">
-        {/* Hàng 1: Chuyển đổi Bảng Cá nhân vs Bảng Trường THPT */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2 bg-slate-100/80 p-1 rounded-2xl border border-slate-200">
+          {/* Action Row */}
+          <div className="pt-2 flex flex-wrap items-center justify-center sm:justify-between gap-4 border-t border-slate-100">
             <button
-              onClick={() => {
-                setViewMode("individual");
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 ${
-                viewMode === "individual"
-                  ? "bg-white text-[#0050A0] shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
+              onClick={handleReturn}
+              className="inline-flex items-center justify-center gap-2 px-7 py-2.5 rounded-full bg-[#009688] hover:bg-[#00897B] active:scale-98 text-white font-semibold text-sm shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
             >
-              <Users className="w-4 h-4" />
-              <span>Bảng Cá Nhân Toàn Quốc</span>
+              <ArrowLeft className="w-4 h-4" />
+              <span>Trở về</span>
             </button>
-            <button
-              onClick={() => {
-                setViewMode("school");
-                setCurrentPage(1);
-              }}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all cursor-pointer flex items-center gap-2 ${
-                viewMode === "school"
-                  ? "bg-white text-[#0050A0] shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              <School className="w-4 h-4" />
-              <span>Bảng Toàn Đoàn Trường THPT</span>
-            </button>
-          </div>
 
-          <div className="flex items-center gap-3">
-            <label className="flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer select-none bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200">
-              <input
-                type="checkbox"
-                checked={anonymous}
-                onChange={(e) => setAnonymous(e.target.checked)}
-                className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
-              />
-              <span>Ẩn danh thông tin cá nhân</span>
-            </label>
-          </div>
-        </div>
-
-        {/* Hàng 2: Tìm kiếm & Lọc Thời gian */}
-        <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3">
-          {/* Search Box */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => {
-                setSearchQuery(e.target.value);
-                setCurrentPage(1);
-              }}
-              placeholder={
-                viewMode === "individual"
-                  ? "Tìm kiếm theo tên học sinh, trường, tỉnh thành..."
-                  : "Tìm kiếm trường THPT, tỉnh thành..."
-              }
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all bg-slate-50/50"
-            />
-            {searchQuery && (
+            {/* User Standing Spotlight Banner */}
+            <div className="flex items-center gap-3 bg-emerald-50/80 border border-emerald-200/80 px-4 py-2 rounded-2xl text-xs">
+              <span className="flex h-2.5 w-2.5 relative">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+              </span>
+              <span className="text-emerald-900 font-medium">
+                Vị trí của bạn: <strong className="text-emerald-700 font-black">Hạng #{currentContest.userStanding.rank}</strong> ({currentContest.userStanding.score}đ) — Cần {currentContest.userStanding.gapToNext}đ để lên Hạng #{currentContest.userStanding.targetRank}
+              </span>
               <button
-                onClick={() => setSearchQuery("")}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs font-bold cursor-pointer"
+                onClick={handlePracticeNow}
+                className="ml-1 text-emerald-700 hover:text-emerald-900 font-bold underline cursor-pointer"
               >
-                ×
+                Luyện tập ngay →
               </button>
-            )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. PODIUM TOP 3 HIGHLIGHT SECTION (KHỐI VINH DANH TOP 3 THEO STYLE ONTHI360) */}
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {/* Top 2: Á Quân 1 */}
+        {top3Podium[1] && (
+          <div
+            onClick={() => setSelectedCandidate(top3Podium[1])}
+            className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-all cursor-pointer relative overflow-hidden flex flex-col items-center text-center group md:order-1"
+          >
+            <div className="w-full flex items-center justify-between mb-3 text-xs">
+              <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center gap-1">
+                <Medal className="w-3.5 h-3.5 text-slate-400" /> Hạng #2
+              </span>
+              <span className="text-slate-400 font-medium">{top3Podium[1].city}</span>
+            </div>
+
+            <div className="relative mb-3">
+              <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-slate-400 via-sky-200 to-blue-500 shadow-md flex items-center justify-center">
+                <img
+                  src={top3Podium[1].avatar}
+                  alt={top3Podium[1].name}
+                  className="w-full h-full object-cover rounded-full bg-slate-50"
+                />
+              </div>
+              <span className="absolute -bottom-2 -right-1 text-xl">🥈</span>
+            </div>
+
+            <h3 className="font-bold text-slate-900 text-base group-hover:text-blue-600 transition-colors">
+              {top3Podium[1].name}
+            </h3>
+            <p className="text-xs text-slate-500 line-clamp-1">{top3Podium[1].school}</p>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 w-full flex items-center justify-around text-xs">
+              <div>
+                <span className="text-slate-400 block">Điểm số</span>
+                <strong className="text-slate-900 text-lg font-black">{top3Podium[1].score}</strong>
+              </div>
+              <div>
+                <span className="text-slate-400 block">Độ chính xác</span>
+                <strong className="text-emerald-600 font-bold">{top3Podium[1].accuracy}</strong>
+              </div>
+              <div>
+                <span className="text-slate-400 block">Thời gian</span>
+                <strong className="text-slate-700 font-semibold">{top3Podium[1].time}</strong>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Top 1: Quán Quân Bảng Vàng (Center & Highlighted) */}
+        {top3Podium[0] && (
+          <div
+            onClick={() => setSelectedCandidate(top3Podium[0])}
+            className="bg-gradient-to-b from-amber-50/80 via-white to-white rounded-3xl p-6 border-2 border-amber-300 shadow-md hover:shadow-lg transition-all cursor-pointer relative overflow-hidden flex flex-col items-center text-center group md:order-2 md:-mt-2"
+          >
+            <div className="w-full flex items-center justify-between mb-3 text-xs">
+              <span className="px-3 py-1 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-white font-extrabold flex items-center gap-1 shadow-xs">
+                <Crown className="w-3.5 h-3.5 text-amber-200 fill-amber-200" /> Quán Quân #1
+              </span>
+              <span className="text-amber-700 font-bold">{top3Podium[0].city}</span>
+            </div>
+
+            <div className="relative mb-3">
+              <div className="w-24 h-24 rounded-full p-1.5 bg-gradient-to-tr from-amber-500 via-yellow-300 to-amber-600 shadow-xl flex items-center justify-center">
+                <img
+                  src={top3Podium[0].avatar}
+                  alt={top3Podium[0].name}
+                  className="w-full h-full object-cover rounded-full bg-amber-50"
+                />
+              </div>
+              <span className="absolute -bottom-2 -right-1 text-2xl">🥇</span>
+            </div>
+
+            <h3 className="font-black text-slate-900 text-lg group-hover:text-amber-600 transition-colors">
+              {top3Podium[0].name}
+            </h3>
+            <p className="text-xs text-slate-600 font-medium line-clamp-1">{top3Podium[0].school}</p>
+
+            <div className="mt-4 pt-3 border-t border-amber-100 w-full flex items-center justify-around text-xs">
+              <div>
+                <span className="text-slate-400 block">Điểm số</span>
+                <strong className="text-amber-600 text-2xl font-black">{top3Podium[0].score}</strong>
+              </div>
+              <div>
+                <span className="text-slate-400 block">Độ chính xác</span>
+                <strong className="text-emerald-600 font-bold">{top3Podium[0].accuracy}</strong>
+              </div>
+              <div>
+                <span className="text-slate-400 block">Thời gian</span>
+                <strong className="text-slate-700 font-semibold">{top3Podium[0].time}</strong>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Top 3: Á Quân 2 */}
+        {top3Podium[2] && (
+          <div
+            onClick={() => setSelectedCandidate(top3Podium[2])}
+            className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition-all cursor-pointer relative overflow-hidden flex flex-col items-center text-center group md:order-3"
+          >
+            <div className="w-full flex items-center justify-between mb-3 text-xs">
+              <span className="px-2.5 py-1 rounded-full bg-amber-100/70 text-amber-900 font-bold flex items-center gap-1">
+                <Medal className="w-3.5 h-3.5 text-amber-700" /> Hạng #3
+              </span>
+              <span className="text-slate-400 font-medium">{top3Podium[2].city}</span>
+            </div>
+
+            <div className="relative mb-3">
+              <div className="w-20 h-20 rounded-full p-1 bg-gradient-to-tr from-amber-700 via-amber-400 to-amber-900 shadow-md flex items-center justify-center">
+                <img
+                  src={top3Podium[2].avatar}
+                  alt={top3Podium[2].name}
+                  className="w-full h-full object-cover rounded-full bg-amber-50"
+                />
+              </div>
+              <span className="absolute -bottom-2 -right-1 text-xl">🥉</span>
+            </div>
+
+            <h3 className="font-bold text-slate-900 text-base group-hover:text-amber-700 transition-colors">
+              {top3Podium[2].name}
+            </h3>
+            <p className="text-xs text-slate-500 line-clamp-1">{top3Podium[2].school}</p>
+
+            <div className="mt-4 pt-3 border-t border-slate-100 w-full flex items-center justify-around text-xs">
+              <div>
+                <span className="text-slate-400 block">Điểm số</span>
+                <strong className="text-slate-900 text-lg font-black">{top3Podium[2].score}</strong>
+              </div>
+              <div>
+                <span className="text-slate-400 block">Độ chính xác</span>
+                <strong className="text-emerald-600 font-bold">{top3Podium[2].accuracy}</strong>
+              </div>
+              <div>
+                <span className="text-slate-400 block">Thời gian</span>
+                <strong className="text-slate-700 font-semibold">{top3Podium[2].time}</strong>
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
+
+      {/* 4. CARD 2: BẢNG "VINH DANH BẢNG VÀNG" ĐẦY ĐỦ */}
+      <section className="bg-white rounded-3xl p-6 sm:p-10 shadow-sm border border-[#E2EDF8] space-y-6">
+        {/* Header Vinh Danh */}
+        <div className="text-center space-y-1">
+          <div className="inline-flex items-center gap-1.5 text-amber-500 font-extrabold text-sm sm:text-base uppercase tracking-widest">
+            <Trophy className="w-4 h-4 text-amber-500 inline-block" />
+            <span>VINH DANH BẢNG VÀNG</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl lg:text-[26px] font-black text-slate-800 tracking-tight">
+            {currentContest.title}
+          </h2>
+        </div>
+
+        {/* View Mode Tabs: Cá nhân vs Trường học */}
+        <div className="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-slate-100">
+          <div className="flex items-center gap-2 bg-slate-100/80 p-1 rounded-2xl border border-slate-200/60 text-xs">
+            <button
+              onClick={() => setActiveViewTab("individuals")}
+              className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+                activeViewTab === "individuals"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Bảng Vàng Cá Nhân ({rawList.length})
+            </button>
+            <button
+              onClick={() => setActiveViewTab("schools")}
+              className={`px-4 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+                activeViewTab === "schools"
+                  ? "bg-white text-slate-900 shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              Bảng Xếp Hạng Trường Học ({SCHOOL_RANKINGS.length})
+            </button>
           </div>
 
-          {/* Scope Pills */}
-          <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
-            {scopes.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => {
-                  setScope(s.id);
+          {/* Bộ lọc khối lớp */}
+          {activeViewTab === "individuals" && (
+            <div className="flex items-center gap-1 text-xs">
+              {GRADE_FILTERS.map((gf) => (
+                <button
+                  key={gf.id}
+                  onClick={() => {
+                    setSelectedGrade(gf.id);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-3 py-1.5 rounded-xl font-medium transition-all cursor-pointer ${
+                    selectedGrade === gf.id
+                      ? "bg-blue-50 text-blue-700 font-bold border border-blue-200"
+                      : "text-slate-500 hover:bg-slate-50"
+                  }`}
+                >
+                  {gf.label}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Search & Province Filter Bar */}
+        {activeViewTab === "individuals" && (
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            {/* Search Input */}
+            <div className="relative flex-1 min-w-[240px] max-w-md">
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Tìm kiếm theo họ tên, trường học, tỉnh thành..."
+                value={searchQuery}
+                onChange={(e) => {
+                  setSearchQuery(e.target.value);
                   setCurrentPage(1);
                 }}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                  scope === s.id
-                    ? "bg-[#0066CC] text-white shadow-2xs"
-                    : "text-slate-600 hover:bg-white"
-                }`}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-        </div>
+                className="w-full pl-9 pr-4 py-2 bg-slate-50 hover:bg-slate-100/80 focus:bg-white border border-slate-200 rounded-2xl text-xs sm:text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 p-0.5"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
 
-        {/* Hàng 3: Grade Filter & Stats Summary */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2.5 border-t border-slate-100 text-xs text-slate-500">
-          <div className="flex flex-wrap items-center gap-2">
-            {viewMode === "individual" && (
-              <>
-                <span className="font-semibold text-slate-400">Lọc khối lớp:</span>
-                <div className="flex items-center gap-1">
-                  {gradeFilters.map((g) => (
+            {/* Province Dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
+                className="inline-flex items-center gap-2 px-3.5 py-2 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-2xl text-xs sm:text-sm font-semibold text-slate-700 transition-all cursor-pointer"
+              >
+                <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                <span>{selectedProvince}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
+
+              {isCityDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-slate-100 py-1.5 z-30 animate-in fade-in zoom-in-95">
+                  {PROVINCES.map((prov) => (
                     <button
-                      key={g.id}
+                      key={prov}
                       onClick={() => {
-                        setGradeFilter(g.id);
+                        setSelectedProvince(prov);
+                        setIsCityDropdownOpen(false);
                         setCurrentPage(1);
                       }}
-                      className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all cursor-pointer ${
-                        gradeFilter === g.id
-                          ? "bg-sky-100 text-blue-800 border border-sky-300"
-                          : "text-slate-500 hover:bg-slate-100"
+                      className={`w-full text-left px-4 py-2 text-xs sm:text-sm flex items-center justify-between transition-colors ${
+                        selectedProvince === prov
+                          ? "bg-blue-50 text-blue-700 font-bold"
+                          : "text-slate-600 hover:bg-slate-50"
                       }`}
                     >
-                      {g.label}
+                      <span>{prov}</span>
+                      {selectedProvince === prov && <Check className="w-3.5 h-3.5 text-blue-600" />}
                     </button>
                   ))}
                 </div>
-              </>
-            )}
-
-            {(searchQuery || gradeFilter !== "all" || scope !== "all-time") && (
-              <button
-                onClick={handleResetFilters}
-                className="inline-flex items-center gap-1 text-[11px] text-rose-600 hover:text-rose-700 font-bold bg-rose-50 px-2.5 py-1 rounded-lg transition-colors cursor-pointer ml-2"
-              >
-                <RotateCcw className="w-3 h-3" />
-                <span>Xóa lọc</span>
-              </button>
-            )}
+              )}
+            </div>
           </div>
+        )}
 
-          <span className="text-slate-400 text-[11px]">
-            Hiển thị <strong className="text-slate-800 font-bold">{totalItems}</strong> kết quả xếp hạng
-          </span>
-        </div>
-      </section>
-
-      {/* ========================================================================= */}
-      {/* BẢNG XẾP HẠNG CHI TIẾT (RICH LEADERBOARD TABLE)                            */}
-      {/* ========================================================================= */}
-      <section className="bg-white rounded-3xl border border-sky-100 shadow-[0_4px_20px_rgba(0,100,220,0.06)] overflow-hidden">
-        <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-slate-100 bg-[#F8FBFE]">
-          <div className="flex items-center gap-2">
-            <BarChart3 className="w-4 h-4 text-blue-600" />
-            <h3 className="text-sm sm:text-base font-black text-slate-900">
-              {viewMode === "individual"
-                ? "Danh Sách Xếp Hạng Thí Sinh (Top 4 – 100)"
-                : "Tổng Sắp Huy Chương Toàn Đoàn Các Trường THPT"}
-            </h3>
-          </div>
-          <span className="text-xs text-slate-500 font-medium hidden sm:inline-block">
-            Tự động cập nhật theo chuẩn ACM/ICPC
-          </span>
-        </div>
-
-        {/* VIEW 1: BẢNG CÁ NHÂN */}
-        {viewMode === "individual" ? (
+        {/* TAB 1: BẢNG XẾP HẠNG CÁ NHÂN (THEO MẪU HÌNH ẢNH) */}
+        {activeViewTab === "individuals" && (
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
+            <table className="w-full text-left border-collapse min-w-[620px]">
               <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold text-[10px] uppercase tracking-wider">
-                  <th className="py-3 px-4 text-center w-16">Hạng</th>
-                  <th className="py-3 px-2 text-center w-14">Biến động</th>
-                  <th className="py-3 px-4">Thí sinh & Danh hiệu</th>
-                  <th className="py-3 px-4">Trường THPT</th>
-                  <th className="py-3 px-4 text-center">Tiến độ AC</th>
-                  <th className="py-3 px-4 text-center">Chuỗi ngày</th>
-                  <th className="py-3 px-4 text-center">Rating</th>
-                  <th className="py-3 px-4 text-right">Tổng điểm</th>
-                  <th className="py-3 px-4 text-center w-24">Chi tiết</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {currentItems.length > 0 ? (
-                  currentItems.map((person) => {
-                    const passPct = Math.round((person.ac / person.totalSubmissions) * 100);
-                    return (
-                      <tr
-                        key={person.rank}
-                        className="hover:bg-sky-50/60 transition-colors group"
-                      >
-                        {/* Cột Thứ hạng */}
-                        <td className="py-3.5 px-4 text-center">
-                          <span className="font-mono text-sm font-black text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
-                            {person.rank}
-                          </span>
-                        </td>
-
-                        {/* Cột Biến động */}
-                        <td className="py-3.5 px-2 text-center">
-                          {person.trendType === "up" && (
-                            <span className="inline-flex items-center gap-0.5 text-emerald-600 font-bold text-[11px] bg-emerald-50 px-1.5 py-0.5 rounded">
-                              <TrendingUp className="w-3 h-3" />
-                              {person.trend}
-                            </span>
-                          )}
-                          {person.trendType === "down" && (
-                            <span className="inline-flex items-center gap-0.5 text-rose-600 font-bold text-[11px] bg-rose-50 px-1.5 py-0.5 rounded">
-                              <TrendingDown className="w-3 h-3" />
-                              {person.trend}
-                            </span>
-                          )}
-                          {person.trendType === "same" && (
-                            <span className="text-slate-400 font-bold text-[11px]">--</span>
-                          )}
-                        </td>
-
-                        {/* Cột Thí sinh */}
-                        <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-3">
-                            <img
-                              src={person.avatar}
-                              alt=""
-                              className="w-10 h-10 rounded-full object-cover border border-slate-200 bg-slate-100 shrink-0"
-                            />
-                            <div className="min-w-0">
-                              <div className="flex items-center gap-2">
-                                <p className="font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
-                                  {anonymous ? "Học viên đã xác thực" : person.name}
-                                </p>
-                                <span className={`px-2 py-0.2 rounded text-[9px] font-black border ${person.badgeColor}`}>
-                                  {person.badge}
-                                </span>
-                              </div>
-                              <p className="text-[11px] text-slate-400 truncate">
-                                {person.grade} · {person.city}
-                              </p>
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Cột Trường */}
-                        <td className="py-3.5 px-4 text-slate-600">
-                          <span className="font-medium line-clamp-1">{person.school}</span>
-                        </td>
-
-                        {/* Cột Tiến độ AC */}
-                        <td className="py-3.5 px-4 text-center">
-                          <div className="inline-block text-left w-28">
-                            <div className="flex justify-between text-[10px] text-slate-500 font-bold mb-1">
-                              <span className="text-emerald-700">{person.ac} AC</span>
-                              <span className="text-slate-400">{passPct}%</span>
-                            </div>
-                            <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-emerald-500 rounded-full"
-                                style={{ width: `${passPct}%` }}
-                              />
-                            </div>
-                          </div>
-                        </td>
-
-                        {/* Cột Chuỗi lửa */}
-                        <td className="py-3.5 px-4 text-center">
-                          <span className="inline-flex items-center gap-1 text-orange-600 font-bold text-xs bg-orange-50 px-2 py-1 rounded-lg border border-orange-200">
-                            <Flame className="w-3.5 h-3.5 fill-orange-500" />
-                            {person.streak} ngày
-                          </span>
-                        </td>
-
-                        {/* Cột Rating */}
-                        <td className="py-3.5 px-4 text-center font-mono font-bold text-slate-700">
-                          {person.rating}
-                        </td>
-
-                        {/* Cột Tổng điểm */}
-                        <td className="py-3.5 px-4 text-right">
-                          <strong className="text-[#0050A0] font-black text-sm block">
-                            {formatNumber(person.score)}
-                          </strong>
-                          <span className="text-[10px] text-slate-400">pts</span>
-                        </td>
-
-                        {/* Cột Nút Chi tiết */}
-                        <td className="py-3.5 px-4 text-center">
-                          <button
-                            onClick={() => setSelectedStudent(person)}
-                            className="p-1.5 rounded-lg bg-sky-50 hover:bg-blue-600 text-blue-700 hover:text-white transition-all cursor-pointer shadow-2xs"
-                            title="Xem hồ sơ năng lực"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <td colSpan={9} className="py-12 text-center text-xs text-slate-400 italic">
-                      Không tìm thấy thí sinh phù hợp với bộ lọc hiện tại.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        ) : (
-          /* VIEW 2: BẢNG TRƯỜNG THPT */
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse">
-              <thead>
-                <tr className="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold text-[10px] uppercase tracking-wider">
-                  <th className="py-3 px-4 text-center w-16">Hạng</th>
-                  <th className="py-3 px-4">Trường THPT & Trực thuộc</th>
-                  <th className="py-3 px-4 text-center">Tỉnh/Thành</th>
-                  <th className="py-3 px-4 text-center">Số học sinh</th>
-                  <th className="py-3 px-4 text-center">Tổng Huy chương (🥇-🥈-🥉)</th>
-                  <th className="py-3 px-4 text-center">Tỉ lệ đạt chuẩn</th>
-                  <th className="py-3 px-4 text-right">Tổng điểm đoàn</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {currentItems.length > 0 ? (
-                  currentItems.map((school) => (
-                    <tr
-                      key={school.rank}
-                      className="hover:bg-sky-50/60 transition-colors group"
+                <tr className="border-b border-slate-200/80 text-xs sm:text-sm text-slate-700 font-bold uppercase tracking-wider">
+                  <th className="py-3.5 px-3 w-16 sm:w-20 text-center">Hạng</th>
+                  <th className="py-3.5 px-3 w-24 text-center">Avatar</th>
+                  <th className="py-3.5 px-4">Họ và tên</th>
+                  <th className="py-3.5 px-4 w-28 sm:w-36 text-center">Điểm số</th>
+                  <th className="py-3.5 px-4 w-36 sm:w-44 text-right">
+                    <div
+                      onClick={() => setIsCityDropdownOpen(!isCityDropdownOpen)}
+                      className="inline-flex items-center justify-end gap-1 cursor-pointer hover:text-blue-600 transition-colors select-none"
                     >
-                      <td className="py-4 px-4 text-center">
-                        <span className={`w-8 h-8 rounded-xl font-mono text-xs font-black inline-flex items-center justify-center ${
-                          school.rank === 1
-                            ? "bg-amber-400 text-amber-950 shadow-xs ring-2 ring-amber-300"
-                            : school.rank === 2
-                            ? "bg-slate-200 text-slate-800"
-                            : school.rank === 3
-                            ? "bg-amber-100 text-amber-900 border border-amber-300"
-                            : "bg-slate-100 text-slate-700"
-                        }`}>
-                          {school.rank}
-                        </span>
+                      <span>Tỉnh/Thành phố</span>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+                    </div>
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody className="divide-y divide-dashed divide-slate-200/70 text-sm">
+                {paginatedData.map((item) => {
+                  const isTop1 = item.rank === 1;
+                  const isTop2 = item.rank === 2;
+                  const isTop3 = item.rank === 3;
+                  const isUser = item.isCurrentUser;
+
+                  return (
+                    <tr
+                      key={`${item.rank}-${item.name}`}
+                      onClick={() => setSelectedCandidate(item)}
+                      className={`group transition-all duration-150 cursor-pointer ${
+                        isUser
+                          ? "bg-[#EBF8F1] hover:bg-[#E2F5EB] border-y-2 border-emerald-300/80 font-medium"
+                          : "hover:bg-slate-50/90"
+                      }`}
+                    >
+                      {/* 1. HẠNG */}
+                      <td className="py-4 px-3 text-center align-middle">
+                        {isTop1 ? (
+                          <div className="inline-flex flex-col items-center justify-center">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-red-600 to-amber-700 text-white flex items-center justify-center shadow-sm border border-amber-300 group-hover:scale-110 transition-transform">
+                              <Trophy className="w-4 h-4 text-amber-200 fill-amber-300" />
+                            </div>
+                          </div>
+                        ) : isTop2 ? (
+                          <div className="inline-flex flex-col items-center justify-center">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-700 to-indigo-900 text-white flex items-center justify-center shadow-sm border border-blue-300 group-hover:scale-110 transition-transform">
+                              <Medal className="w-4 h-4 text-slate-200 fill-slate-200" />
+                            </div>
+                          </div>
+                        ) : isTop3 ? (
+                          <div className="inline-flex flex-col items-center justify-center">
+                            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-700 to-teal-900 text-white flex items-center justify-center shadow-sm border border-emerald-300 group-hover:scale-110 transition-transform">
+                              <Award className="w-4 h-4 text-amber-200 fill-amber-300" />
+                            </div>
+                          </div>
+                        ) : (
+                          <span
+                            className={`font-black text-base sm:text-lg ${
+                              isUser ? "text-emerald-700" : "text-slate-800"
+                            }`}
+                          >
+                            {item.rank}
+                          </span>
+                        )}
                       </td>
 
-                      <td className="py-4 px-4">
-                        <div className="flex items-center gap-3">
-                          <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-700 flex items-center justify-center shrink-0 border border-blue-100 font-black text-sm">
-                            <School className="w-5 h-5" />
-                          </div>
-                          <div>
-                            <p className="font-bold text-slate-900 text-xs group-hover:text-blue-600 transition-colors">
-                              {school.name}
-                            </p>
-                            <p className="text-[11px] text-slate-400">{school.banner}</p>
-                          </div>
+                      {/* 2. AVATAR VỚI VÒNG NGUYỆT QUẾ VÀ TOOLTIP */}
+                      <td className="py-4 px-3 text-center align-middle relative">
+                        <div className="inline-flex items-center justify-center relative">
+                          {/* Rank 1 Laurel Frame */}
+                          {isTop1 && (
+                            <div className="relative p-1">
+                              <div className="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-amber-500 via-yellow-300 to-amber-600 shadow-md flex items-center justify-center">
+                                <img
+                                  src={item.avatar}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover rounded-full bg-amber-50"
+                                />
+                              </div>
+                              <span className="absolute -left-2 top-1/2 -translate-y-1/2 text-amber-500 text-lg select-none">
+                                🌿
+                              </span>
+                              <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-amber-500 text-lg select-none transform scale-x-[-1]">
+                                🌿
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Rank 2 Laurel Frame */}
+                          {isTop2 && (
+                            <div className="relative p-1">
+                              <div className="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-slate-400 via-sky-200 to-blue-500 shadow-md flex items-center justify-center">
+                                <img
+                                  src={item.avatar}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover rounded-full bg-slate-50"
+                                />
+                              </div>
+                              <span className="absolute -left-2 top-1/2 -translate-y-1/2 text-sky-400 text-lg select-none">
+                                🌿
+                              </span>
+                              <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-sky-400 text-lg select-none transform scale-x-[-1]">
+                                🌿
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Rank 3 Laurel Frame */}
+                          {isTop3 && (
+                            <div className="relative p-1">
+                              <div className="w-14 h-14 rounded-full p-[2px] bg-gradient-to-tr from-amber-700 via-amber-400 to-amber-900 shadow-md flex items-center justify-center">
+                                <img
+                                  src={item.avatar}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover rounded-full bg-amber-50"
+                                />
+                              </div>
+                              <span className="absolute -left-2 top-1/2 -translate-y-1/2 text-amber-600 text-lg select-none">
+                                🌿
+                              </span>
+                              <span className="absolute -right-2 top-1/2 -translate-y-1/2 text-amber-600 text-lg select-none transform scale-x-[-1]">
+                                🌿
+                              </span>
+                            </div>
+                          )}
+
+                          {/* Normal Ranks & User */}
+                          {!isTop1 && !isTop2 && !isTop3 && (
+                            <div className="relative">
+                              <div
+                                className={`w-11 h-11 rounded-full overflow-hidden p-0.5 shadow-sm border ${
+                                  isUser
+                                    ? "border-emerald-400 ring-2 ring-emerald-200"
+                                    : "border-slate-200 bg-slate-100"
+                                }`}
+                              >
+                                <img
+                                  src={item.avatar}
+                                  alt={item.name}
+                                  className="w-full h-full object-cover rounded-full"
+                                />
+                              </div>
+
+                              {/* Tooltip Badge: "Bạn cần 16 điểm để thăng hạng" */}
+                              {isUser && (
+                                <div className="absolute -top-7 left-1/2 -translate-x-1/2 whitespace-nowrap z-20 pointer-events-none">
+                                  <div className="bg-[#48BB78] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full shadow-md flex items-center gap-1 animate-bounce">
+                                    <span>Bạn cần {item.gapToNextRank || 16} điểm để thăng hạng</span>
+                                  </div>
+                                  <div className="w-0 h-0 border-x-4 border-x-transparent border-t-4 border-t-[#48BB78] mx-auto"></div>
+                                </div>
+                              )}
+                            </div>
+                          )}
                         </div>
                       </td>
 
-                      <td className="py-4 px-4 text-center text-slate-600 font-medium">
-                        {school.city}
-                      </td>
-
-                      <td className="py-4 px-4 text-center font-bold text-slate-700">
-                        {school.studentsCount} thí sinh
-                      </td>
-
-                      <td className="py-4 px-4 text-center">
-                        <div className="inline-flex items-center gap-2 bg-slate-50 px-3 py-1 rounded-xl border border-slate-200 text-xs font-bold">
-                          <span className="text-amber-700">🥇 {school.goldMedals}</span>
-                          <span className="text-slate-600">🥈 {school.silverMedals}</span>
-                          <span className="text-amber-900">🥉 {school.bronzeMedals}</span>
+                      {/* 3. HỌ VÀ TÊN & TRƯỜNG */}
+                      <td className="py-4 px-4 align-middle">
+                        <div className="flex flex-col">
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`font-bold text-sm sm:text-base ${
+                                isUser ? "text-emerald-900" : "text-slate-800"
+                              }`}
+                            >
+                              {item.name}
+                            </span>
+                            {isUser && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-200 text-emerald-800">
+                                Bạn
+                              </span>
+                            )}
+                            {item.grade && (
+                              <span className="text-[10px] font-semibold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md">
+                                {item.grade}
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-xs text-slate-400 font-normal">
+                            {item.school}
+                          </span>
                         </div>
                       </td>
 
-                      <td className="py-4 px-4 text-center">
-                        <span className="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
-                          {school.passRate}
+                      {/* 4. ĐIỂM SỐ */}
+                      <td className="py-4 px-4 text-center align-middle">
+                        <span
+                          className={`text-base sm:text-lg font-black ${
+                            isUser
+                              ? "text-emerald-600"
+                              : isTop1
+                              ? "text-slate-900 font-black"
+                              : "text-slate-800"
+                          }`}
+                        >
+                          {item.score}
                         </span>
                       </td>
 
-                      <td className="py-4 px-4 text-right">
-                        <strong className="text-[#0050A0] font-black text-sm block">
-                          {formatNumber(school.totalScore)}
-                        </strong>
-                        <span className="text-[10px] text-slate-400">điểm đoàn</span>
+                      {/* 5. TỈNH / THÀNH PHỐ */}
+                      <td className="py-4 px-4 text-right align-middle">
+                        <span className="text-xs sm:text-sm font-medium text-slate-600">
+                          {item.city}
+                        </span>
                       </td>
                     </tr>
-                  ))
-                ) : (
+                  );
+                })}
+
+                {paginatedData.length === 0 && (
                   <tr>
-                    <td colSpan={7} className="py-12 text-center text-xs text-slate-400 italic">
-                      Không tìm thấy trường THPT phù hợp.
+                    <td colSpan="5" className="py-12 text-center text-slate-400 text-sm">
+                      Không tìm thấy thí sinh nào phù hợp với bộ lọc hiện tại.
                     </td>
                   </tr>
                 )}
@@ -1223,199 +1289,157 @@ export default function LeaderboardPage() {
           </div>
         )}
 
-        {/* PHÂN TRANG (PAGINATION) */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-5 py-3.5 border-t border-slate-100 bg-slate-50/50 text-xs">
-          <span className="text-slate-500">
-            Hiển thị trang <strong className="text-slate-800 font-bold">{currentPage}</strong> /{" "}
-            <strong className="text-slate-800 font-bold">{totalPages}</strong>
-          </span>
+        {/* TAB 2: BẢNG XẾP HẠNG TRƯỜNG HỌC / ĐỘI TUYỂN */}
+        {activeViewTab === "schools" && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse min-w-[620px]">
+              <thead>
+                <tr className="border-b border-slate-200/80 text-xs sm:text-sm text-slate-700 font-bold uppercase tracking-wider">
+                  <th className="py-3.5 px-3 w-16 text-center">Hạng</th>
+                  <th className="py-3.5 px-4">Trường THPT / Đội Tuyển</th>
+                  <th className="py-3.5 px-4 text-center">Số học sinh</th>
+                  <th className="py-3.5 px-4 text-center">Tổng điểm Top</th>
+                  <th className="py-3.5 px-4 text-center">Huy chương (🥇/🥈/🥉)</th>
+                  <th className="py-3.5 px-4 text-right">Tỉnh/Thành</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-dashed divide-slate-200/70 text-sm">
+                {SCHOOL_RANKINGS.map((sch) => (
+                  <tr key={sch.name} className="hover:bg-slate-50/90 transition-colors">
+                    <td className="py-4 px-3 text-center align-middle font-black text-slate-800">
+                      {sch.rank === 1 ? "🥇 1" : sch.rank === 2 ? "🥈 2" : sch.rank === 3 ? "🥉 3" : sch.rank}
+                    </td>
+                    <td className="py-4 px-4 align-middle">
+                      <div className="font-bold text-slate-900">{sch.name}</div>
+                      <span className="text-xs text-blue-600 font-medium">{sch.badge}</span>
+                    </td>
+                    <td className="py-4 px-4 text-center align-middle text-slate-600">
+                      {sch.studentsCount} bạn
+                    </td>
+                    <td className="py-4 px-4 text-center align-middle font-black text-blue-600">
+                      {sch.topScoreSum}
+                    </td>
+                    <td className="py-4 px-4 text-center align-middle">
+                      <span className="text-amber-500 font-bold">{sch.goldMedals}🥇</span> ·{" "}
+                      <span className="text-slate-400 font-bold">{sch.silverMedals}🥈</span> ·{" "}
+                      <span className="text-amber-700 font-bold">{sch.bronzeMedals}🥉</span>
+                    </td>
+                    <td className="py-4 px-4 text-right align-middle text-slate-600 font-medium">
+                      {sch.city}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-          <div className="flex items-center gap-1.5">
+        {/* PHÂN TRANG (PAGINATION) */}
+        {activeViewTab === "individuals" && (
+          <div className="pt-4 flex items-center justify-center gap-2">
             <button
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-              className={`p-2 rounded-xl border flex items-center gap-1 font-bold text-xs transition-all cursor-pointer ${
-                currentPage === 1
-                  ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
-                  : "border-slate-200 text-slate-700 hover:bg-white hover:border-blue-400 hover:text-blue-600 bg-white shadow-2xs"
-              }`}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
               <ChevronLeft className="w-4 h-4" />
-              <span>Trước</span>
             </button>
 
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
               <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                className={`w-8 h-8 rounded-xl font-bold text-xs transition-all cursor-pointer flex items-center justify-center ${
-                  currentPage === page
-                    ? "bg-[#0066CC] text-white shadow-2xs font-black"
-                    : "bg-white text-slate-600 border border-slate-200 hover:bg-slate-100"
+                key={pageNum}
+                onClick={() => setCurrentPage(pageNum)}
+                className={`w-8 h-8 rounded-full text-xs sm:text-sm font-bold flex items-center justify-center transition-all cursor-pointer ${
+                  currentPage === pageNum
+                    ? "bg-[#FF6B35] text-white shadow-sm"
+                    : "text-slate-600 hover:bg-slate-100"
                 }`}
               >
-                {page}
+                {pageNum}
               </button>
             ))}
 
+            {totalPages > 4 && <span className="text-slate-400 text-xs px-1">...</span>}
+
             <button
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-              className={`p-2 rounded-xl border flex items-center gap-1 font-bold text-xs transition-all cursor-pointer ${
-                currentPage === totalPages
-                  ? "border-slate-200 text-slate-300 cursor-not-allowed bg-white"
-                  : "border-slate-200 text-slate-700 hover:bg-white hover:border-blue-400 hover:text-blue-600 bg-white shadow-2xs"
-              }`}
+              className="w-8 h-8 rounded-full flex items-center justify-center text-slate-500 hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
             >
-              <span>Sau</span>
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
-        </div>
+        )}
       </section>
 
-      {/* ========================================================================= */}
-      {/* MODAL CHI TIẾT HỌC VIÊN / PROFILE POPUP                                    */}
-      {/* ========================================================================= */}
-      {selectedStudent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
-          <div className="bg-white rounded-3xl border border-sky-200 shadow-2xl max-w-lg w-full overflow-hidden animate-scaleUp">
-            {/* Modal Header */}
-            <div className="relative bg-gradient-to-r from-[#003B7A] to-[#0055B3] p-5 text-white">
-              <button
-                onClick={() => setSelectedStudent(null)}
-                className="absolute top-4 right-4 text-white/70 hover:text-white p-1 rounded-full hover:bg-white/20 transition-all cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
+      {/* 5. MODAL XEM CHI TIẾT THÍ SINH KHI BẤM VÀO DÒNG */}
+      {selectedCandidate && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50 animate-in fade-in">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-5 relative">
+            <button
+              onClick={() => setSelectedCandidate(null)}
+              className="absolute right-4 top-4 p-1.5 rounded-full hover:bg-slate-100 text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
 
-              <div className="flex items-center gap-4">
+            {/* Candidate Header */}
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-blue-400 shadow-sm">
                 <img
-                  src={selectedStudent.avatar}
-                  alt={selectedStudent.name}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-amber-400 shadow-md"
+                  src={selectedCandidate.avatar}
+                  alt={selectedCandidate.name}
+                  className="w-full h-full object-cover"
                 />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-lg font-black text-white">
-                      {anonymous ? "Học viên đã xác thực" : selectedStudent.name}
-                    </h3>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-black bg-amber-400 text-amber-950">
-                      Hạng #{selectedStudent.rank}
-                    </span>
-                  </div>
-                  <p className="text-xs text-sky-100">{selectedStudent.school}</p>
-                  <p className="text-[11px] text-sky-200 mt-0.5">
-                    {selectedStudent.grade} · {selectedStudent.city}
-                  </p>
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-black text-slate-900 text-lg">{selectedCandidate.name}</h3>
+                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">
+                    Hạng #{selectedCandidate.rank}
+                  </span>
                 </div>
+                <p className="text-xs text-slate-500">{selectedCandidate.school}</p>
+                <p className="text-xs text-slate-400 flex items-center gap-1 mt-0.5">
+                  <MapPin className="w-3 h-3 text-slate-400" /> {selectedCandidate.city}
+                </p>
               </div>
             </div>
 
-            {/* Modal Body */}
-            <div className="p-5 space-y-4 text-xs">
-              {/* Stats Grid */}
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-blue-50/70 p-3 rounded-2xl border border-blue-100 text-center">
-                  <span className="text-[10px] text-slate-500 block">Tổng điểm</span>
-                  <strong className="text-blue-900 text-base font-black">
-                    {formatNumber(selectedStudent.score)}
-                  </strong>
-                </div>
-                <div className="bg-emerald-50/70 p-3 rounded-2xl border border-emerald-100 text-center">
-                  <span className="text-[10px] text-slate-500 block">Số bài AC</span>
-                  <strong className="text-emerald-800 text-base font-black">
-                    {selectedStudent.ac} bài
-                  </strong>
-                </div>
-                <div className="bg-orange-50/70 p-3 rounded-2xl border border-orange-100 text-center">
-                  <span className="text-[10px] text-slate-500 block">Chuỗi ngày</span>
-                  <strong className="text-orange-700 text-base font-black flex items-center justify-center gap-1">
-                    <Flame className="w-4 h-4 fill-orange-500" /> {selectedStudent.streak}
-                  </strong>
-                </div>
+            {/* Stats Grid */}
+            <div className="grid grid-cols-3 gap-3 bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+              <div>
+                <span className="text-xs text-slate-400 font-medium block">Điểm số</span>
+                <span className="text-xl font-black text-blue-600">{selectedCandidate.score}</span>
               </div>
-
-              {/* Radar / Skill Bars */}
-              {selectedStudent.skills && (
-                <div className="space-y-2 pt-2 border-t border-slate-100">
-                  <span className="text-xs font-bold text-slate-800 block">
-                    📊 Năng lực Thuật toán Chuyên sâu:
-                  </span>
-                  <div className="space-y-1.5 text-[11px]">
-                    <div>
-                      <div className="flex justify-between text-slate-600 mb-0.5">
-                        <span>Quy hoạch động (DP):</span>
-                        <strong className="text-blue-700">{selectedStudent.skills.dp}%</strong>
-                      </div>
-                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-blue-600 rounded-full"
-                          style={{ width: `${selectedStudent.skills.dp}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex justify-between text-slate-600 mb-0.5">
-                        <span>Lý thuyết Đồ thị & Luồng (Graph):</span>
-                        <strong className="text-purple-700">{selectedStudent.skills.graph}%</strong>
-                      </div>
-                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-purple-600 rounded-full"
-                          style={{ width: `${selectedStudent.skills.graph}%` }}
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <div className="flex justify-between text-slate-600 mb-0.5">
-                        <span>Cấu trúc Dữ liệu Nâng cao (DS):</span>
-                        <strong className="text-emerald-700">{selectedStudent.skills.ds}%</strong>
-                      </div>
-                      <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-emerald-600 rounded-full"
-                          style={{ width: `${selectedStudent.skills.ds}%` }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Recent Contests */}
-              {selectedStudent.recentContests && (
-                <div className="space-y-2 pt-2 border-t border-slate-100">
-                  <span className="text-xs font-bold text-slate-800 block">
-                    🏆 Thành tích Cuộc thi Gần nhất:
-                  </span>
-                  <div className="space-y-1.5">
-                    {selectedStudent.recentContests.map((c, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-200/70 text-[11px]"
-                      >
-                        <span className="font-semibold text-slate-700">{c.name}</span>
-                        <div className="text-right">
-                          <strong className="text-blue-700 font-bold">{c.rank}</strong>
-                          <span className="text-slate-400 text-[10px] ml-1.5">({c.score})</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+              <div>
+                <span className="text-xs text-slate-400 font-medium block">Độ chính xác</span>
+                <span className="text-xl font-black text-emerald-600">
+                  {selectedCandidate.accuracy}
+                </span>
+              </div>
+              <div>
+                <span className="text-xs text-slate-400 font-medium block">Thời gian</span>
+                <span className="text-xl font-black text-amber-600">{selectedCandidate.time}</span>
+              </div>
             </div>
 
-            {/* Modal Footer */}
-            <div className="p-4 bg-slate-50 border-t border-slate-100 text-center">
+            {/* Action buttons */}
+            <div className="flex items-center gap-3 pt-2">
               <button
-                onClick={() => setSelectedStudent(null)}
-                className="w-full py-2.5 px-4 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold text-xs transition-all cursor-pointer"
+                onClick={() => setSelectedCandidate(null)}
+                className="flex-1 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition-colors cursor-pointer"
               >
-                Đóng hồ sơ
+                Đóng
+              </button>
+              <button
+                onClick={() => {
+                  setSelectedCandidate(null);
+                  if (onNavigate) onNavigate("Cuộc thi");
+                }}
+                className="flex-1 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs shadow-md transition-colors cursor-pointer"
+              >
+                Xem phòng thi
               </button>
             </div>
           </div>
